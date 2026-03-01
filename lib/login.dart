@@ -35,7 +35,7 @@ class _LoginState extends State<Login> {
                   Container(
                     height: 300,
                     width: 300,
-                    margin: EdgeInsets.only(left: 46, top: 45),
+                    margin: EdgeInsets.only(left: 40, top: 45),
                     child: Image.asset('images/logo.png'),
                   ),
                   CardLogin(),

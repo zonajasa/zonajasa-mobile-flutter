@@ -35,7 +35,7 @@ class _RegisterState extends State<Register> {
                     child: Container(
                       height: 260,
                       width: 260,
-                      margin: EdgeInsets.only(left: 0, top: 35),
+                      margin: EdgeInsets.only(left: 1, top: 35),
                       child: Image.asset('images/logo.png'),
                     ),
                   ),
