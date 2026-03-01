@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jasa_app/dashboard.dart';
 import 'package:jasa_app/login_card.dart';
 import 'package:jasa_app/register.dart';
 
@@ -72,6 +73,9 @@ class _LoginState extends State<Login> {
                   ),
                   onPressed: () {
                     // proses login
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => Dashboard()),
+                    );
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
