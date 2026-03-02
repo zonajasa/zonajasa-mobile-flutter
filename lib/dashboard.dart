@@ -146,6 +146,40 @@ class _buildHomeState extends State<_buildHome> {
     {'imagePath': 'images/BlueCircle.png', 'label': 'Darurat'},
   ];
 
+  // daftar penyedia jasa
+  final List<Map<String, String>> providers = [
+    {
+      "name": "Pak Budi",
+      "company": "CV. Budi Mandiri",
+      "service": "Tukang - Service AC",
+      "image": "images/orang.png",
+    },
+    {
+      "name": "Bu Sari",
+      "company": "CV. Sari Jaya",
+      "service": "Listrik - Instalasi",
+      "image": "images/orang.png",
+    },
+    {
+      "name": "Pak Anton",
+      "company": "CV. Anton Sejahtera",
+      "service": "Kebersihan - Jasa Laundry",
+      "image": "images/orang.png",
+    },
+    {
+      "name": "Bu Sinar",
+      "company": "CV. Anton Sejahtera",
+      "service": "Kebersihan - Jasa Laundry",
+      "image": "images/orang.png",
+    },
+    {
+      "name": "Pak Marjan",
+      "company": "CV. Anton Sejahtera",
+      "service": "Kebersihan - Jasa Laundry",
+      "image": "images/orang.png",
+    },
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -423,18 +457,20 @@ class _buildHomeState extends State<_buildHome> {
               ),
             ),
           ),
-          //konten teks
+          //data layanan
           Positioned(
             top: MediaQuery.of(context).size.height * 0.43 + 115,
-            left: 20,
-            right: 20,
+            left: 15,
+            right: 15,
+            bottom: 15,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                /// ===== JUDUL ATAS =====
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
+                    const Text(
                       "Penyedia jasa terdekat",
                       style: TextStyle(
                         fontSize: 19,
@@ -442,7 +478,6 @@ class _buildHomeState extends State<_buildHome> {
                         color: Colors.black87,
                       ),
                     ),
-                    SizedBox(height: 8),
                     TextButton(
                       onPressed: () {},
                       style: TextButton.styleFrom(
@@ -461,9 +496,82 @@ class _buildHomeState extends State<_buildHome> {
                     ),
                   ],
                 ),
+
+                const SizedBox(height: 12),
+
+                /// ===== LIST DATA =====
+                Expanded(
+                  child: ListView.separated(
+                    itemCount: providers.length,
+                    padding: EdgeInsets.only(top: 5),
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 12),
+                    itemBuilder: (context, index) {
+                      final provider = providers[index];
+                      return Container(
+                        height: 110,
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 10, top: 8),
+                              child: CircleAvatar(
+                                radius: 40,
+                                backgroundImage: AssetImage(provider["image"]!),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    provider["name"]!,
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    provider["company"]!,
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                  Text(
+                                    provider["service"]!,
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                  Text(
+                                    provider["service"]!,
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ],
             ),
           ),
+          //end
         ],
       ),
     );
