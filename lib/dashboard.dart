@@ -85,6 +85,8 @@ class _buildHome extends StatefulWidget {
 }
 
 class _buildHomeState extends State<_buildHome> {
+  int selectedCategoryIndex = 0;
+  bool isLoadingProviders = false;
   String currentLocation = "Mendeteksi lokasi...";
 
   @override
@@ -137,6 +139,11 @@ class _buildHomeState extends State<_buildHome> {
 
   bool isNotifPressed = false;
 
+  List<Map<String, String>> get filteredProviders {
+    String selectedCategory = menuItems[selectedCategoryIndex]['label']!;
+    return providers.where((p) => p['category'] == selectedCategory).toList();
+  }
+
   final List<Map<String, String>> menuItems = [
     {'imagePath': 'images/BlueWrench.png', 'label': 'Tukang'},
     {'imagePath': 'images/YellowLightning.png', 'label': 'Listrik'},
@@ -155,6 +162,7 @@ class _buildHomeState extends State<_buildHome> {
       "image": "images/orang.png",
       "rating": "5.5",
       "jarak": "1 km",
+      "category": "Tukang",
     },
     {
       "name": "Bu Sari",
@@ -163,6 +171,7 @@ class _buildHomeState extends State<_buildHome> {
       "image": "images/orang.png",
       "rating": "5.5",
       "jarak": "10 km",
+      "category": "Tukang",
     },
     {
       "name": "Pak Anton",
@@ -171,6 +180,7 @@ class _buildHomeState extends State<_buildHome> {
       "image": "images/orang.png",
       "rating": "4.5",
       "jarak": "1 km",
+      "category": "Tukang",
     },
     {
       "name": "Bu Sinar",
@@ -179,6 +189,7 @@ class _buildHomeState extends State<_buildHome> {
       "image": "images/orang.png",
       "rating": "4.5",
       "jarak": "5 km",
+      "category": "Tukang",
     },
     {
       "name": "Pak Marjan",
@@ -187,6 +198,7 @@ class _buildHomeState extends State<_buildHome> {
       "image": "images/orang.png",
       "rating": "5.5",
       "jarak": "4 km",
+      "category": "Tukang",
     },
     {
       "name": "Pak Alfin",
@@ -195,6 +207,7 @@ class _buildHomeState extends State<_buildHome> {
       "image": "images/orang.png",
       "rating": "5.5",
       "jarak": "8 km",
+      "category": "Tukang",
     },
     {
       "name": "Pak Saeto",
@@ -203,6 +216,7 @@ class _buildHomeState extends State<_buildHome> {
       "image": "images/orang.png",
       "rating": "5.5",
       "jarak": "9 km",
+      "category": "Tukang",
     },
     {
       "name": "Pak Maruf",
@@ -211,6 +225,7 @@ class _buildHomeState extends State<_buildHome> {
       "image": "images/orang.png",
       "rating": "5.5",
       "jarak": "2 km",
+      "category": "Tukang",
     },
     {
       "name": "Pak Akbar",
@@ -219,6 +234,7 @@ class _buildHomeState extends State<_buildHome> {
       "image": "images/orang.png",
       "rating": "5.5",
       "jarak": "4 km",
+      "category": "Tukang",
     },
     {
       "name": "Pak Samsul",
@@ -227,6 +243,7 @@ class _buildHomeState extends State<_buildHome> {
       "image": "images/orang.png",
       "rating": "5.5",
       "jarak": "1 km",
+      "category": "Tukang",
     },
   ];
 
@@ -498,8 +515,18 @@ class _buildHomeState extends State<_buildHome> {
                     child: AnimatedImageButton(
                       imagePath: item['imagePath']!,
                       label: item['label']!,
-                      onTap: () {
-                        print("${item['label']} ditekan");
+                      isSelected: selectedCategoryIndex == index,
+                      onTap: () async {
+                        setState(() {
+                          selectedCategoryIndex = index;
+                          isLoadingProviders = true;
+                        });
+
+                        await Future.delayed(const Duration(milliseconds: 600));
+
+                        setState(() {
+                          isLoadingProviders = false;
+                        });
                       },
                     ),
                   );
@@ -551,138 +578,205 @@ class _buildHomeState extends State<_buildHome> {
 
                 /// ===== LIST DATA =====
                 Expanded(
-                  child: ListView.separated(
-                    itemCount: providers.length,
-                    padding: EdgeInsets.only(top: 5),
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(height: 12),
-                    itemBuilder: (context, index) {
-                      final provider = providers[index];
-                      return Container(
-                        height: 110,
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 7, top: 8),
-                              child: CircleAvatar(
-                                radius: 40,
-                                backgroundImage: AssetImage(provider["image"]!),
+                  child: isLoadingProviders
+                      ? ListView.builder(
+                          itemCount: 5,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              height: 110,
+                              margin: const EdgeInsets.only(bottom: 12),
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15),
                               ),
-                            ),
-                            const SizedBox(width: 7),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
+                              child: Row(
                                 children: [
-                                  Text(
-                                    provider["name"]!,
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
+                                  Container(
+                                    width: 80,
+                                    height: 80,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.shade300,
+                                      shape: BoxShape.circle,
                                     ),
                                   ),
-                                  Text(
-                                    provider["company"]!,
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                      color: Colors.black54,
-                                    ),
-                                  ),
-                                  Row(
-                                    children: [
-                                      ...List.generate(5, (index) {
-                                        double rating = double.parse(
-                                          provider["rating"] ?? "0",
-                                        );
-                                        return Icon(
-                                          index < rating.floor()
-                                              ? Icons.star
-                                              : Icons.star_border,
-                                          color: Colors.amber,
-                                          size: 18,
-                                        );
-                                      }),
-                                      const SizedBox(width: 3),
-                                      Text(
-                                        provider["rating"] ?? "0",
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          height: 16,
+                                          width: 120,
+                                          color: Colors.grey.shade300,
                                         ),
-                                      ),
-                                      const SizedBox(width: 5),
-
-                                      Container(
-                                        height: 14,
-                                        width: 1,
-                                        color: Colors.grey.shade400,
-                                      ),
-
-                                      const SizedBox(width: 5),
-
-                                      /// Jarak
-                                      Text(
-                                        provider["jarak"] ?? "0 km",
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black54,
+                                        const SizedBox(height: 8),
+                                        Container(
+                                          height: 14,
+                                          width: 180,
+                                          color: Colors.grey.shade200,
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  Text(
-                                    provider["service"]!,
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                      color: Colors.black54,
+                                        const SizedBox(height: 8),
+                                        Container(
+                                          height: 14,
+                                          width: 100,
+                                          color: Colors.grey.shade200,
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                right: 10,
-                                top: 20,
+                            );
+                          },
+                        )
+                      : ListView.separated(
+                          itemCount: filteredProviders.length,
+                          padding: EdgeInsets.only(top: 5),
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(height: 12),
+                          itemBuilder: (context, index) {
+                            final provider = filteredProviders[index];
+
+                            return Container(
+                              height: 110,
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15),
                               ),
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xff0e86e4),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 18,
-                                    vertical: 10,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      left: 7,
+                                      top: 8,
+                                    ),
+                                    child: CircleAvatar(
+                                      radius: 40,
+                                      backgroundImage: AssetImage(
+                                        provider["image"]!,
+                                      ),
+                                    ),
                                   ),
-                                  minimumSize: const Size(
-                                    0,
-                                    36,
-                                  ), // tinggi kecil
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
+                                  const SizedBox(width: 7),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          provider["name"]!,
+                                          style: const TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(
+                                          provider["company"]!,
+                                          style: const TextStyle(
+                                            fontSize: 15,
+                                            color: Colors.black54,
+                                          ),
+                                        ),
+                                        Row(
+                                          children: [
+                                            ...List.generate(5, (index) {
+                                              double rating = double.parse(
+                                                provider["rating"] ?? "0",
+                                              );
+                                              return Icon(
+                                                index < rating.floor()
+                                                    ? Icons.star
+                                                    : Icons.star_border,
+                                                color: Colors.amber,
+                                                size: 18,
+                                              );
+                                            }),
+                                            const SizedBox(width: 3),
+                                            Text(
+                                              provider["rating"] ?? "0",
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 5),
+
+                                            Container(
+                                              height: 14,
+                                              width: 1,
+                                              color: Colors.grey.shade400,
+                                            ),
+
+                                            const SizedBox(width: 5),
+
+                                            /// Jarak
+                                            Text(
+                                              provider["jarak"] ?? "0 km",
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.black54,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Text(
+                                          provider["service"]!,
+                                          style: const TextStyle(
+                                            fontSize: 15,
+                                            color: Colors.black54,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                onPressed: () {},
-                                child: const Text(
-                                  "Chat",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      right: 10,
+                                      top: 20,
+                                    ),
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: const Color(
+                                          0xff0e86e4,
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 18,
+                                          vertical: 10,
+                                        ),
+                                        minimumSize: const Size(
+                                          0,
+                                          36,
+                                        ), // tinggi kecil
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                        ),
+                                      ),
+                                      onPressed: () {},
+                                      child: const Text(
+                                        "Chat",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                ],
                               ),
-                            ),
-                          ],
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
                 ),
               ],
             ),
@@ -697,12 +791,15 @@ class _buildHomeState extends State<_buildHome> {
 class AnimatedImageButton extends StatefulWidget {
   final String imagePath;
   final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
 
   const AnimatedImageButton({
     super.key,
     required this.imagePath,
     required this.label,
-    required void Function() onTap,
+    required this.isSelected,
+    required this.onTap,
   });
 
   @override
@@ -727,7 +824,7 @@ class _AnimatedImageButtonState extends State<AnimatedImageButton> {
             setState(() {
               isPressed = false;
             });
-            print("${widget.label} ditekan");
+            widget.onTap();
           },
           onTapCancel: () {
             setState(() {
@@ -735,7 +832,7 @@ class _AnimatedImageButtonState extends State<AnimatedImageButton> {
             });
           },
           child: AnimatedScale(
-            scale: isPressed ? 1.2 : 1.0,
+            scale: widget.isSelected ? 1.2 : (isPressed ? 1.2 : 1.0),
             duration: const Duration(milliseconds: 100),
             child: Image.asset(widget.imagePath, width: 50, height: 50),
           ),
@@ -746,7 +843,7 @@ class _AnimatedImageButtonState extends State<AnimatedImageButton> {
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: isPressed ? Colors.blue : Colors.black87,
+            color: widget.isSelected ? Colors.blue : Colors.black87,
           ),
         ),
       ],
