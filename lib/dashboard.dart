@@ -180,7 +180,7 @@ class _buildHomeState extends State<_buildHome> {
       "image": "images/orang.png",
       "rating": "4.5",
       "jarak": "1 km",
-      "category": "Tukang",
+      "category": "Kebersihan",
     },
     {
       "name": "Bu Sinar",
@@ -189,7 +189,7 @@ class _buildHomeState extends State<_buildHome> {
       "image": "images/orang.png",
       "rating": "4.5",
       "jarak": "5 km",
-      "category": "Tukang",
+      "category": "Kebersihan",
     },
     {
       "name": "Pak Marjan",
@@ -198,7 +198,7 @@ class _buildHomeState extends State<_buildHome> {
       "image": "images/orang.png",
       "rating": "5.5",
       "jarak": "4 km",
-      "category": "Tukang",
+      "category": "Kebersihan",
     },
     {
       "name": "Pak Alfin",
