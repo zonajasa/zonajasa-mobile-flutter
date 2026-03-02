@@ -136,6 +136,16 @@ class _buildHomeState extends State<_buildHome> {
   }
 
   bool isNotifPressed = false;
+
+  final List<Map<String, String>> menuItems = [
+    {'imagePath': 'images/BlueWrench.png', 'label': 'Tukang'},
+    {'imagePath': 'images/YellowLightning.png', 'label': 'Listrik'},
+    {'imagePath': 'images/BlueCircle.png', 'label': 'Kebersihan'},
+    {'imagePath': 'images/BlueCar.png', 'label': 'Service'},
+    {'imagePath': 'images/YellowLightning.png', 'label': 'Bangunan'},
+    {'imagePath': 'images/BlueCircle.png', 'label': 'Darurat'},
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -146,7 +156,7 @@ class _buildHomeState extends State<_buildHome> {
         children: [
           //layout header
           Container(
-            height: MediaQuery.of(context).size.height * 0.50,
+            height: MediaQuery.of(context).size.height * 0.48,
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(30),
@@ -369,15 +379,16 @@ class _buildHomeState extends State<_buildHome> {
           ),
           //menu layanan
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.46,
+            top: MediaQuery.of(context).size.height * 0.43,
             left: 15,
             right: 15,
             child: Container(
-              height: 90,
-              padding: const EdgeInsets.all(10),
+              height: 101,
+              clipBehavior: Clip.none,
+              padding: const EdgeInsets.symmetric(vertical: 8),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(15),
                 boxShadow: [
                   BoxShadow(
                     // ignore: deprecated_member_use
@@ -387,10 +398,134 @@ class _buildHomeState extends State<_buildHome> {
                   ),
                 ],
               ),
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                padding: EdgeInsets.only(top: 5),
+                itemCount: menuItems.length,
+                separatorBuilder: (context, index) => Container(
+                  width: 1,
+                  margin: const EdgeInsets.symmetric(vertical: 1),
+                  color: Colors.grey[300],
+                ),
+                itemBuilder: (context, index) {
+                  final item = menuItems[index];
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    child: AnimatedImageButton(
+                      imagePath: item['imagePath']!,
+                      label: item['label']!,
+                      onTap: () {
+                        print("${item['label']} ditekan");
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          //konten teks
+          Positioned(
+            top: MediaQuery.of(context).size.height * 0.43 + 115,
+            left: 20,
+            right: 20,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Penyedia jasa terdekat",
+                      style: TextStyle(
+                        fontSize: 19,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    TextButton(
+                      onPressed: () {},
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: const Size(0, 0),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: const Text(
+                        "Lihat semua",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xff0e86e4),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class AnimatedImageButton extends StatefulWidget {
+  final String imagePath;
+  final String label;
+
+  const AnimatedImageButton({
+    super.key,
+    required this.imagePath,
+    required this.label,
+    required void Function() onTap,
+  });
+
+  @override
+  State<AnimatedImageButton> createState() => _AnimatedImageButtonState();
+}
+
+class _AnimatedImageButtonState extends State<AnimatedImageButton> {
+  bool isPressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        GestureDetector(
+          onTapDown: (_) {
+            setState(() {
+              isPressed = true;
+            });
+          },
+          onTapUp: (_) {
+            setState(() {
+              isPressed = false;
+            });
+            print("${widget.label} ditekan");
+          },
+          onTapCancel: () {
+            setState(() {
+              isPressed = false;
+            });
+          },
+          child: AnimatedScale(
+            scale: isPressed ? 1.2 : 1.0,
+            duration: const Duration(milliseconds: 100),
+            child: Image.asset(widget.imagePath, width: 50, height: 50),
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          widget.label,
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+            color: isPressed ? Colors.blue : Colors.black87,
+          ),
+        ),
+      ],
     );
   }
 }

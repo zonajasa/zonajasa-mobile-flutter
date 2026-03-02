@@ -72,6 +72,10 @@ flutter:
     - images/pohon.png
     - images/orang1.png
     - images/orang2.png
+    - images/BlueCar.png
+    - images/BlueCircle.png
+    - images/BlueWrench.png
+    - images/YellowLightning.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
