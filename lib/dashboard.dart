@@ -146,37 +146,87 @@ class _buildHomeState extends State<_buildHome> {
     {'imagePath': 'images/BlueCircle.png', 'label': 'Darurat'},
   ];
 
-  // daftar penyedia jasa
+  // daftar penyedia jasa DATA DUMMY
   final List<Map<String, String>> providers = [
     {
       "name": "Pak Budi",
       "company": "CV. Budi Mandiri",
       "service": "Tukang - Service AC",
       "image": "images/orang.png",
+      "rating": "5.5",
+      "jarak": "1 km",
     },
     {
       "name": "Bu Sari",
       "company": "CV. Sari Jaya",
       "service": "Listrik - Instalasi",
       "image": "images/orang.png",
+      "rating": "5.5",
+      "jarak": "10 km",
     },
     {
       "name": "Pak Anton",
       "company": "CV. Anton Sejahtera",
-      "service": "Kebersihan - Jasa Laundry",
+      "service": "Jasa Kebersihan",
       "image": "images/orang.png",
+      "rating": "4.5",
+      "jarak": "1 km",
     },
     {
       "name": "Bu Sinar",
       "company": "CV. Anton Sejahtera",
-      "service": "Kebersihan - Jasa Laundry",
+      "service": "Jasa Kebersihan",
       "image": "images/orang.png",
+      "rating": "4.5",
+      "jarak": "5 km",
     },
     {
       "name": "Pak Marjan",
       "company": "CV. Anton Sejahtera",
-      "service": "Kebersihan - Jasa Laundry",
+      "service": "Jasa Kebersihan",
       "image": "images/orang.png",
+      "rating": "5.5",
+      "jarak": "4 km",
+    },
+    {
+      "name": "Pak Alfin",
+      "company": "CV. Anton Sejahtera",
+      "service": "Jasa Kebersihan",
+      "image": "images/orang.png",
+      "rating": "5.5",
+      "jarak": "8 km",
+    },
+    {
+      "name": "Pak Saeto",
+      "company": "CV. Anton Sejahtera",
+      "service": "Jasa Kebersihan",
+      "image": "images/orang.png",
+      "rating": "5.5",
+      "jarak": "9 km",
+    },
+    {
+      "name": "Pak Maruf",
+      "company": "CV. Anton Sejahtera",
+      "service": "Jasa Kebersihan",
+      "image": "images/orang.png",
+      "rating": "5.5",
+      "jarak": "2 km",
+    },
+    {
+      "name": "Pak Akbar",
+      "company": "CV. Anton Sejahtera",
+      "service": "Jasa Kebersihan",
+      "image": "images/orang.png",
+      "rating": "5.5",
+      "jarak": "4 km",
+    },
+    {
+      "name": "Pak Samsul",
+      "company": "CV. Anton Sejahtera",
+      "service": "Jasa Kebersihan",
+      "image": "images/orang.png",
+      "rating": "5.5",
+      "jarak": "1 km",
     },
   ];
 
@@ -497,7 +547,7 @@ class _buildHomeState extends State<_buildHome> {
                   ],
                 ),
 
-                const SizedBox(height: 12),
+                const SizedBox(height: 5),
 
                 /// ===== LIST DATA =====
                 Expanded(
@@ -519,13 +569,13 @@ class _buildHomeState extends State<_buildHome> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Padding(
-                              padding: const EdgeInsets.only(left: 10, top: 8),
+                              padding: const EdgeInsets.only(left: 7, top: 8),
                               child: CircleAvatar(
                                 radius: 40,
                                 backgroundImage: AssetImage(provider["image"]!),
                               ),
                             ),
-                            const SizedBox(width: 10),
+                            const SizedBox(width: 7),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -545,12 +595,47 @@ class _buildHomeState extends State<_buildHome> {
                                       color: Colors.black54,
                                     ),
                                   ),
-                                  Text(
-                                    provider["service"]!,
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                      color: Colors.black54,
-                                    ),
+                                  Row(
+                                    children: [
+                                      ...List.generate(5, (index) {
+                                        double rating = double.parse(
+                                          provider["rating"] ?? "0",
+                                        );
+                                        return Icon(
+                                          index < rating.floor()
+                                              ? Icons.star
+                                              : Icons.star_border,
+                                          color: Colors.amber,
+                                          size: 18,
+                                        );
+                                      }),
+                                      const SizedBox(width: 3),
+                                      Text(
+                                        provider["rating"] ?? "0",
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 5),
+
+                                      Container(
+                                        height: 14,
+                                        width: 1,
+                                        color: Colors.grey.shade400,
+                                      ),
+
+                                      const SizedBox(width: 5),
+
+                                      /// Jarak
+                                      Text(
+                                        provider["jarak"] ?? "0 km",
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.black54,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                   Text(
                                     provider["service"]!,
@@ -560,6 +645,37 @@ class _buildHomeState extends State<_buildHome> {
                                     ),
                                   ),
                                 ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                right: 10,
+                                top: 20,
+                              ),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xff0e86e4),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 18,
+                                    vertical: 10,
+                                  ),
+                                  minimumSize: const Size(
+                                    0,
+                                    36,
+                                  ), // tinggi kecil
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                                onPressed: () {},
+                                child: const Text(
+                                  "Chat",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
                               ),
                             ),
                           ],
