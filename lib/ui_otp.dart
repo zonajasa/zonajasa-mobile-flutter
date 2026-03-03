@@ -62,7 +62,7 @@ class _UiPinCodeState extends State<UiPinCode> {
 
       await Future.delayed(const Duration(seconds: 2));
 
-      Navigator.of(context).pop(); // tutup loading dialog
+      Navigator.of(context).pop();
 
       showVerificationSuccess();
     } else {
@@ -98,7 +98,7 @@ class _UiPinCodeState extends State<UiPinCode> {
                   height: 45,
                   child: CircularProgressIndicator(
                     strokeWidth: 3,
-                    color: Color(0xff5f6dfc),
+                    color: Color(0xff0e86e4),
                   ),
                 ),
                 SizedBox(height: 20),
@@ -131,10 +131,14 @@ class _UiPinCodeState extends State<UiPinCode> {
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: const BoxDecoration(
-                    color: Color(0xff5f6dfc),
+                    color: Colors.green,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.check, color: Colors.white, size: 40),
+                  child: const FaIcon(
+                    FontAwesomeIcons.check,
+                    color: Colors.white,
+                    size: 40,
+                  ),
                 ),
 
                 const SizedBox(height: 20),
@@ -158,14 +162,14 @@ class _UiPinCodeState extends State<UiPinCode> {
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xff5f6dfc),
+                      backgroundColor: const Color(0xff0e86e4),
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     onPressed: () {
-                      Navigator.of(context).pop(); // tutup dialog
+                      Navigator.of(context).pop();
 
                       Navigator.pushReplacement(
                         context,
@@ -174,7 +178,10 @@ class _UiPinCodeState extends State<UiPinCode> {
                     },
                     child: const Text(
                       "Continue",
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
@@ -194,7 +201,7 @@ class _UiPinCodeState extends State<UiPinCode> {
         width: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xff5f6dfc), Color(0xff9f5afd)],
+            colors: [Color(0xff0247ae), Color(0xff0e86e4)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -225,7 +232,7 @@ class _UiPinCodeState extends State<UiPinCode> {
                             child: FaIcon(
                               FontAwesomeIcons.envelope,
                               size: 40,
-                              color: Color(0xff5f6dfc),
+                              color: Color(0xff0e86e4),
                             ),
                           ),
 
@@ -280,10 +287,10 @@ class _UiPinCodeState extends State<UiPinCode> {
                                     inactiveColor: Colors.grey.shade300,
                                     selectedColor: hasError
                                         ? Colors.red
-                                        : const Color(0xff5f6dfc),
+                                        : const Color(0xff0e86e4),
                                     activeColor: hasError
                                         ? Colors.red
-                                        : const Color(0xff5f6dfc),
+                                        : const Color(0xff0e86e4),
                                     inactiveFillColor: Colors.grey.shade200,
                                     selectedFillColor: Colors.white,
                                     activeFillColor: Colors.white,
