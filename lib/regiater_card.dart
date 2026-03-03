@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jasa_app/ui_otp.dart';
 
 class RegisterCard extends StatefulWidget {
   const RegisterCard({super.key});
@@ -203,7 +204,10 @@ class _RegisterCardState extends State<RegisterCard> {
                   ),
                 ),
                 onPressed: () {
-                  // proses login
+                  // proses otp
+                  Navigator.of(
+                    context,
+                  ).push(MaterialPageRoute(builder: (context) => UiPinCode()));
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(10.0),

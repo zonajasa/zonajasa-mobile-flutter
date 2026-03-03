@@ -16,7 +16,7 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   bool _isLoading = true;
   int _selectedIndex = 0;
-  BottomNavigationBarType _bottomNavType = BottomNavigationBarType.fixed;
+  final BottomNavigationBarType _bottomNavType = BottomNavigationBarType.fixed;
 
   @override
   void initState() {
@@ -78,7 +78,7 @@ class _DashboardState extends State<Dashboard> {
 
 //////////////////////////// DASHBOARD ////////////////////////////
 class _buildHome extends StatefulWidget {
-  const _buildHome({super.key});
+  const _buildHome();
 
   @override
   State<_buildHome> createState() => _buildHomeState();
@@ -853,7 +853,7 @@ class _AnimatedImageButtonState extends State<AnimatedImageButton> {
 
 //////////// LOADING  /////////
 class _buildSkeleton extends StatelessWidget {
-  const _buildSkeleton({super.key});
+  const _buildSkeleton();
 
   @override
   Widget build(BuildContext context) {
