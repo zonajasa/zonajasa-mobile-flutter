@@ -1,41 +1,303 @@
 import 'package:flutter/material.dart';
+import 'package:jasa_app/dashboard.dart';
+import 'package:jasa_app/login.dart';
+import 'package:jasa_app/register.dart';
 
-class SplashS extends StatelessWidget {
+class SplashS extends StatefulWidget {
   const SplashS({super.key});
 
   @override
+  State<SplashS> createState() => _SplashSState();
+}
+
+class _SplashSState extends State<SplashS> {
+  int selectedIndex = 0;
+  final PageController _pageController = PageController();
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          color: Color(0xffeeeefa),
-          child: Column(
-            children: [
-              Stack(
+      body: Column(
+        children: [
+          //header
+          ClipPath(
+            clipper: BottomCurveClipper(),
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.65,
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Color.fromARGB(255, 1, 80, 200), Color(0xff0e86e4)],
+                ),
+              ),
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 60),
+                  child: Transform(
+                    alignment: Alignment.center,
+                    transform: Matrix4.diagonal3Values(1.7, 1.4, 1.0),
+                    child: Image.asset(
+                      "images/BannerP1.png",
+                      fit: BoxFit.fitHeight,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          //tombol login / register
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 30,
+              right: 30,
+              top: 0,
+              bottom: 10,
+            ),
+            child: Container(
+              height: 55,
+              decoration: BoxDecoration(
+                color: const Color(0xff0247ae),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: const Color(0xff0247ae), width: 2),
+              ),
+              child: Stack(
                 children: [
-                  Container(
-                    height: MediaQuery.of(context).size.height / 2,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [Color(0xff0247ae), Color(0xff0e86e4)],
+                  AnimatedAlign(
+                    duration: const Duration(milliseconds: 250),
+                    curve: Curves.easeInOut,
+                    alignment: selectedIndex == 1
+                        ? Alignment.centerLeft
+                        : Alignment.centerRight,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width / 2 - 40,
+                      margin: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(5),
                       ),
                     ),
                   ),
-                  Container(
-                    height: 300,
-                    width: 300,
-                    margin: EdgeInsets.only(left: 45, top: 45),
-                    child: Image.asset('images/logo.png'),
+
+                  Row(
+                    children: [
+                      /// MASUK
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedIndex = 0;
+                            });
+
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const Login(),
+                              ),
+                              (route) => false,
+                            );
+                          },
+                          child: Center(
+                            child: Text(
+                              "Masuk",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: selectedIndex == 0
+                                    ? Colors.white
+                                    : const Color(0xff0247ae),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      /// DAFTAR
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedIndex = 1;
+                            });
+
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const Register(),
+                              ),
+                              (route) => false,
+                            );
+                          },
+                          child: Center(
+                            child: Text(
+                              "Daftar",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: selectedIndex == 1
+                                    ? Colors.white
+                                    : const Color(0xff0247ae),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
+            ),
+          ),
+          // konten data
+          Column(
+            children: [
+              const SizedBox(height: 5),
+
+              const Text(
+                "Layanan Jasa Terbaik di Sekitar Anda",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xff0247ae),
+                ),
+              ),
+
+              const SizedBox(height: 5),
+
+              const Divider(thickness: 1, indent: 30, endIndent: 30),
+
+              const SizedBox(height: 2),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                child: IntrinsicHeight(
+                  child: Row(
+                    children: const [
+                      Expanded(
+                        child: ServiceImageItem(
+                          imagePath: "images/BlueWrench.png",
+                          label: "Tukang",
+                        ),
+                      ),
+
+                      VerticalDivider(thickness: 1, width: 20),
+
+                      Expanded(
+                        child: ServiceImageItem(
+                          imagePath: "images/YellowLightning.png",
+                          label: "Listrik",
+                        ),
+                      ),
+
+                      VerticalDivider(thickness: 1, width: 20),
+
+                      Expanded(
+                        child: ServiceImageItem(
+                          imagePath: "images/BlueCircle.png",
+                          label: "Kebersihan",
+                        ),
+                      ),
+
+                      VerticalDivider(thickness: 1, width: 20),
+
+                      Expanded(
+                        child: ServiceImageItem(
+                          imagePath: "images/BlueCar.png",
+                          label: "Servis",
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 2),
+
+              const Divider(thickness: 1, indent: 30, endIndent: 30),
+
+              Transform.translate(
+                offset: const Offset(0, -10), // minus = naik
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const Dashboard(),
+                      ),
+                      (route) => false,
+                    );
+                  },
+                  child: const Text(
+                    "Lewati",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 94, 93, 93),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
-        ),
+          //tombol
+        ],
       ),
+    );
+  }
+}
+
+class BottomCurveClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+
+    path.lineTo(0, size.height - 80);
+
+    path.quadraticBezierTo(
+      size.width / 2,
+      size.height,
+      size.width,
+      size.height - 80,
+    );
+
+    path.lineTo(size.width, 0);
+    path.close();
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+}
+
+class ServiceImageItem extends StatelessWidget {
+  final String imagePath;
+  final String label;
+
+  const ServiceImageItem({
+    super.key,
+    required this.imagePath,
+    required this.label,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Image.asset(imagePath, width: 50, height: 50, fit: BoxFit.contain),
+        const SizedBox(height: 3),
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: Color(0xff0247ae),
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
     );
   }
 }
