@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jasa_app/AppLoader.dart';
 import 'package:jasa_app/navigationPage.dart';
-import 'package:jasa_app/pages/HomePage.dart';
 import 'package:jasa_app/login_card.dart';
 import 'package:jasa_app/register.dart';
 
@@ -83,7 +82,7 @@ class _LoginState extends State<Login> {
                             isLoading = true;
                           });
 
-                          await Future.delayed(const Duration(seconds: 2));
+                          await Future.delayed(const Duration(seconds: 3));
 
                           if (!mounted) return;
 

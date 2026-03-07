@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:jasa_app/pages/profileUI.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,21 +13,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // bool _isLoading = true;
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _fakeLoading();
-  // }
-
-  // void _fakeLoading() async {
-  //   await Future.delayed(const Duration(seconds: 2));
-  //   setState(() {
-  //     _isLoading = false;
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(body: _buildHome());
@@ -811,17 +794,3 @@ class _AnimatedImageButtonState extends State<AnimatedImageButton> {
   }
 }
 
-//////////// LOADING  /////////
-// class _buildSkeleton extends StatelessWidget {
-//   const _buildSkeleton();
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Center(
-//       child: LoadingAnimationWidget.halfTriangleDot(
-//         color: Color(0xff0e86e4),
-//         size: 100,
-//       ),
-//     );
-//   }
-// }
