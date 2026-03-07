@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:jasa_app/dashboard.dart';
+import 'package:jasa_app/pages/HomePage.dart';
 import 'package:jasa_app/services/auth_service.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -174,7 +174,7 @@ class _UiPinCodeState extends State<UiPinCode> {
 
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (_) => const Dashboard()),
+                          MaterialPageRoute(builder: (_) => const HomePage()),
                         );
                       });
                     },

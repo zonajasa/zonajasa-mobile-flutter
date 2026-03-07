@@ -4,79 +4,39 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:jasa_app/pages/profileUI.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-class Dashboard extends StatefulWidget {
-  const Dashboard({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<Dashboard> createState() => _DashboardState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _DashboardState extends State<Dashboard> {
-  bool _isLoading = true;
-  int _selectedIndex = 0;
-  final BottomNavigationBarType _bottomNavType = BottomNavigationBarType.fixed;
+class _HomePageState extends State<HomePage> {
+  // bool _isLoading = true;
 
-  @override
-  void initState() {
-    super.initState();
-    _fakeLoading();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _fakeLoading();
+  // }
 
-  void _fakeLoading() async {
-    await Future.delayed(const Duration(seconds: 2));
-    setState(() {
-      _isLoading = false;
-    });
-  }
+  // void _fakeLoading() async {
+  //   await Future.delayed(const Duration(seconds: 2));
+  //   setState(() {
+  //     _isLoading = false;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _isLoading ? _buildSkeleton() : _buildHome(),
-      //tombol navigasi bawah
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        selectedItemColor: const Color(0xff0e86e4),
-        unselectedItemColor: const Color(0xff757575),
-        type: _bottomNavType,
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        items: [
-          BottomNavigationBarItem(
-            // ignore: deprecated_member_use
-            icon: FaIcon(FontAwesomeIcons.house),
-            activeIcon: FaIcon(FontAwesomeIcons.solidHouse),
-            label: 'Beranda',
-          ),
-          BottomNavigationBarItem(
-            // ignore: deprecated_member_use
-            icon: FaIcon(FontAwesomeIcons.circleUp),
-            // ignore: deprecated_member_use
-            activeIcon: FaIcon(FontAwesomeIcons.solidCircleUp),
-            label: 'Explore',
-          ),
-          BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.commentDots),
-            activeIcon: FaIcon(FontAwesomeIcons.solidCommentDots),
-            label: 'Chat',
-          ),
-          BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.user),
-            activeIcon: FaIcon(FontAwesomeIcons.solidUser),
-            label: 'Akun',
-          ),
-        ],
-      ),
-    );
+    return Scaffold(body: _buildHome());
   }
 }
 
-//////////////////////////// DASHBOARD ////////////////////////////
+//////////////////////////// HomePage ////////////////////////////
 class _buildHome extends StatefulWidget {
   const _buildHome();
 
@@ -852,16 +812,16 @@ class _AnimatedImageButtonState extends State<AnimatedImageButton> {
 }
 
 //////////// LOADING  /////////
-class _buildSkeleton extends StatelessWidget {
-  const _buildSkeleton();
+// class _buildSkeleton extends StatelessWidget {
+//   const _buildSkeleton();
 
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: LoadingAnimationWidget.halfTriangleDot(
-        color: Color(0xff0e86e4),
-        size: 100,
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Center(
+//       child: LoadingAnimationWidget.halfTriangleDot(
+//         color: Color(0xff0e86e4),
+//         size: 100,
+//       ),
+//     );
+//   }
+// }
