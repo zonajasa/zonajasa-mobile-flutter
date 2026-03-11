@@ -16,232 +16,237 @@ class _SplashSState extends State<SplashS> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          //header
-          ClipPath(
-            clipper: BottomCurveClipper(),
-            child: Container(
-              height: MediaQuery.of(context).size.height * 0.65,
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Color.fromARGB(255, 1, 80, 200), Color(0xff0e86e4)],
-                ),
-              ),
-              child: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 60),
-                  child: Transform(
-                    alignment: Alignment.center,
-                    transform: Matrix4.diagonal3Values(1.7, 1.4, 1.0),
-                    child: Image.asset(
-                      "images/BannerP1.png",
-                      fit: BoxFit.fitHeight,
-                    ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            //header
+            ClipPath(
+              clipper: BottomCurveClipper(),
+              child: Container(
+                height: MediaQuery.of(context).size.height * 0.65,
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Color.fromARGB(255, 1, 80, 200),
+                      Color(0xff0e86e4),
+                    ],
                   ),
                 ),
-              ),
-            ),
-          ),
-          //tombol login / register
-          Padding(
-            padding: const EdgeInsets.only(
-              left: 30,
-              right: 30,
-              top: 0,
-              bottom: 10,
-            ),
-            child: Container(
-              height: 55,
-              decoration: BoxDecoration(
-                color: const Color(0xff0247ae),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: const Color(0xff0247ae), width: 2),
-              ),
-              child: Stack(
-                children: [
-                  AnimatedAlign(
-                    duration: const Duration(milliseconds: 250),
-                    curve: Curves.easeInOut,
-                    alignment: selectedIndex == 1
-                        ? Alignment.centerLeft
-                        : Alignment.centerRight,
-                    child: Container(
-                      width: MediaQuery.of(context).size.width / 2 - 40,
-                      margin: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(5),
+                child: SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 60),
+                    child: Transform(
+                      alignment: Alignment.center,
+                      transform: Matrix4.diagonal3Values(1.7, 1.4, 1.0),
+                      child: Image.asset(
+                        "images/BannerP1.png",
+                        fit: BoxFit.fitHeight,
                       ),
                     ),
                   ),
+                ),
+              ),
+            ),
+            //tombol login / register
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 30,
+                right: 30,
+                top: 0,
+                bottom: 10,
+              ),
+              child: Container(
+                height: 55,
+                decoration: BoxDecoration(
+                  color: const Color(0xff0247ae),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: const Color(0xff0247ae), width: 2),
+                ),
+                child: Stack(
+                  children: [
+                    AnimatedAlign(
+                      duration: const Duration(milliseconds: 250),
+                      curve: Curves.easeInOut,
+                      alignment: selectedIndex == 1
+                          ? Alignment.centerLeft
+                          : Alignment.centerRight,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width / 2 - 40,
+                        margin: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                      ),
+                    ),
 
-                  Row(
-                    children: [
-                      /// MASUK
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              selectedIndex = 0;
-                            });
+                    Row(
+                      children: [
+                        /// MASUK
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedIndex = 0;
+                              });
 
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const Login(),
-                              ),
-                              (route) => false,
-                            );
-                          },
-                          child: Center(
-                            child: Text(
-                              "Masuk",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: selectedIndex == 0
-                                    ? Colors.white
-                                    : const Color(0xff0247ae),
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const Login(),
+                                ),
+                                (route) => false,
+                              );
+                            },
+                            child: Center(
+                              child: Text(
+                                "Masuk",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: selectedIndex == 0
+                                      ? Colors.white
+                                      : const Color(0xff0247ae),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
 
-                      /// DAFTAR
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              selectedIndex = 1;
-                            });
+                        /// DAFTAR
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedIndex = 1;
+                              });
 
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const Register(),
-                              ),
-                              (route) => false,
-                            );
-                          },
-                          child: Center(
-                            child: Text(
-                              "Daftar",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: selectedIndex == 1
-                                    ? Colors.white
-                                    : const Color(0xff0247ae),
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const Register(),
+                                ),
+                                (route) => false,
+                              );
+                            },
+                            child: Center(
+                              child: Text(
+                                "Daftar",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: selectedIndex == 1
+                                      ? Colors.white
+                                      : const Color(0xff0247ae),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          // konten data
-          Column(
-            children: [
-              const SizedBox(height: 5),
+            // konten data
+            Column(
+              children: [
+                const SizedBox(height: 5),
 
-              const Text(
-                "Layanan Jasa Terbaik di Sekitar Anda",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xff0247ae),
-                ),
-              ),
-
-              const SizedBox(height: 5),
-
-              const Divider(thickness: 1, indent: 30, endIndent: 30),
-
-              const SizedBox(height: 2),
-
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30),
-                child: IntrinsicHeight(
-                  child: Row(
-                    children: const [
-                      Expanded(
-                        child: ServiceImageItem(
-                          imagePath: "images/BlueWrench.png",
-                          label: "Tukang",
-                        ),
-                      ),
-
-                      VerticalDivider(thickness: 1, width: 20),
-
-                      Expanded(
-                        child: ServiceImageItem(
-                          imagePath: "images/YellowLightning.png",
-                          label: "Listrik",
-                        ),
-                      ),
-
-                      VerticalDivider(thickness: 1, width: 20),
-
-                      Expanded(
-                        child: ServiceImageItem(
-                          imagePath: "images/BlueCircle.png",
-                          label: "Kebersihan",
-                        ),
-                      ),
-
-                      VerticalDivider(thickness: 1, width: 20),
-
-                      Expanded(
-                        child: ServiceImageItem(
-                          imagePath: "images/BlueCar.png",
-                          label: "Servis",
-                        ),
-                      ),
-                    ],
+                const Text(
+                  "Layanan Jasa Terbaik di Sekitar Anda",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xff0247ae),
                   ),
                 ),
-              ),
 
-              const SizedBox(height: 2),
+                const SizedBox(height: 5),
 
-              const Divider(thickness: 1, indent: 30, endIndent: 30),
+                const Divider(thickness: 1, indent: 30, endIndent: 30),
 
-              Transform.translate(
-                offset: const Offset(0, -10), // minus = naik
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const Navigationpage(),
-                      ),
-                      (route) => false,
-                    );
-                  },
-                  child: const Text(
-                    "Lewati",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 94, 93, 93),
+                const SizedBox(height: 2),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 30),
+                  child: IntrinsicHeight(
+                    child: Row(
+                      children: const [
+                        Expanded(
+                          child: ServiceImageItem(
+                            imagePath: "images/BlueWrench.png",
+                            label: "Tukang",
+                          ),
+                        ),
+
+                        VerticalDivider(thickness: 1, width: 20),
+
+                        Expanded(
+                          child: ServiceImageItem(
+                            imagePath: "images/YellowLightning.png",
+                            label: "Listrik",
+                          ),
+                        ),
+
+                        VerticalDivider(thickness: 1, width: 20),
+
+                        Expanded(
+                          child: ServiceImageItem(
+                            imagePath: "images/BlueCircle.png",
+                            label: "Kebersihan",
+                          ),
+                        ),
+
+                        VerticalDivider(thickness: 1, width: 20),
+
+                        Expanded(
+                          child: ServiceImageItem(
+                            imagePath: "images/BlueCar.png",
+                            label: "Servis",
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          //tombol
-        ],
+
+                const SizedBox(height: 2),
+
+                const Divider(thickness: 1, indent: 30, endIndent: 30),
+
+                Transform.translate(
+                  offset: const Offset(0, -10), // minus = naik
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const Navigationpage(),
+                        ),
+                        (route) => false,
+                      );
+                    },
+                    child: const Text(
+                      "Lewati",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 94, 93, 93),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            //tombol
+          ],
+        ),
       ),
     );
   }

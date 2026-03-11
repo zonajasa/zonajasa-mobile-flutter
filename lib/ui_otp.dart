@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:jasa_app/pages/HomePage.dart';
+import 'package:jasa_app/AppLoader.dart';
+import 'package:jasa_app/navigationPage.dart';
 import 'package:jasa_app/services/auth_service.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -13,6 +14,8 @@ class UiPinCode extends StatefulWidget {
 }
 
 class _UiPinCodeState extends State<UiPinCode> {
+  bool isLoading = false;
+  late BuildContext pageContext;
   final TextEditingController otpController = TextEditingController();
   final String dummyCode = "123456";
 
@@ -166,17 +169,23 @@ class _UiPinCodeState extends State<UiPinCode> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    onPressed: () {
-                      Navigator.of(context, rootNavigator: true).pop();
+                    onPressed: () async {
+                      Navigator.pop(context); // tutup dialog
 
-                      Future.microtask(() {
-                        if (!mounted) return;
-
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (_) => const HomePage()),
-                        );
+                      setState(() {
+                        isLoading = true;
                       });
+
+                      await Future.delayed(const Duration(seconds: 3));
+
+                      if (!mounted) return;
+
+                      Navigator.pushReplacement(
+                        pageContext,
+                        MaterialPageRoute(
+                          builder: (context) => const Navigationpage(),
+                        ),
+                      );
                     },
                     child: const Text(
                       "Continue",
@@ -197,184 +206,191 @@ class _UiPinCodeState extends State<UiPinCode> {
 
   @override
   Widget build(BuildContext context) {
+    pageContext = context;
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      body: Container(
-        width: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xff0247ae), Color(0xff0e86e4)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return SingleChildScrollView(
-                keyboardDismissBehavior:
-                    ScrollViewKeyboardDismissBehavior.onDrag,
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                  child: IntrinsicHeight(
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 60),
-
-                        /// ICON
-                        Container(
-                          padding: const EdgeInsets.all(20),
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                          child: FaIcon(
-                            FontAwesomeIcons.envelope,
-                            size: 40,
-                            color: Color(0xff0e86e4),
-                          ),
+      body: isLoading
+          ? const AppLoader()
+          : Container(
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xff0247ae), Color(0xff0e86e4)],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+              ),
+              child: SafeArea(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return SingleChildScrollView(
+                      keyboardDismissBehavior:
+                          ScrollViewKeyboardDismissBehavior.onDrag,
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: constraints.maxHeight,
                         ),
-
-                        const SizedBox(height: 30),
-
-                        /// TITLE
-                        const Text(
-                          "OTP Verification",
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-
-                        const SizedBox(height: 10),
-
-                        const Text(
-                          "We sent a 6-digit code to\n+62 8••• •••• 1234",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.white70),
-                        ),
-
-                        const SizedBox(height: 40),
-
-                        /// WHITE CARD
-                        Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 24),
-                          padding: const EdgeInsets.all(24),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(25),
-                          ),
+                        child: IntrinsicHeight(
                           child: Column(
-                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              /// PIN FIELD
-                              PinCodeTextField(
-                                appContext: context,
-                                length: 6,
-                                controller: otpController,
-                                autoFocus: true,
-                                keyboardType: TextInputType.number,
-                                animationType: AnimationType.fade,
-                                errorAnimationController: errorController,
-                                enableActiveFill: true,
-                                pinTheme: PinTheme(
-                                  shape: PinCodeFieldShape.box,
-                                  borderRadius: BorderRadius.circular(12),
-                                  fieldHeight: 55,
-                                  fieldWidth: 45,
-                                  inactiveColor: Colors.grey.shade300,
-                                  selectedColor: hasError
-                                      ? Colors.red
-                                      : const Color(0xff0e86e4),
-                                  activeColor: hasError
-                                      ? Colors.red
-                                      : const Color(0xff0e86e4),
-                                  inactiveFillColor: Colors.grey.shade200,
-                                  selectedFillColor: Colors.white,
-                                  activeFillColor: Colors.white,
+                              const SizedBox(height: 60),
+
+                              /// ICON
+                              Container(
+                                padding: const EdgeInsets.all(20),
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
                                 ),
-                                onChanged: (value) {
-                                  if (hasError) {
-                                    setState(() {
-                                      hasError = false;
-                                    });
-                                  }
-                                },
-                                onCompleted: (value) {
-                                  validateOtp(value);
-                                },
+                                child: FaIcon(
+                                  FontAwesomeIcons.envelope,
+                                  size: 40,
+                                  color: Color(0xff0e86e4),
+                                ),
                               ),
 
-                              if (hasError)
-                                const Padding(
-                                  padding: EdgeInsets.only(top: 8),
-                                  child: Text(
-                                    "Kode OTP salah. Coba lagi.",
-                                    style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 13,
-                                    ),
-                                  ),
+                              const SizedBox(height: 30),
+
+                              /// TITLE
+                              const Text(
+                                "OTP Verification",
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
                                 ),
+                              ),
 
-                              const SizedBox(height: 15),
+                              const SizedBox(height: 10),
 
-                              /// RESEND
-                              secondsRemaining > 0
-                                  ? Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        const Icon(
-                                          Icons.timer_outlined,
-                                          size: 18,
-                                          color: Colors.black54,
-                                        ),
-                                        const SizedBox(width: 6),
-                                        Text(
-                                          "Resend code in 00:$formattedTime",
-                                          style: const TextStyle(
-                                            color: Colors.black54,
-                                            fontWeight: FontWeight.w500,
+                              const Text(
+                                "We sent a 6-digit code to\n+62 8••• •••• 1234",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.white70),
+                              ),
+
+                              const SizedBox(height: 40),
+
+                              /// WHITE CARD
+                              Container(
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                ),
+                                padding: const EdgeInsets.all(24),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    /// PIN FIELD
+                                    PinCodeTextField(
+                                      appContext: context,
+                                      length: 6,
+                                      controller: otpController,
+                                      autoFocus: true,
+                                      keyboardType: TextInputType.number,
+                                      animationType: AnimationType.fade,
+                                      errorAnimationController: errorController,
+                                      enableActiveFill: true,
+                                      pinTheme: PinTheme(
+                                        shape: PinCodeFieldShape.box,
+                                        borderRadius: BorderRadius.circular(12),
+                                        fieldHeight: 55,
+                                        fieldWidth: 45,
+                                        inactiveColor: Colors.grey.shade300,
+                                        selectedColor: hasError
+                                            ? Colors.red
+                                            : const Color(0xff0e86e4),
+                                        activeColor: hasError
+                                            ? Colors.red
+                                            : const Color(0xff0e86e4),
+                                        inactiveFillColor: Colors.grey.shade200,
+                                        selectedFillColor: Colors.white,
+                                        activeFillColor: Colors.white,
+                                      ),
+                                      onChanged: (value) {
+                                        if (hasError) {
+                                          setState(() {
+                                            hasError = false;
+                                          });
+                                        }
+                                      },
+                                      onCompleted: (value) {
+                                        validateOtp(value);
+                                      },
+                                    ),
+
+                                    if (hasError)
+                                      const Padding(
+                                        padding: EdgeInsets.only(top: 8),
+                                        child: Text(
+                                          "Kode OTP salah. Coba lagi.",
+                                          style: TextStyle(
+                                            color: Colors.red,
+                                            fontSize: 13,
                                           ),
                                         ),
-                                      ],
-                                    )
-                                  : TextButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          secondsRemaining = 55;
-                                        });
-                                        startTimer();
-                                      },
-                                      child: const Text(
-                                        "Resend Code",
-                                        style: TextStyle(
-                                          color: Color(0xff5f6dfc),
-                                          fontWeight: FontWeight.bold,
-                                        ),
                                       ),
-                                    ),
+
+                                    const SizedBox(height: 15),
+
+                                    /// RESEND
+                                    secondsRemaining > 0
+                                        ? Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              const Icon(
+                                                Icons.timer_outlined,
+                                                size: 18,
+                                                color: Colors.black54,
+                                              ),
+                                              const SizedBox(width: 6),
+                                              Text(
+                                                "Resend code in 00:$formattedTime",
+                                                style: const TextStyle(
+                                                  color: Colors.black54,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        : TextButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                secondsRemaining = 55;
+                                              });
+                                              startTimer();
+                                            },
+                                            child: const Text(
+                                              "Resend Code",
+                                              style: TextStyle(
+                                                color: Color(0xff5f6dfc),
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                  ],
+                                ),
+                              ),
+
+                              const SizedBox(height: 30),
+
+                              const Text(
+                                "Try: 123456",
+                                style: TextStyle(color: Colors.white70),
+                              ),
                             ],
                           ),
                         ),
-
-                        const SizedBox(height: 30),
-
-                        const Text(
-                          "Try: 123456",
-                          style: TextStyle(color: Colors.white70),
-                        ),
-                      ],
-                    ),
-                  ),
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
-        ),
-      ),
+              ),
+            ),
     );
   }
 }

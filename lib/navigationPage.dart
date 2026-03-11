@@ -13,7 +13,12 @@ class Navigationpage extends StatefulWidget {
 class _NavigationpageState extends State<Navigationpage> {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = [HomePage(), Profileui()];
+  final List<Widget> _pages = [
+    HomePage(),
+    Container(),
+    Container(),
+    Profileui(),
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
