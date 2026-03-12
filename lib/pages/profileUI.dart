@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoding/geocoding.dart';
@@ -62,6 +63,7 @@ class _ProfileuiState extends State<Profileui> {
   }
 
   bool isNotifPressed = false;
+  bool switchValue = false;
 
   @override
   Widget build(BuildContext context) {
@@ -119,14 +121,32 @@ class _ProfileuiState extends State<Profileui> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Text(
-                          "XioFik Hasan",
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Leon S. Kurniawan",
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(width: 5),
+                            FaIcon(
+                              FontAwesomeIcons.buildingCircleCheck,
+                              size: 15,
+                              color: Colors.blue,
+                            ),
+                          ],
+                        ),
+                        Text(
+                          "CV Harapan Bangsa",
                           style: TextStyle(
-                            fontSize: 22,
+                            fontSize: 15,
                             fontWeight: FontWeight.bold,
+                            color: Colors.blue,
                           ),
                         ),
-
                         const SizedBox(height: 5),
 
                         Row(
@@ -134,7 +154,7 @@ class _ProfileuiState extends State<Profileui> {
                           children: [
                             FaIcon(
                               FontAwesomeIcons.locationDot,
-                              size: 16,
+                              size: 15,
                               color: Colors.grey,
                             ),
                             SizedBox(width: 5),
@@ -160,7 +180,7 @@ class _ProfileuiState extends State<Profileui> {
                                       color: Colors.orange,
                                     ),
                                     SizedBox(width: 5),
-                                    Text("4.5"),
+                                    Text("0.0"),
                                   ],
                                 ),
                               ],
@@ -178,7 +198,7 @@ class _ProfileuiState extends State<Profileui> {
                                     ),
                                     SizedBox(width: 5),
                                     Text(
-                                      "3 Tahun",
+                                      "0 Tahun",
                                       style: TextStyle(
                                         color: Colors.blue,
                                         fontWeight: FontWeight.w600,
@@ -200,7 +220,7 @@ class _ProfileuiState extends State<Profileui> {
                                       color: Colors.green,
                                     ),
                                     SizedBox(width: 5),
-                                    Text("20"),
+                                    Text("0"),
                                   ],
                                 ),
                               ],
@@ -228,28 +248,157 @@ class _ProfileuiState extends State<Profileui> {
                   ),
                 ],
               ),
+              const SizedBox(height: 15),
+
+              Container(
+                margin: const EdgeInsets.only(left: 20, right: 20),
+                padding: const EdgeInsets.only(bottom: 10, top: 10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Column(
+                          children: [
+                            Row(
+                              children: [
+                                FaIcon(
+                                  FontAwesomeIcons.repeat,
+                                  size: 20,
+                                  color: Colors.grey,
+                                ),
+                                SizedBox(width: 10),
+                                Text(
+                                  "Ubah Menjadi Pemilik jasa",
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+
+                        Column(
+                          children: [
+                            CupertinoSwitch(
+                              value: switchValue,
+                              activeTrackColor: CupertinoColors.activeBlue,
+                              onChanged: (bool value) {
+                                setState(() {
+                                  switchValue = value;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
               const SizedBox(height: 20),
 
               // MENU PROFILE
-              ListTile(
-                leading: const Icon(Icons.person_outline),
-                title: const Text("Profile Setting"),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                onTap: () {},
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Pengaturan Akun",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
               ),
+              const SizedBox(height: 10),
 
-              ListTile(
-                leading: const Icon(Icons.location_on_outlined),
-                title: const Text("Location"),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                onTap: () {},
-              ),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 10,
+                      offset: Offset(0, 5),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    // EDIT PROFILE
+                    ListTile(
+                      leading: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const FaIcon(
+                          FontAwesomeIcons.solidUser,
+                          color: Colors.white,
+                        ),
+                      ),
+                      title: const Text(
+                        "Edit Profil",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: const Text("Ubah foto, nama, nomor HP, dsb"),
+                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                      onTap: () {},
+                    ),
 
-              ListTile(
-                leading: const Icon(Icons.account_balance_wallet_outlined),
-                title: const Text("Manage Withdrawals"),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                onTap: () {},
+                    const Divider(height: 1),
+
+                    // NOTIFIKASI
+                    ListTile(
+                      leading: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.green.shade100,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(
+                          Icons.notifications,
+                          color: Colors.green,
+                        ),
+                      ),
+                      title: const Text(
+                        "Notifikasi",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: const Text("Pengaturan push notifikasi"),
+                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                      onTap: () {},
+                    ),
+
+                    const Divider(height: 1),
+
+                    // KEAMANAN
+                    ListTile(
+                      leading: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.shade100,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(Icons.shield, color: Colors.blue),
+                      ),
+                      title: const Text(
+                        "Keamanan",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: const Text("Ubah password akun"),
+                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                      onTap: () {},
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
