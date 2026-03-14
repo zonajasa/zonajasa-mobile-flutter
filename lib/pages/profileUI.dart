@@ -62,8 +62,161 @@ class _ProfileuiState extends State<Profileui> {
     });
   }
 
+  void showConfirmPemilikJasa() {
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const FaIcon(
+                  FontAwesomeIcons.store,
+                  size: 40,
+                  color: Color(0xff0e86e4),
+                ),
+
+                const SizedBox(height: 15),
+
+                const Text(
+                  "Menjadi Pemilik Jasa?",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+
+                const SizedBox(height: 10),
+
+                const Text(
+                  "Apakah Anda yakin ingin menjadi pemilik jasa?",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.black54),
+                ),
+
+                const SizedBox(height: 25),
+
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.pop(dialogContext);
+                        },
+                        child: const Text("Tidak"),
+                      ),
+                    ),
+
+                    const SizedBox(width: 10),
+
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xff0e86e4),
+                        ),
+                        onPressed: () async {
+                          Navigator.pop(dialogContext);
+                          showLoadingDialog();
+
+                          await Future.delayed(const Duration(seconds: 2));
+
+                          if (!mounted) return;
+
+                          Navigator.pop(context);
+
+                          setState(() {
+                            switchValue = true;
+                            isPemilikJasa = true;
+                          });
+
+                          showSuccessSnackBar();
+                        },
+                        child: const Text(
+                          "Ya",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void showLoadingDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          elevation: 10,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: const SizedBox(
+            width: 150,
+            height: 150,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 45,
+                  height: 45,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 3,
+                    color: Color(0xff0e86e4),
+                  ),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  "Processing...",
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void showSuccessSnackBar() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.green,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(20),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        duration: const Duration(seconds: 5),
+        content: const Row(
+          children: [
+            FaIcon(FontAwesomeIcons.circleCheck, color: Colors.white, size: 18),
+            SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                "Berhasil! Silahkan lengkapi data profil usaha Anda.",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   bool isNotifPressed = false;
   bool switchValue = false;
+  bool isPemilikJasa = false;
 
   @override
   Widget build(BuildContext context) {
@@ -96,142 +249,220 @@ class _ProfileuiState extends State<Profileui> {
                     ),
                   ),
                   // DATA PROFILE
-                  Container(
-                    margin: const EdgeInsets.only(
-                      top: 150,
-                      left: 20,
-                      right: 20,
-                    ),
-                    padding: const EdgeInsets.only(bottom: 10, top: 60),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          // ignore: deprecated_member_use
-                          Colors.white.withOpacity(0.6),
-                          Colors.white,
-                          Colors.white,
-                        ],
-                        stops: [0.0, 0.60, 1.0],
+                  if (isPemilikJasa) ...[
+                    Container(
+                      margin: const EdgeInsets.only(
+                        top: 150,
+                        left: 20,
+                        right: 20,
                       ),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
+                      padding: const EdgeInsets.only(bottom: 10, top: 60),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            // ignore: deprecated_member_use
+                            Colors.white.withOpacity(0.6),
+                            Colors.white,
+                            Colors.white,
+                          ],
+                          stops: [0.0, 0.60, 1.0],
+                        ),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
 
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Leon S. Kurniawan",
-                              style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Leon S. Kurniawan",
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                            SizedBox(width: 5),
-                            FaIcon(
-                              FontAwesomeIcons.buildingCircleCheck,
-                              size: 15,
+                              SizedBox(width: 5),
+                              FaIcon(
+                                FontAwesomeIcons.buildingCircleCheck,
+                                size: 15,
+                                color: Colors.blue,
+                              ),
+                            ],
+                          ),
+                          Text(
+                            "CV Lorem Impsum",
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
                               color: Colors.blue,
                             ),
-                          ],
-                        ),
-                        Text(
-                          "CV Harapan Bangsa",
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue,
                           ),
-                        ),
-                        const SizedBox(height: 5),
+                          const SizedBox(height: 5),
 
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            FaIcon(
-                              FontAwesomeIcons.locationDot,
-                              size: 15,
-                              color: Colors.grey,
-                            ),
-                            SizedBox(width: 5),
-                            Text(
-                              currentLocation,
-                              style: TextStyle(color: Colors.grey),
-                            ),
-                          ],
-                        ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              FaIcon(
+                                FontAwesomeIcons.locationDot,
+                                size: 15,
+                                color: Colors.grey,
+                              ),
+                              SizedBox(width: 5),
+                              Text(
+                                currentLocation,
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ],
+                          ),
 
-                        const SizedBox(height: 30),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: const [
-                            Column(
-                              children: [
-                                Text("AVG rating"),
-                                Row(
-                                  children: [
-                                    FaIcon(
-                                      FontAwesomeIcons.solidStar,
-                                      size: 15,
-                                      color: Colors.orange,
-                                    ),
-                                    SizedBox(width: 5),
-                                    Text("0.0"),
-                                  ],
-                                ),
-                              ],
-                            ),
-
-                            Column(
-                              children: [
-                                Text("Pengalaman"),
-                                Row(
-                                  children: [
-                                    FaIcon(
-                                      FontAwesomeIcons.award,
-                                      size: 15,
-                                      color: Colors.orange,
-                                    ),
-                                    SizedBox(width: 5),
-                                    Text(
-                                      "0 Tahun",
-                                      style: TextStyle(
-                                        color: Colors.blue,
-                                        fontWeight: FontWeight.w600,
+                          const SizedBox(height: 30),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: const [
+                              Column(
+                                children: [
+                                  Text("AVG rating"),
+                                  Row(
+                                    children: [
+                                      FaIcon(
+                                        FontAwesomeIcons.solidStar,
+                                        size: 15,
+                                        color: Colors.orange,
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                                      SizedBox(width: 5),
+                                      Text("0.0"),
+                                    ],
+                                  ),
+                                ],
+                              ),
 
-                            Column(
-                              children: [
-                                Text("Total Jasa"),
-                                Row(
-                                  children: [
-                                    FaIcon(
-                                      FontAwesomeIcons.briefcase,
-                                      size: 15,
-                                      color: Colors.green,
-                                    ),
-                                    SizedBox(width: 5),
-                                    Text("0"),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                              Column(
+                                children: [
+                                  Text("Pengalaman"),
+                                  Row(
+                                    children: [
+                                      FaIcon(
+                                        FontAwesomeIcons.award,
+                                        size: 15,
+                                        color: Colors.orange,
+                                      ),
+                                      SizedBox(width: 5),
+                                      Text(
+                                        "0 Tahun",
+                                        style: TextStyle(
+                                          color: Colors.blue,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
 
-                        const SizedBox(height: 20),
-                      ],
+                              Column(
+                                children: [
+                                  Text("Total Jasa"),
+                                  Row(
+                                    children: [
+                                      FaIcon(
+                                        FontAwesomeIcons.briefcase,
+                                        size: 15,
+                                        color: Colors.green,
+                                      ),
+                                      SizedBox(width: 5),
+                                      Text("0"),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 20),
+                        ],
+                      ),
                     ),
-                  ),
+                  ] else ...[
+                    Container(
+                      margin: const EdgeInsets.only(
+                        top: 150,
+                        left: 20,
+                        right: 20,
+                      ),
+                      padding: const EdgeInsets.only(bottom: 10, top: 60),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            // ignore: deprecated_member_use
+                            Colors.white.withOpacity(0.6),
+                            Colors.white,
+                            Colors.white,
+                          ],
+                          stops: [0.0, 0.60, 1.0],
+                        ),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Leon S. Kurniawan",
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              FaIcon(
+                                FontAwesomeIcons.locationDot,
+                                size: 15,
+                                color: Colors.grey,
+                              ),
+                              SizedBox(width: 5),
+                              Text(
+                                currentLocation,
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                          const Divider(height: 1),
+
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Isi Informasi di bawah agar usaha \n Anda muncul di pencarian",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 10),
+                        ],
+                      ),
+                    ),
+                  ],
                   // FOTO
                   Positioned(
                     top: 80,
@@ -249,59 +480,59 @@ class _ProfileuiState extends State<Profileui> {
                 ],
               ),
               const SizedBox(height: 15),
+              if (!isPemilikJasa)
+                Container(
+                  margin: const EdgeInsets.only(left: 20, right: 20),
+                  padding: const EdgeInsets.only(bottom: 10, top: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Column(
+                            children: [
+                              Row(
+                                children: [
+                                  FaIcon(
+                                    FontAwesomeIcons.repeat,
+                                    size: 20,
+                                    color: Colors.grey,
+                                  ),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    "Ubah Menjadi Pemilik jasa?",
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
 
-              Container(
-                margin: const EdgeInsets.only(left: 20, right: 20),
-                padding: const EdgeInsets.only(bottom: 10, top: 10),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
+                          Column(
+                            children: [
+                              CupertinoSwitch(
+                                value: switchValue,
+                                activeTrackColor: CupertinoColors.activeBlue,
+                                onChanged: (bool value) {
+                                  if (value == true) {
+                                    showConfirmPemilikJasa();
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Column(
-                          children: [
-                            Row(
-                              children: [
-                                FaIcon(
-                                  FontAwesomeIcons.repeat,
-                                  size: 20,
-                                  color: Colors.grey,
-                                ),
-                                SizedBox(width: 10),
-                                Text(
-                                  "Ubah Menjadi Pemilik jasa",
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
 
-                        Column(
-                          children: [
-                            CupertinoSwitch(
-                              value: switchValue,
-                              activeTrackColor: CupertinoColors.activeBlue,
-                              onChanged: (bool value) {
-                                setState(() {
-                                  switchValue = value;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
 
               // MENU PROFILE
               const Padding(
