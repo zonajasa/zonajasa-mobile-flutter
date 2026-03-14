@@ -58,7 +58,7 @@ class _UiPinCodeState extends State<UiPinCode> {
   Future<void> validateOtp(String value) async {
     showLoadingDialog();
 
-    bool isValid = await AuthService.verifyOtp(value);
+    bool isValid = await AuthServices.verifyOtp(value);
 
     if (!mounted) return;
 

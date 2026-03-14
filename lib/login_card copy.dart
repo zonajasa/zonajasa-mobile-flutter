@@ -1,14 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CardLogin extends StatelessWidget {
-  final TextEditingController noWaController;
-  final TextEditingController passwordController;
-
-  const CardLogin({
-    super.key,
-    required this.noWaController,
-    required this.passwordController,
-  });
+  const CardLogin({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,20 +25,8 @@ class CardLogin extends StatelessWidget {
         padding: const EdgeInsets.only(left: 20, right: 20),
         child: Column(
           children: [
-            Field(
-              hint: "Nomor WhatsApp",
-              icon: Icons.phone_android,
-              controller: noWaController,
-            ),
-
-            Field(
-              hint: "Password",
-              icon: Icons.lock,
-              isPassword: true,
-              controller: passwordController,
-            ),
-            // Field(hint: "Email atau Nomor HP", icon: Icons.email_outlined),
-            // Field(hint: "Password", icon: Icons.lock, isPassword: true),
+            Field(hint: "Email atau Nomor HP", icon: Icons.email_outlined),
+            Field(hint: "Password", icon: Icons.lock, isPassword: true),
           ],
         ),
       ),
@@ -58,11 +39,8 @@ class Field extends StatefulWidget {
     super.key,
     required this.hint,
     required this.icon,
-    required this.controller,
     this.isPassword = false,
   });
-
-  final TextEditingController controller;
 
   final String hint;
   final IconData icon;
@@ -98,7 +76,6 @@ class _FieldState extends State<Field> {
       crossAxisAlignment: CrossAxisAlignment.start, // biar rata kiri
       children: [
         TextFormField(
-          controller: widget.controller,
           focusNode: _focusNode,
           obscureText: widget.isPassword && !_isPasswordVisible,
           decoration: InputDecoration(

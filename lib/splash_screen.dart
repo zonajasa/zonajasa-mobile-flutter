@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jasa_app/navigationPage.dart';
 import 'package:jasa_app/login.dart';
 import 'package:jasa_app/register.dart';
+import 'package:jasa_app/utils/session_manager.dart';
 
 class SplashS extends StatefulWidget {
   const SplashS({super.key});
@@ -13,6 +14,34 @@ class SplashS extends StatefulWidget {
 class _SplashSState extends State<SplashS> {
   int selectedIndex = 0;
   final PageController _pageController = PageController();
+
+  bool userClicked = false;
+
+  @override
+  void initState() {
+    super.initState();
+    checkLogin();
+  }
+
+  void checkLogin() async {
+    await Future.delayed(const Duration(seconds: 2));
+
+    // Jangan auto login kalau user udah klik tombol
+    if (userClicked) return;
+
+    String? token = await SessionManager.getToken();
+
+    if (token != null && token.isNotEmpty) {
+      // Token valid → langsung ke Home
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const Navigationpage()),
+      );
+    }
+    // Kalau token null/empty → tetap di splash, user bisa klik Masuk/Daftar
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,6 +118,8 @@ class _SplashSState extends State<SplashS> {
                         Expanded(
                           child: GestureDetector(
                             onTap: () {
+                              userClicked = true;
+
                               setState(() {
                                 selectedIndex = 0;
                               });
@@ -120,6 +151,8 @@ class _SplashSState extends State<SplashS> {
                         Expanded(
                           child: GestureDetector(
                             onTap: () {
+                              userClicked = true;
+
                               setState(() {
                                 selectedIndex = 1;
                               });

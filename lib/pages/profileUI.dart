@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart' as http;
+import 'package:jasa_app/utils/session_manager.dart';
+import 'dart:convert';
 
 class Profileui extends StatefulWidget {
   const Profileui({super.key});
@@ -13,11 +16,44 @@ class Profileui extends StatefulWidget {
 
 class _ProfileuiState extends State<Profileui> {
   String currentLocation = "Mendeteksi lokasi...";
+  bool switchValue = false;
+  bool isPemilikJasa = false;
 
   @override
   void initState() {
     super.initState();
     _getLocation();
+    getProfile();
+  }
+
+  // tambahkan state untuk profile
+  String namaLengkap = "";
+  String email = "";
+  String noWhatsapp = "";
+
+  Future<void> getProfile() async {
+    String? token = await SessionManager.getToken(); // <--- sini
+    if (token == null) return;
+
+    final response = await http.get(
+      Uri.parse("http://192.168.1.9:8085/api/v1/user/auth/profile"),
+      headers: {"Authorization": "Bearer $token"},
+    );
+
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+      final data = jsonData["data"];
+
+      setState(() {
+        namaLengkap = data["nama_lengkap"] ?? "";
+        email = data["email"] ?? "";
+        noWhatsapp = data["no_whatsapp"] ?? "";
+        isPemilikJasa = data["role"] == "pemilik_jasa";
+        switchValue = isPemilikJasa;
+      });
+    } else {
+      debugPrint("Gagal load profile: ${response.statusCode}");
+    }
   }
 
   Future<void> _getLocation() async {
@@ -215,8 +251,6 @@ class _ProfileuiState extends State<Profileui> {
   }
 
   bool isNotifPressed = false;
-  bool switchValue = false;
-  bool isPemilikJasa = false;
 
   @override
   Widget build(BuildContext context) {
@@ -279,7 +313,9 @@ class _ProfileuiState extends State<Profileui> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                "Leon S. Kurniawan",
+                                namaLengkap.isNotEmpty
+                                    ? namaLengkap
+                                    : "Nama belum tersedia",
                                 style: TextStyle(
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold,
@@ -416,7 +452,9 @@ class _ProfileuiState extends State<Profileui> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                "Leon S. Kurniawan",
+                                namaLengkap.isNotEmpty
+                                    ? namaLengkap
+                                    : "Nama belum tersedia",
                                 style: TextStyle(
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold,

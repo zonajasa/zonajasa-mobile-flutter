@@ -3,8 +3,6 @@ import 'package:jasa_app/AppLoader.dart';
 import 'package:jasa_app/navigationPage.dart';
 import 'package:jasa_app/login_card.dart';
 import 'package:jasa_app/register.dart';
-import 'package:jasa_app/services/auth_service.dart';
-import 'package:jasa_app/utils/session_manager.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -15,16 +13,6 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   bool isLoading = false;
-  final TextEditingController noWaController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-
-  @override
-  void dispose() {
-    noWaController.dispose();
-    passwordController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,10 +42,7 @@ class _LoginState extends State<Login> {
                           margin: EdgeInsets.only(left: 40, top: 45),
                           child: Image.asset('images/logo.png'),
                         ),
-                        CardLogin(
-                          noWaController: noWaController,
-                          passwordController: passwordController,
-                        ),
+                        // CardLogin(),
                       ],
                     ),
                     // Lupa kata sandi
@@ -93,63 +78,19 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                         onPressed: () async {
-                          if (noWaController.text.isEmpty ||
-                              passwordController.text.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  "Nomor WA dan password wajib diisi",
-                                ),
-                              ),
-                            );
-                            return;
-                          }
-
                           setState(() {
                             isLoading = true;
                           });
 
-                          try {
-                            final result = await AuthService.login(
-                              noWaController.text,
-                              passwordController.text,
-                            );
+                          await Future.delayed(const Duration(seconds: 3));
 
-                            // pastikan status dicek sesuai backend
-                            if (result["status"] == "success" ||
-                                result["status"] == 200) {
-                              String token = result["data"]["token"];
-                              String nama =
-                                  result["data"]["user"]["nama_lengkap"];
+                          if (!mounted) return;
 
-                              // Simpan token di session manager
-                              await SessionManager.saveUser(token, nama);
-
-                              if (!mounted) return;
-
-                              Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                  builder: (context) => Navigationpage(),
-                                ),
-                              );
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    result["message"] ?? "Login gagal",
-                                  ),
-                                ),
-                              );
-                            }
-                          } catch (e) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("Login gagal")),
-                            );
-                          }
-
-                          setState(() {
-                            isLoading = false;
-                          });
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (context) => Navigationpage(),
+                            ),
+                          );
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(10.0),

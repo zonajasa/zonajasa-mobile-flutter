@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:jasa_app/utils/session_manager.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -32,10 +33,21 @@ class _buildHomeState extends State<_buildHome> {
   bool isLoadingProviders = false;
   String currentLocation = "Mendeteksi lokasi...";
 
+  String namaUser = "";
+
+  void loadUser() async {
+    String? nama = await SessionManager.getNama();
+
+    setState(() {
+      namaUser = nama ?? "";
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     _getLocation();
+    loadUser();
   }
 
   Future<void> _getLocation() async {
@@ -348,14 +360,27 @@ class _buildHomeState extends State<_buildHome> {
             left: 17,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  "Halo, Miftah!",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      "Halo,",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    SizedBox(width: 5),
+                    Text(
+                      namaUser,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 15),
                 Text(
@@ -793,4 +818,3 @@ class _AnimatedImageButtonState extends State<AnimatedImageButton> {
     );
   }
 }
-
