@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:jasa_app/services/user_service.dart';
 import 'package:jasa_app/utils/session_manager.dart';
 
 class HomePage extends StatefulWidget {
@@ -32,22 +33,30 @@ class _buildHomeState extends State<_buildHome> {
   int selectedCategoryIndex = 0;
   bool isLoadingProviders = false;
   String currentLocation = "Mendeteksi lokasi...";
-
-  String namaUser = "";
-
-  void loadUser() async {
-    String? nama = await SessionManager.getNama();
-
-    setState(() {
-      namaUser = nama ?? "";
-    });
-  }
-
   @override
   void initState() {
     super.initState();
     _getLocation();
-    loadUser();
+    getProfile();
+  }
+
+  // tambahkan state untuk profile
+  String namaLengkap = "";
+
+  Future<void> getProfile() async {
+    final result = await UserService.getProfile();
+
+    if (result == null) {
+      debugPrint("Gagal load profile");
+      return;
+    }
+
+    final data = result["data"];
+    if (data == null) return;
+
+    setState(() {
+      namaLengkap = data["nama_lengkap"] ?? "";
+    });
   }
 
   Future<void> _getLocation() async {
@@ -373,7 +382,9 @@ class _buildHomeState extends State<_buildHome> {
                     ),
                     SizedBox(width: 5),
                     Text(
-                      namaUser,
+                      namaLengkap.isNotEmpty
+                          ? namaLengkap
+                          : "Nama belum tersedia",
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -703,41 +714,6 @@ class _buildHomeState extends State<_buildHome> {
                                           ),
                                         ),
                                       ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      right: 10,
-                                      top: 20,
-                                    ),
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(
-                                          0xff0e86e4,
-                                        ),
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 18,
-                                          vertical: 10,
-                                        ),
-                                        minimumSize: const Size(
-                                          0,
-                                          36,
-                                        ), // tinggi kecil
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            10,
-                                          ),
-                                        ),
-                                      ),
-                                      onPressed: () {},
-                                      child: const Text(
-                                        "Chat",
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                        ),
-                                      ),
                                     ),
                                   ),
                                 ],

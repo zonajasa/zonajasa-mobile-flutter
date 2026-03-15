@@ -42,9 +42,9 @@ class _NavigationpageState extends State<Navigationpage> {
           ),
 
           BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.circleUp),
-            activeIcon: FaIcon(FontAwesomeIcons.solidCircleUp),
-            label: 'Explore',
+            icon: FaIcon(FontAwesomeIcons.clipboardList),
+            activeIcon: FaIcon(FontAwesomeIcons.clipboardList),
+            label: 'Pemesanan',
           ),
 
           BottomNavigationBarItem(

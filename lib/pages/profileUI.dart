@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
+import 'package:jasa_app/services/user_service.dart';
 import 'package:jasa_app/utils/session_manager.dart';
 import 'dart:convert';
 
@@ -32,28 +33,23 @@ class _ProfileuiState extends State<Profileui> {
   String noWhatsapp = "";
 
   Future<void> getProfile() async {
-    String? token = await SessionManager.getToken(); // <--- sini
-    if (token == null) return;
+    final result = await UserService.getProfile();
 
-    final response = await http.get(
-      Uri.parse("http://192.168.1.9:8085/api/v1/user/auth/profile"),
-      headers: {"Authorization": "Bearer $token"},
-    );
-
-    if (response.statusCode == 200) {
-      final jsonData = jsonDecode(response.body);
-      final data = jsonData["data"];
-
-      setState(() {
-        namaLengkap = data["nama_lengkap"] ?? "";
-        email = data["email"] ?? "";
-        noWhatsapp = data["no_whatsapp"] ?? "";
-        isPemilikJasa = data["role"] == "pemilik_jasa";
-        switchValue = isPemilikJasa;
-      });
-    } else {
-      debugPrint("Gagal load profile: ${response.statusCode}");
+    if (result == null) {
+      debugPrint("Gagal load profile");
+      return;
     }
+
+    final data = result["data"];
+    if (data == null) return;
+
+    setState(() {
+      namaLengkap = data["nama_lengkap"] ?? "";
+      email = data["email"] ?? "";
+      noWhatsapp = data["no_whatsapp"] ?? "";
+      isPemilikJasa = data["role"] == "pemilik_jasa";
+      switchValue = isPemilikJasa;
+    });
   }
 
   Future<void> _getLocation() async {

@@ -2,18 +2,20 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:jasa_app/utils/session_manager.dart';
 
+//buat profile
 class UserService {
-  static const String baseUrl = "http://192.168.1.9:8085/api/v1";
+  static const String baseUrl = "http://192.168.1.7:8085/api/v1";
 
   static Future<Map<String, dynamic>?> getProfile() async {
     // ambil token dari session
     String? token = await SessionManager.getToken();
 
-    if (token == null) return null; // belum login
+    if (token == null) return null; 
 
-    var response = await http.get(
+    var response = await http.post(
       Uri.parse("$baseUrl/user/auth/profile"),
       headers: {
+        "Accept": "application/json",
         "Authorization": "Bearer $token",
         "X-API-PLATFORM": "mobile",
         "X-API-VERSION": "1",
