@@ -48,9 +48,9 @@ class _NavigationpageState extends State<Navigationpage> {
           ),
 
           BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.commentDots),
-            activeIcon: FaIcon(FontAwesomeIcons.solidCommentDots),
-            label: 'Chat',
+            icon: FaIcon(FontAwesomeIcons.bell),
+            activeIcon: FaIcon(FontAwesomeIcons.solidBell),
+            label: 'Notifikasi',
           ),
 
           BottomNavigationBarItem(

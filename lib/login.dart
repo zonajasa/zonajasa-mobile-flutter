@@ -127,10 +127,12 @@ class _LoginState extends State<Login> {
 
                               if (!mounted) return;
 
-                              Navigator.of(context).pushReplacement(
+                              Navigator.pushAndRemoveUntil(
+                                context,
                                 MaterialPageRoute(
                                   builder: (context) => Navigationpage(),
                                 ),
+                                (route) => false,
                               );
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -162,91 +164,6 @@ class _LoginState extends State<Login> {
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                    // login with sosial medoaia
-                    Align(
-                      alignment: Alignment.center,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 50,
-                          vertical: 10,
-                        ),
-                        child: Row(
-                          children: [
-                            const Expanded(
-                              child: Divider(
-                                color: Colors.grey, // warna garis
-                                thickness: 0.5, // ketebalan garis
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                              ),
-                              child: const Text(
-                                "Atau lanjutkan dengan",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0xff9b9bb4),
-                                ),
-                              ),
-                            ),
-                            const Expanded(
-                              child: Divider(
-                                color: Colors.grey, // warna garis
-                                thickness: 0.5, // ketebalan garis
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    // tombol sosial media
-                    SizedBox(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            style: IconButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: Colors.blue,
-                            ),
-                            onPressed: () {},
-                            icon: Image.asset(
-                              'images/google.png',
-                              width: 28,
-                              height: 28,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          IconButton(
-                            style: IconButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: Colors.blue,
-                            ),
-                            onPressed: () {},
-                            icon: Image.asset(
-                              'images/fb.png',
-                              width: 27,
-                              height: 27,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          IconButton(
-                            style: IconButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: Colors.blue,
-                            ),
-                            onPressed: () {},
-                            icon: Image.asset(
-                              'images/apple.png',
-                              width: 28,
-                              height: 28,
-                            ),
-                          ),
-                        ],
                       ),
                     ),
                     // tulisan belum punya akun?

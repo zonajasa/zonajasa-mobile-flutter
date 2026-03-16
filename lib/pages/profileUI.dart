@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' as http;
+import 'package:jasa_app/login.dart';
 import 'package:jasa_app/services/user_service.dart';
 import 'package:jasa_app/utils/session_manager.dart';
-import 'dart:convert';
 
 class Profileui extends StatefulWidget {
   const Profileui({super.key});
@@ -25,6 +24,7 @@ class _ProfileuiState extends State<Profileui> {
     super.initState();
     _getLocation();
     getProfile();
+    checkLogin();
   }
 
   // tambahkan state untuk profile
@@ -49,6 +49,14 @@ class _ProfileuiState extends State<Profileui> {
       noWhatsapp = data["no_whatsapp"] ?? "";
       isPemilikJasa = data["role"] == "pemilik_jasa";
       switchValue = isPemilikJasa;
+    });
+  }
+
+  Future<void> checkLogin() async {
+    String? token = await SessionManager.getToken();
+
+    setState(() {
+      isLogin = token != null;
     });
   }
 
@@ -247,6 +255,7 @@ class _ProfileuiState extends State<Profileui> {
   }
 
   bool isNotifPressed = false;
+  bool isLogin = false;
 
   @override
   Widget build(BuildContext context) {
@@ -661,6 +670,45 @@ class _ProfileuiState extends State<Profileui> {
                       subtitle: const Text("Ubah password akun"),
                       trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                       onTap: () {},
+                    ),
+                    const Divider(height: 1),
+                    // LOGOUT
+                    ListTile(
+                      leading: Container(
+                        padding: const EdgeInsets.all(10),
+                        child: FaIcon(
+                          isLogin
+                              ? FontAwesomeIcons.arrowRightFromBracket
+                              : FontAwesomeIcons.rightToBracket,
+                          color: isLogin ? Colors.red : Colors.green,
+                        ),
+                      ),
+
+                      title: Text(
+                        isLogin ? "Logout" : "Login",
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+
+                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+
+                      onTap: () async {
+                        if (isLogin) {
+                          await SessionManager.logout();
+
+                          if (!context.mounted) return;
+
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(builder: (context) => Login()),
+                            (route) => false,
+                          );
+                        } else {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => Login()),
+                          );
+                        }
+                      },
                     ),
                   ],
                 ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jasa_app/AppLoader.dart';
 import 'package:jasa_app/navigationPage.dart';
-import 'package:jasa_app/login_card.dart';
 import 'package:jasa_app/register.dart';
 
 class Login extends StatefulWidget {

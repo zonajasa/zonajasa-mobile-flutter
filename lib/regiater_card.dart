@@ -68,38 +68,6 @@ class _RegisterCardState extends State<RegisterCard> {
             SizedBox(height: 10),
             TextFormField(
               decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.email_outlined, size: 25),
-                prefixIconColor: WidgetStateColor.resolveWith((states) {
-                  if (states.contains(WidgetState.focused)) {
-                    return const Color(0xff0e86e4);
-                  }
-                  return const Color(0xff9b9bb4);
-                }),
-                hintText: "Email",
-                hintStyle: const TextStyle(fontSize: 18),
-                filled: true,
-                fillColor: Colors.white,
-                contentPadding: const EdgeInsets.symmetric(vertical: 12),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
-                  borderSide: const BorderSide(color: Color(0xff9b9bb4)),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
-                  borderSide: const BorderSide(color: Color(0xff9b9bb4)),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
-                  borderSide: const BorderSide(
-                    color: Color(0xff0e86e4),
-                    width: 2,
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
-            TextFormField(
-              decoration: InputDecoration(
                 prefixIcon: const Icon(
                   Icons.phone_android,
                   size: 25, // ukuran icon lebih besar
@@ -110,7 +78,7 @@ class _RegisterCardState extends State<RegisterCard> {
                   }
                   return const Color(0xff9b9bb4);
                 }),
-                hintText: "Nomor HP",
+                hintText: "No. whatsApp",
                 hintStyle: const TextStyle(
                   fontSize: 18, // teks hint lebih besar
                 ),
