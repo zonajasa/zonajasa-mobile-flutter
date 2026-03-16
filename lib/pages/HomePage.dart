@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:jasa_app/model/category.dart';
+import 'package:jasa_app/model/service.dart';
+import 'package:jasa_app/pages/detail_jasa.dart';
 import 'package:jasa_app/services/user_service.dart';
 
 class HomePage extends StatefulWidget {
@@ -102,9 +105,12 @@ class _buildHomeState extends State<_buildHome> {
 
   bool isNotifPressed = false;
 
-  List<Map<String, String>> get filteredProviders {
-    String selectedCategory = menuItems[selectedCategoryIndex]['label']!;
-    return providers.where((p) => p['category'] == selectedCategory).toList();
+  List<Service> get filteredServices {
+    String categoryId = demoCategories[selectedCategoryIndex].id;
+
+    return demoServices
+        .where((service) => service.categoryId == categoryId)
+        .toList();
   }
 
   final List<Map<String, String>> menuItems = [
@@ -114,100 +120,6 @@ class _buildHomeState extends State<_buildHome> {
     {'imagePath': 'images/BlueCar.png', 'label': 'Service'},
     {'imagePath': 'images/YellowLightning.png', 'label': 'Bangunan'},
     {'imagePath': 'images/BlueCircle.png', 'label': 'Darurat'},
-  ];
-
-  // daftar penyedia jasa DATA DUMMY
-  final List<Map<String, String>> providers = [
-    {
-      "name": "Pak Budi",
-      "company": "CV. Budi Mandiri",
-      "service": "Tukang - Service AC",
-      "image": "images/orang.png",
-      "rating": "5.5",
-      "jarak": "1 km",
-      "category": "Tukang",
-    },
-    {
-      "name": "Bu Sari",
-      "company": "CV. Sari Jaya",
-      "service": "Listrik - Instalasi",
-      "image": "images/orang.png",
-      "rating": "5.5",
-      "jarak": "10 km",
-      "category": "Tukang",
-    },
-    {
-      "name": "Pak Anton",
-      "company": "CV. Anton Sejahtera",
-      "service": "Tukang Kebersihan",
-      "image": "images/orang.png",
-      "rating": "4.5",
-      "jarak": "1 km",
-      "category": "Kebersihan",
-    },
-    {
-      "name": "Bu Sinar",
-      "company": "CV. Anton Sejahtera",
-      "service": "Jasa Kebersihan",
-      "image": "images/orang.png",
-      "rating": "4.5",
-      "jarak": "5 km",
-      "category": "Kebersihan",
-    },
-    {
-      "name": "Pak Marjan",
-      "company": "CV. Anton Sejahtera",
-      "service": "Jasa Kebersihan",
-      "image": "images/orang.png",
-      "rating": "5.5",
-      "jarak": "4 km",
-      "category": "Kebersihan",
-    },
-    {
-      "name": "Pak Alfin",
-      "company": "CV. Anton Sejahtera",
-      "service": "Jasa Kebersihan",
-      "image": "images/orang.png",
-      "rating": "5.5",
-      "jarak": "8 km",
-      "category": "Tukang",
-    },
-    {
-      "name": "Pak Saeto",
-      "company": "CV. Anton Sejahtera",
-      "service": "Jasa Kebersihan",
-      "image": "images/orang.png",
-      "rating": "5.5",
-      "jarak": "9 km",
-      "category": "Tukang",
-    },
-    {
-      "name": "Pak Maruf",
-      "company": "CV. Anton Sejahtera",
-      "service": "Jasa Kebersihan",
-      "image": "images/orang.png",
-      "rating": "5.5",
-      "jarak": "2 km",
-      "category": "Tukang",
-    },
-    {
-      "name": "Pak Akbar",
-      "company": "CV. Anton Sejahtera",
-      "service": "Jasa Kebersihan",
-      "image": "images/orang.png",
-      "rating": "5.5",
-      "jarak": "4 km",
-      "category": "Tukang",
-    },
-    {
-      "name": "Pak Samsul",
-      "company": "CV. Anton Sejahtera",
-      "service": "Jasa Kebersihan",
-      "image": "images/orang.png",
-      "rating": "5.5",
-      "jarak": "1 km",
-      "category": "Kebersihan",
-    },
   ];
 
   @override
@@ -614,113 +526,129 @@ class _buildHomeState extends State<_buildHome> {
                               },
                             )
                           : ListView.separated(
-                              itemCount: filteredProviders.length,
+                              // itemCount: filteredProviders.length,
+                              itemCount: filteredServices.length,
                               padding: EdgeInsets.only(top: 5),
                               separatorBuilder: (context, index) =>
                                   const SizedBox(height: 12),
-                              itemBuilder: (context, index) {
-                                final provider = filteredProviders[index];
 
-                                return Container(
-                                  height: 110,
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 8,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                          left: 15,
-                                          top: 8,
-                                        ),
-                                        child: CircleAvatar(
-                                          radius: 35,
-                                          backgroundImage: AssetImage(
-                                            provider["image"]!,
+                              itemBuilder: (context, index) {
+                                // final provider = filteredProviders[index];
+                                final service = filteredServices[index];
+                                return InkWell(
+                                  borderRadius: BorderRadius.circular(15),
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            DetailJasa(serviceId: service.id),
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    height: 110,
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 8,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            left: 15,
+                                            top: 8,
+                                          ),
+                                          child: CircleAvatar(
+                                            radius: 35,
+                                            backgroundImage: AssetImage(
+                                              service.image,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      const SizedBox(width: 15),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              provider["name"]!,
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
+                                        const SizedBox(width: 15),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                service.name,
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
-                                            ),
-                                            Text(
-                                              provider["company"]!,
-                                              style: const TextStyle(
-                                                fontSize: 15,
-                                                color: Colors.black54,
+                                              Text(
+                                                service.company,
+                                                style: const TextStyle(
+                                                  fontSize: 15,
+                                                  color: Colors.black54,
+                                                ),
                                               ),
-                                            ),
-                                            Row(
-                                              children: [
-                                                ...List.generate(5, (index) {
-                                                  double rating = double.parse(
-                                                    provider["rating"] ?? "0",
-                                                  );
-                                                  return Icon(
-                                                    index < rating.floor()
-                                                        ? Icons.star
-                                                        : Icons.star_border,
-                                                    color: Colors.amber,
-                                                    size: 16,
-                                                  );
-                                                }),
-                                                const SizedBox(width: 3),
-                                                Text(
-                                                  provider["rating"] ?? "0",
-                                                  style: const TextStyle(
-                                                    fontSize: 15,
-                                                    fontWeight: FontWeight.w600,
+                                              Row(
+                                                children: [
+                                                  ...List.generate(5, (index) {
+                                                    double rating =
+                                                        service.rating;
+                                                    return Icon(
+                                                      index < rating.floor()
+                                                          ? Icons.star
+                                                          : Icons.star_border,
+                                                      color: Colors.amber,
+                                                      size: 16,
+                                                    );
+                                                  }),
+                                                  const SizedBox(width: 3),
+                                                  Text(
+                                                    service.rating
+                                                        .toStringAsFixed(1),
+
+                                                    style: const TextStyle(
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
                                                   ),
-                                                ),
-                                                const SizedBox(width: 5),
+                                                  const SizedBox(width: 5),
 
-                                                Container(
-                                                  height: 14,
-                                                  width: 1,
-                                                  color: Colors.grey.shade400,
-                                                ),
-
-                                                const SizedBox(width: 5),
-
-                                                /// Jarak
-                                                Text(
-                                                  provider["jarak"] ?? "0 km",
-                                                  style: const TextStyle(
-                                                    fontSize: 15,
-                                                    color: Colors.black54,
+                                                  Container(
+                                                    height: 14,
+                                                    width: 1,
+                                                    color: Colors.grey.shade400,
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                            Text(
-                                              provider["service"]!,
-                                              style: const TextStyle(
-                                                fontSize: 15,
-                                                color: Colors.black54,
+
+                                                  const SizedBox(width: 5),
+
+                                                  /// Jarak
+                                                  Text(
+                                                    service.jarak,
+                                                    style: const TextStyle(
+                                                      fontSize: 15,
+                                                      color: Colors.black54,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                            ),
-                                          ],
+                                              Text(
+                                                service.layanan,
+                                                style: const TextStyle(
+                                                  fontSize: 15,
+                                                  color: Colors.black54,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 );
                               },
