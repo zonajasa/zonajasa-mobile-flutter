@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CardLogin extends StatelessWidget {
   final TextEditingController noWaController;
@@ -101,6 +102,13 @@ class _FieldState extends State<Field> {
           controller: widget.controller,
           focusNode: _focusNode,
           obscureText: widget.isPassword && !_isPasswordVisible,
+          keyboardType: widget.hint == "Nomor WhatsApp"
+              ? TextInputType.number
+              : TextInputType.text,
+
+          inputFormatters: widget.hint == "Nomor WhatsApp"
+              ? [FilteringTextInputFormatter.digitsOnly]
+              : [],
           decoration: InputDecoration(
             prefixIcon: Icon(widget.icon, size: 30),
             prefixIconColor: WidgetStateColor.resolveWith((states) {

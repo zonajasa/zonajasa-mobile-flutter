@@ -7,8 +7,8 @@ import 'package:jasa_app/model/app_colors.dart';
 /// and provide consistent error handling and loading placeholders
 class ImageHelper {
   /// Loads a network image with proper caching and error handling
-  static Widget loadNetworkImage({
-    required String imageUrl,
+  static Widget loadImage({
+    required String path,
     double? width,
     double? height,
     BoxFit fit = BoxFit.cover,
@@ -16,7 +16,6 @@ class ImageHelper {
     Widget? errorWidget,
     BorderRadius? borderRadius,
   }) {
-    // Create default placeholder and error widgets if not provided
     final defaultPlaceholder = Container(
       width: width,
       height: height,
@@ -34,17 +33,27 @@ class ImageHelper {
       ),
     );
 
-    // Use Image.network directly for web to avoid plugin issues
+    final isNetwork = path.startsWith('http');
+
+    // 🔥 kalau asset
+    if (!isNetwork) {
+      return ClipRRect(
+        borderRadius: borderRadius ?? BorderRadius.zero,
+        child: Image.asset(path, width: width, height: height, fit: fit),
+      );
+    }
+
+    // 🔥 kalau network
     if (kIsWeb) {
       return ClipRRect(
         borderRadius: borderRadius ?? BorderRadius.zero,
         child: Image.network(
-          imageUrl,
+          path,
           width: width,
           height: height,
           fit: fit,
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
+          loadingBuilder: (context, child, progress) {
+            if (progress == null) return child;
             return placeholder ?? defaultPlaceholder;
           },
           errorBuilder: (context, error, stackTrace) {
@@ -54,11 +63,10 @@ class ImageHelper {
       );
     }
 
-    // Use CachedNetworkImage for mobile platforms for better performance
     return ClipRRect(
       borderRadius: borderRadius ?? BorderRadius.zero,
       child: CachedNetworkImage(
-        imageUrl: imageUrl,
+        imageUrl: path,
         width: width,
         height: height,
         fit: fit,

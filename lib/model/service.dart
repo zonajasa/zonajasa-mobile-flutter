@@ -85,7 +85,7 @@ class Service {
 List<Service> demoServices = [
   Service(
     id: '1',
-    name: 'Standard Home Cleaning',
+    name: 'Pak Samsul',
     layanan: 'Tukang - Service AC',
     company: 'CV. Budi Mandiri',
     description:
@@ -93,11 +93,11 @@ List<Service> demoServices = [
     price: 120,
     categoryId: '1',
     jarak: '10 km',
-    image: 'images/orang.png',
+    image: 'images/e.png',
     rating: 4.8,
     reviewCount: 245,
     bookingCount: 1250,
-    images: ['images/a.png', 'images/b.png', 'images/b.png'],
+    images: ['images/b.png', 'images/c.png', 'images/a.png'],
     features: [
       'Dusting all accessible surfaces',
       'Vacuuming carpets and floors',
@@ -111,7 +111,7 @@ List<Service> demoServices = [
   ),
   Service(
     id: '2',
-    name: 'Deep Cleaning Service',
+    name: 'Andisari',
     layanan: 'Listrik - Instalasi',
     company: 'CV. Sari Jaya',
     description:
@@ -119,7 +119,7 @@ List<Service> demoServices = [
     price: 220,
     categoryId: '1',
     jarak: '5 km',
-    image: 'images/orang.png',
+    image: 'images/b.png',
     rating: 4.9,
     reviewCount: 189,
     bookingCount: 876,
@@ -136,7 +136,7 @@ List<Service> demoServices = [
   ),
   Service(
     id: '3',
-    name: 'Pipe Leak Repair',
+    name: 'Ibu Enda',
     layanan: 'Pipe Leak Repair',
     company: 'CV. Anton Sejahtera',
     description:
@@ -144,7 +144,7 @@ List<Service> demoServices = [
     price: 90,
     categoryId: '2',
     jarak: '10 km',
-    image: 'images/orang.png',
+    image: 'images/e.png',
     rating: 4.7,
     reviewCount: 156,
     bookingCount: 735,
@@ -161,7 +161,7 @@ List<Service> demoServices = [
   ),
   Service(
     id: '4',
-    name: 'Bathroom Installation',
+    name: 'Pak samsudin',
     layanan: 'Bathroom Installation',
     company: 'CV. Anton Sejahtera',
     description:
@@ -169,7 +169,7 @@ List<Service> demoServices = [
     price: 580,
     categoryId: '2',
     jarak: '10 km',
-    image: 'images/orang.png',
+    image: 'images/f.png',
     rating: 4.9,
     reviewCount: 122,
     bookingCount: 450,
@@ -186,7 +186,7 @@ List<Service> demoServices = [
   ),
   Service(
     id: '5',
-    name: 'Electrical Wiring',
+    name: 'Pak Bahar',
     layanan: 'Electrical Wiring',
     company: 'CV. Anton Sejahtera',
     description:
@@ -211,7 +211,7 @@ List<Service> demoServices = [
   ),
   Service(
     id: '6',
-    name: 'Room Painting',
+    name: 'Syamsudin',
     layanan: 'Room Painting',
     company: 'CV. Anton Sejahtera',
     description:
@@ -219,7 +219,7 @@ List<Service> demoServices = [
     price: 320,
     categoryId: '4',
     jarak: '14 km',
-    image: 'images/orang.png',
+    image: 'images/a.png',
     rating: 4.7,
     reviewCount: 205,
     bookingCount: 920,

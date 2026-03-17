@@ -3,11 +3,13 @@ import 'package:jasa_app/model/app_colors.dart';
 import 'package:jasa_app/model/app_text_styles.dart';
 import 'package:jasa_app/model/review.dart';
 import 'package:jasa_app/model/review_card.dart';
+import 'package:jasa_app/pages/booking/booking_screen.dart';
 import 'package:jasa_app/pages/service_image_carousel.dart';
 import 'package:jasa_app/model/service.dart';
 
 class DetailJasa extends StatelessWidget {
   final String serviceId;
+  final int _quantity = 1;
 
   const DetailJasa({super.key, required this.serviceId});
 
@@ -73,12 +75,6 @@ class DetailJasa extends StatelessWidget {
                               style: AppTextStyles.headline2,
                             ),
                           ),
-                          Text(
-                            '\Rp${service.price}',
-                            style: AppTextStyles.headline2.copyWith(
-                              color: Colors.blue,
-                            ),
-                          ),
                         ],
                       ),
 
@@ -104,8 +100,19 @@ class DetailJasa extends StatelessWidget {
                           ),
                         ],
                       ),
-
-                      const SizedBox(height: 16),
+                      // == Jenis layanan / kategory
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              service.layanan,
+                              style: AppTextStyles.body2,
+                            ),
+                          ),
+                        ],
+                      ),
 
                       const Divider(),
 
@@ -297,25 +304,70 @@ class DetailJasa extends StatelessWidget {
       // TOMBOL BOOKING
       bottomNavigationBar: SafeArea(
         child: Container(
-          margin: const EdgeInsets.all(16),
-          height: 55,
-          child: ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
-              elevation: 6,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.shadow,
+                blurRadius: 10,
+                offset: const Offset(0, -2),
               ),
-            ),
-            child: const Text(
-              "PESAN SEKARANG",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+            ],
+          ),
+          child: Row(
+            children: [
+              // 🔥 Total Price
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('Total Harga', style: AppTextStyles.body2),
+                  const SizedBox(height: 4),
+                  Text(
+                    '\Rp${(service.price * _quantity).toStringAsFixed(2)}',
+                    style: AppTextStyles.headline2.copyWith(
+                      color: AppColors.primary,
+                    ),
+                  ),
+                ],
               ),
-            ),
+
+              const SizedBox(width: 16),
+
+              // 🔥 BUTTON FULL WIDTH
+              Expanded(
+                child: SizedBox(
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              BookingNow(serviceId: service.id),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    child: const Text(
+                      "Pesan Sekarang",
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

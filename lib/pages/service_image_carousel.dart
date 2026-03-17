@@ -74,8 +74,8 @@ class _ServiceImageCarouselState extends State<ServiceImageCarousel>
                       serviceName: 'Service',
                       height: MediaQuery.of(context).size.height,
                     )
-                  : ImageHelper.loadNetworkImage(
-                      imageUrl: widget.images[index],
+                  : ImageHelper.loadImage(
+                      path: widget.images[index],
                       fit: BoxFit.cover,
                       placeholder: const Center(
                         child: CircularProgressIndicator(),

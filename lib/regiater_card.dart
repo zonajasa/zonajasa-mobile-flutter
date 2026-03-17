@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:jasa_app/ui_otp.dart';
 
 class RegisterCard extends StatefulWidget {
@@ -67,6 +68,8 @@ class _RegisterCardState extends State<RegisterCard> {
             ),
             SizedBox(height: 10),
             TextFormField(
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               decoration: InputDecoration(
                 prefixIcon: const Icon(
                   Icons.phone_android,
@@ -78,7 +81,7 @@ class _RegisterCardState extends State<RegisterCard> {
                   }
                   return const Color(0xff9b9bb4);
                 }),
-                hintText: "No. whatsApp",
+                hintText: "Nomor whatsApp",
                 hintStyle: const TextStyle(
                   fontSize: 18, // teks hint lebih besar
                 ),
