@@ -6,6 +6,7 @@ import 'package:jasa_app/model/review_card.dart';
 import 'package:jasa_app/pages/booking/booking_screen.dart';
 import 'package:jasa_app/pages/service_image_carousel.dart';
 import 'package:jasa_app/model/service.dart';
+import 'package:intl/intl.dart';
 
 class DetailJasa extends StatelessWidget {
   final String serviceId;
@@ -325,7 +326,7 @@ class DetailJasa extends StatelessWidget {
                   const Text('Total Harga', style: AppTextStyles.body2),
                   const SizedBox(height: 4),
                   Text(
-                    '\Rp${(service.price * _quantity).toStringAsFixed(2)}',
+                    'Rp${NumberFormat('#,###').format(service.price * _quantity)}',
                     style: AppTextStyles.headline2.copyWith(
                       color: AppColors.primary,
                     ),
