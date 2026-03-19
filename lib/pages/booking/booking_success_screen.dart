@@ -3,7 +3,6 @@ import 'package:jasa_app/model/app_colors.dart';
 import 'package:jasa_app/model/app_text_styles.dart';
 import 'package:intl/intl.dart';
 import 'package:jasa_app/navigationPage.dart';
-import 'package:jasa_app/pages/HomePage.dart';
 
 class BookingBerhasil extends StatefulWidget {
   const BookingBerhasil({super.key});

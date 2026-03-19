@@ -42,6 +42,21 @@ class _buildHomeState extends State<_buildHome> {
     getProfile();
   }
 
+  String getCategoryName(String categoryId) {
+    final category = demoCategories.firstWhere(
+      (cat) => cat.id == categoryId,
+      orElse: () => Category(
+        id: '',
+        name: 'Unknown',
+        icon: '',
+        image: '',
+        description: '',
+      ),
+    );
+
+    return category.name;
+  }
+
   // tambahkan state untuk profile
   String namaLengkap = "";
 
@@ -535,6 +550,9 @@ class _buildHomeState extends State<_buildHome> {
                               itemBuilder: (context, index) {
                                 // final provider = filteredProviders[index];
                                 final service = filteredServices[index];
+                                final layanan = service.layanan_jasa;
+                                final displayed = layanan.take(1).join(', ');
+                                final sisa = layanan.length - 1;
                                 return InkWell(
                                   borderRadius: BorderRadius.circular(15),
                                   onTap: () {
@@ -638,11 +656,22 @@ class _buildHomeState extends State<_buildHome> {
                                                 ],
                                               ),
                                               Text(
-                                                "service.layanan_jasa",
-                                                style: const TextStyle(
-                                                  fontSize: 15,
-                                                  color: Colors.black54,
+                                                layanan.isEmpty
+                                                    ? "${getCategoryName(service.categoryId)} • Tidak ada layanan"
+                                                    : sisa > 0
+                                                    ? "${getCategoryName(service.categoryId)} • $displayed +$sisa lainnya"
+                                                    : "${getCategoryName(service.categoryId)} • $displayed",
+                                                style: TextStyle(
+                                                  fontSize: 13,
+                                                  color: layanan.isEmpty
+                                                      ? Colors.grey
+                                                      : Colors.black54,
+                                                  fontStyle: layanan.isEmpty
+                                                      ? FontStyle.italic
+                                                      : FontStyle.normal,
                                                 ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
                                               ),
                                             ],
                                           ),
