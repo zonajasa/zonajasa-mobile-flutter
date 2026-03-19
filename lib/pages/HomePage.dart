@@ -638,7 +638,7 @@ class _buildHomeState extends State<_buildHome> {
                                                 ],
                                               ),
                                               Text(
-                                                service.layanan,
+                                                "service.layanan_jasa",
                                                 style: const TextStyle(
                                                   fontSize: 15,
                                                   color: Colors.black54,

@@ -1,21 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jasa_app/pages/HomePage.dart';
+import 'package:jasa_app/pages/pesanan/ui_pemesanan.dart';
 import 'package:jasa_app/pages/profileUI.dart';
 
 class Navigationpage extends StatefulWidget {
-  const Navigationpage({super.key});
+  final int initialIndex;
+  const Navigationpage({super.key, this.initialIndex = 0});
 
   @override
   State<Navigationpage> createState() => _NavigationpageState();
 }
 
 class _NavigationpageState extends State<Navigationpage> {
-  int _selectedIndex = 0;
+  late int _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.initialIndex;
+  }
 
   final List<Widget> _pages = [
     HomePage(),
-    Container(),
+    PemesananPage(),
     Container(),
     Profileui(),
   ];

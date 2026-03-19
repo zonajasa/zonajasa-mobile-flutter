@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:jasa_app/AppLoader.dart';
 import 'package:jasa_app/model/app_colors.dart';
 import 'package:jasa_app/model/app_text_styles.dart';
 import 'package:jasa_app/model/category.dart';
@@ -46,242 +45,232 @@ class _BookingNowState extends State<BookingNow> {
     );
     return Scaffold(
       appBar: AppBar(title: const Text('Pesan Layanan')),
-      body: isLoading
-          ? const AppLoader()
-          : Column(
-              children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Service Summary
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: AppColors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.shadow,
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: Image.asset(
-                                  service.image,
-                                  width: 80,
-                                  height: 80,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      service.name,
-                                      style: AppTextStyles.headline3,
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      'Rp${NumberFormat('#,###').format(service.price)} - ${category.name}',
-                                      style: AppTextStyles.price,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
+      body: Stack(
+        children: [
+          Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Service Summary
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppColors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.shadow,
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
-
-                        const SizedBox(height: 24),
-
-                        // Date Selection
-                        const Text(
-                          'Pilih Tanggal',
-                          style: AppTextStyles.headline3,
-                        ),
-                        const SizedBox(height: 12),
-                        SizedBox(
-                          height: 100,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: 14, // Show next 14 days
-                            itemBuilder: (context, index) {
-                              final date = DateTime.now().add(
-                                Duration(days: index),
-                              );
-                              final isSelected =
-                                  _selectedDate.year == date.year &&
-                                  _selectedDate.month == date.month &&
-                                  _selectedDate.day == date.day;
-
-                              return GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _selectedDate = date;
-                                  });
-                                },
-                                child: Container(
-                                  width: 70,
-                                  margin: const EdgeInsets.only(right: 12),
-                                  decoration: BoxDecoration(
-                                    color: isSelected
-                                        ? AppColors.primary
-                                        : AppColors.white,
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: isSelected
-                                          ? AppColors.primary
-                                          : AppColors.border,
-                                    ),
+                        child: Row(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.asset(
+                                service.image,
+                                width: 80,
+                                height: 80,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    service.name,
+                                    style: AppTextStyles.headline3,
                                   ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        DateFormat('EEE').format(date),
-                                        style: AppTextStyles.body2.copyWith(
-                                          color: isSelected
-                                              ? AppColors.white
-                                              : AppColors.textPrimary,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        DateFormat('dd').format(date),
-                                        style: AppTextStyles.headline3.copyWith(
-                                          color: isSelected
-                                              ? AppColors.white
-                                              : AppColors.textPrimary,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        DateFormat('MMM').format(date),
-                                        style: AppTextStyles.caption.copyWith(
-                                          color: isSelected
-                                              ? AppColors.white
-                                              : AppColors.textSecondary,
-                                        ),
-                                      ),
-                                    ],
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Rp${NumberFormat('#,###').format(service.price)} - ${category.name}',
+                                    style: AppTextStyles.price,
                                   ),
-                                ),
-                              );
-                            },
-                          ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
+                      ),
 
-                        const SizedBox(height: 24),
+                      const SizedBox(height: 24),
 
-                        // Time Selection
-                        const Text(
-                          'Pilih Waktu',
-                          style: AppTextStyles.headline3,
-                        ),
-                        const SizedBox(height: 12),
-                        Wrap(
-                          spacing: 10,
-                          runSpacing: 10,
-                          children: _availableTimes.map((time) {
-                            final isSelected = _selectedTime == time;
+                      // Date Selection
+                      const Text(
+                        'Pilih Tanggal',
+                        style: AppTextStyles.headline3,
+                      ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        height: 100,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: 14, // Show next 14 days
+                          itemBuilder: (context, index) {
+                            final date = DateTime.now().add(
+                              Duration(days: index),
+                            );
+                            final isSelected =
+                                _selectedDate.year == date.year &&
+                                _selectedDate.month == date.month &&
+                                _selectedDate.day == date.day;
 
                             return GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  _selectedTime = time;
+                                  _selectedDate = date;
                                 });
                               },
                               child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 10,
-                                ),
+                                width: 70,
+                                margin: const EdgeInsets.only(right: 12),
                                 decoration: BoxDecoration(
                                   color: isSelected
                                       ? AppColors.primary
                                       : AppColors.white,
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
                                     color: isSelected
                                         ? AppColors.primary
                                         : AppColors.border,
                                   ),
                                 ),
-                                child: Text(
-                                  time,
-                                  style: AppTextStyles.body2.copyWith(
-                                    color: isSelected
-                                        ? AppColors.white
-                                        : AppColors.textPrimary,
-                                  ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      DateFormat('EEE').format(date),
+                                      style: AppTextStyles.body2.copyWith(
+                                        color: isSelected
+                                            ? AppColors.white
+                                            : AppColors.textPrimary,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      DateFormat('dd').format(date),
+                                      style: AppTextStyles.headline3.copyWith(
+                                        color: isSelected
+                                            ? AppColors.white
+                                            : AppColors.textPrimary,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      DateFormat('MMM').format(date),
+                                      style: AppTextStyles.caption.copyWith(
+                                        color: isSelected
+                                            ? AppColors.white
+                                            : AppColors.textSecondary,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             );
-                          }).toList(),
+                          },
                         ),
+                      ),
 
-                        const SizedBox(height: 24),
+                      const SizedBox(height: 24),
 
-                        // Payment Method
-                        const Text(
-                          'Pilih Layanan jasa',
-                          style: AppTextStyles.headline3,
-                        ),
-                        const SizedBox(height: 12),
-                        _buildJasaOption(
-                          'card',
-                          'Credit/Debit Card',
-                          Icons.credit_card,
-                        ),
-                        const SizedBox(height: 8),
-                        _buildJasaOption('paypal', 'PayPal', Icons.paypal),
-                        const SizedBox(height: 8),
-                        _buildJasaOption(
-                          'cash',
-                          'Cash on Delivery',
-                          Icons.money,
-                        ),
+                      // Time Selection
+                      const Text('Pilih Waktu', style: AppTextStyles.headline3),
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        children: _availableTimes.map((time) {
+                          final isSelected = _selectedTime == time;
 
-                        const SizedBox(height: 40),
-                      ],
-                    ),
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _selectedTime = time;
+                              });
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 10,
+                              ),
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? AppColors.primary
+                                    : AppColors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: isSelected
+                                      ? AppColors.primary
+                                      : AppColors.border,
+                                ),
+                              ),
+                              child: Text(
+                                time,
+                                style: AppTextStyles.body2.copyWith(
+                                  color: isSelected
+                                      ? AppColors.white
+                                      : AppColors.textPrimary,
+                                ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // PILIHAN JASA
+                      const Text(
+                        'Pilih Layanan jasa',
+                        style: AppTextStyles.headline3,
+                      ),
+                      const SizedBox(height: 12),
+                      _buildJasaOption('paypal', 'Service AC', Icons.paypal),
+                      const SizedBox(height: 8),
+                      _buildJasaOption(
+                        'cash',
+                        'Instalasi Listrik',
+                        Icons.money,
+                      ),
+
+                      const SizedBox(height: 40),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
+          ),
+        ],
+      ),
       bottomNavigationBar: SafeArea(
         child: Container(
           margin: const EdgeInsets.all(16),
           height: 55,
           child: ElevatedButton(
-            onPressed: () async {
-              setState(() {
-                isLoading = true;
-              });
+            onPressed: isLoading
+                ? null
+                : () async {
+                    setState(() => isLoading = true);
 
-              await Future.delayed(
-                const Duration(seconds: 2),
-              ); // nanti ganti API
+                    await Future.delayed(const Duration(seconds: 2));
 
-              setState(() {
-                isLoading = false;
-              });
+                    // kasih delay dikit biar user liat efeknya
+                    await Future.delayed(const Duration(milliseconds: 500));
 
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => BookingBerhasil()),
-              );
-            },
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => BookingBerhasil()),
+                    );
+                  },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.blue,
               elevation: 6,
@@ -289,13 +278,27 @@ class _BookingNowState extends State<BookingNow> {
                 borderRadius: BorderRadius.circular(16),
               ),
             ),
-            child: const Text(
-              "Booking Now",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: isLoading
+                  ? const SizedBox(
+                      key: ValueKey('loading'),
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Text(
+                      "Booking Now",
+                      key: ValueKey('text'),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
             ),
           ),
         ),

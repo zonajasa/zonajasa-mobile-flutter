@@ -39,6 +39,13 @@ class AppTextStyles {
     height: 1.3,
   );
 
+  static const TextStyle headline4 = TextStyle(
+    fontSize: 17,
+    fontWeight: FontWeight.w500,
+    color: AppColors.info,
+    height: 1.3,
+  );
+
   // Body Styles
   static const TextStyle body1 = TextStyle(
     fontSize: 16,

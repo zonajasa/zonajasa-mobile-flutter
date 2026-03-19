@@ -1,7 +1,6 @@
 class Service {
   final String id;
   final String name;
-  final String layanan;
   final String company;
   final String description;
   final double price;
@@ -12,14 +11,13 @@ class Service {
   final int reviewCount;
   final int bookingCount;
   final List<String> images;
-  final List<String> features;
+  final List<String> layanan_jasa;
   final bool isFeatured;
   final bool isPopular;
 
   Service({
     required this.id,
     required this.name,
-    required this.layanan,
     required this.company,
     required this.description,
     required this.price,
@@ -30,7 +28,7 @@ class Service {
     required this.reviewCount,
     required this.bookingCount,
     required this.images,
-    required this.features,
+    required this.layanan_jasa,
     this.isFeatured = false,
     this.isPopular = false,
   });
@@ -40,7 +38,6 @@ class Service {
       id: json['id'] as String,
       name: json['name'] as String,
       company: json['company'] as String,
-      layanan: json['layanan'] as String,
       jarak: json['jarak'] as String,
       description: json['description'] as String,
       price: (json['price'] as num).toDouble(),
@@ -52,7 +49,7 @@ class Service {
       images: (json['images'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
-      features: (json['features'] as List<dynamic>)
+      layanan_jasa: (json['layanan_jasa'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
       isFeatured: json['isFeatured'] as bool? ?? false,
@@ -64,7 +61,6 @@ class Service {
     return {
       'id': id,
       'name': name,
-      'layanan': layanan,
       'company': company,
       'description': description,
       'price': price,
@@ -74,7 +70,7 @@ class Service {
       'reviewCount': reviewCount,
       'bookingCount': bookingCount,
       'images': images,
-      'features': features,
+      'layanan_jasa': layanan_jasa,
       'isFeatured': isFeatured,
       'isPopular': isPopular,
     };
@@ -86,7 +82,6 @@ List<Service> demoServices = [
   Service(
     id: '1',
     name: 'Pak Samsul',
-    layanan: 'Tukang - Service AC',
     company: 'CV. Budi Mandiri',
     description:
         'Professional cleaning service to make your home spotless and fresh. Our team uses eco-friendly products and advanced cleaning techniques.',
@@ -98,21 +93,13 @@ List<Service> demoServices = [
     reviewCount: 245,
     bookingCount: 1250,
     images: ['images/b.png', 'images/c.png', 'images/a.png'],
-    features: [
-      'Dusting all accessible surfaces',
-      'Vacuuming carpets and floors',
-      'Mopping all floors',
-      'Cleaning kitchen surfaces',
-      'Cleaning bathrooms',
-      'Waste removal',
-    ],
+    layanan_jasa: ['Service AC', 'Service Printer', 'Service Kulkas'],
     isFeatured: true,
     isPopular: true,
   ),
   Service(
     id: '2',
     name: 'Andisari',
-    layanan: 'Listrik - Instalasi',
     company: 'CV. Sari Jaya',
     description:
         'A thorough cleaning service for homes that need extra attention. Includes cleaning inside appliances, behind furniture, and detailed scrubbing.',
@@ -124,20 +111,12 @@ List<Service> demoServices = [
     reviewCount: 189,
     bookingCount: 876,
     images: ['images/a.png', 'images/b.png', 'images/b.png'],
-    features: [
-      'All standard cleaning tasks',
-      'Inside oven and refrigerator cleaning',
-      'Cabinet interiors',
-      'Window cleaning',
-      'Baseboards and door frames',
-      'Light fixtures and ceiling fans',
-    ],
+    layanan_jasa: ['Service AC', 'Service Printer', 'Service Kulkas'],
     isFeatured: true,
   ),
   Service(
     id: '3',
     name: 'Ibu Enda',
-    layanan: 'Pipe Leak Repair',
     company: 'CV. Anton Sejahtera',
     description:
         'Fast and reliable repair for any pipe leaks in your home. Our certified plumbers fix all types of pipe leaks to prevent water damage.',
@@ -149,20 +128,12 @@ List<Service> demoServices = [
     reviewCount: 156,
     bookingCount: 735,
     images: ['images/a.png', 'images/b.png', 'images/b.png'],
-    features: [
-      'Leak detection',
-      'Pipe repair or replacement',
-      'Water pressure testing',
-      'Fixture inspection',
-      'Joint sealing',
-      '30-day guarantee',
-    ],
+    layanan_jasa: ['Service AC', 'Service Printer', 'Service Kulkas'],
     isPopular: true,
   ),
   Service(
     id: '4',
     name: 'Pak samsudin',
-    layanan: 'Bathroom Installation',
     company: 'CV. Anton Sejahtera',
     description:
         'Complete bathroom installation service including fixtures, plumbing, and finishing. Transform your bathroom with our expert plumbers.',
@@ -174,20 +145,12 @@ List<Service> demoServices = [
     reviewCount: 122,
     bookingCount: 450,
     images: ['images/a.png', 'images/b.png', 'images/b.png'],
-    features: [
-      'Fixture installation',
-      'Plumbing connection',
-      'Tile installation',
-      'Waterproofing',
-      'Vanity installation',
-      'Final inspection and testing',
-    ],
+    layanan_jasa: ['Service AC', 'Service Printer', 'Service Kulkas'],
     isFeatured: true,
   ),
   Service(
     id: '5',
     name: 'Pak Bahar',
-    layanan: 'Electrical Wiring',
     company: 'CV. Anton Sejahtera',
     description:
         'Professional electrical wiring service for new installations or rewiring existing systems. All work meets safety codes and regulations.',
@@ -199,20 +162,12 @@ List<Service> demoServices = [
     reviewCount: 178,
     bookingCount: 689,
     images: ['images/a.png', 'images/b.png', 'images/b.png'],
-    features: [
-      'Circuit installation',
-      'Panel upgrades',
-      'Outlet installation',
-      'Safety inspection',
-      'Compliance with electrical codes',
-      '1-year warranty on work',
-    ],
+    layanan_jasa: ['Service AC', 'Service Printer', 'Service Kulkas'],
     isPopular: true,
   ),
   Service(
     id: '6',
     name: 'Syamsudin',
-    layanan: 'Room Painting',
     company: 'CV. Anton Sejahtera',
     description:
         'Transform your space with our professional painting services. We use high-quality paints and techniques for a perfect finish.',
@@ -224,14 +179,7 @@ List<Service> demoServices = [
     reviewCount: 205,
     bookingCount: 920,
     images: ['images/a.png', 'images/b.png', 'images/b.png'],
-    features: [
-      'Surface preparation',
-      'Premium quality paint',
-      'Edge protection',
-      'Furniture protection',
-      'Two coats of paint',
-      'Clean-up after completion',
-    ],
+    layanan_jasa: ['Service AC', 'Service Printer', 'Service Kulkas'],
     isFeatured: true,
     isPopular: true,
   ),

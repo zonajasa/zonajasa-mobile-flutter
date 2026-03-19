@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jasa_app/model/app_colors.dart';
 import 'package:jasa_app/model/app_text_styles.dart';
+import 'package:jasa_app/model/category.dart';
 import 'package:jasa_app/model/review.dart';
 import 'package:jasa_app/model/review_card.dart';
 import 'package:jasa_app/pages/booking/booking_screen.dart';
@@ -18,6 +19,9 @@ class DetailJasa extends StatelessWidget {
   Widget build(BuildContext context) {
     final service = demoServices.firstWhere((s) => s.id == serviceId);
     final reviews = demoReviews.where((r) => r.serviceId == serviceId).toList();
+    final category = demoCategories.firstWhere(
+      (c) => c.id == service.categoryId,
+    );
 
     return Scaffold(
       body: Stack(
@@ -101,15 +105,15 @@ class DetailJasa extends StatelessWidget {
                           ),
                         ],
                       ),
-                      // == Jenis layanan / kategory
-                      const SizedBox(height: 12),
+                      // == Jenis kategory
+                      const SizedBox(height: 5),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
                             child: Text(
-                              service.layanan,
-                              style: AppTextStyles.body2,
+                              category.name,
+                              style: AppTextStyles.headline4,
                             ),
                           ),
                         ],
@@ -128,11 +132,11 @@ class DetailJasa extends StatelessWidget {
 
                       // Features
                       const Text(
-                        'What\'s Included',
+                        'Layanan Jasa',
                         style: AppTextStyles.headline3,
                       ),
                       const SizedBox(height: 12),
-                      ...service.features.map(
+                      ...service.layanan_jasa.map(
                         (feature) => Padding(
                           padding: const EdgeInsets.only(bottom: 8),
                           child: Row(
@@ -168,7 +172,7 @@ class DetailJasa extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'Service Provider',
+                        'Profil pemilik jasa',
                         style: AppTextStyles.headline3,
                       ),
                       const SizedBox(height: 12),
@@ -220,8 +224,8 @@ class DetailJasa extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text(
-                                    'ServicePro Solutions',
+                                  Text(
+                                    service.company,
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
