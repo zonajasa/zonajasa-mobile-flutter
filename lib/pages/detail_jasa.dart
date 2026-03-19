@@ -5,6 +5,7 @@ import 'package:jasa_app/model/category.dart';
 import 'package:jasa_app/model/review.dart';
 import 'package:jasa_app/model/review_card.dart';
 import 'package:jasa_app/pages/booking/booking_screen.dart';
+import 'package:jasa_app/pages/review/service_reviews_screen.dart';
 import 'package:jasa_app/pages/service_image_carousel.dart';
 import 'package:jasa_app/model/service.dart';
 import 'package:intl/intl.dart';
@@ -234,21 +235,27 @@ class DetailJasa extends StatelessWidget {
                                   const SizedBox(height: 4),
                                   Row(
                                     children: [
-                                      const Icon(
-                                        Icons.star,
-                                        color: Colors.amber,
-                                        size: 16,
-                                      ),
+                                      ...List.generate(5, (index) {
+                                        double rating = service.rating;
+                                        return Icon(
+                                          index < rating.floor()
+                                              ? Icons.star
+                                              : Icons.star_border,
+                                          color: Colors.amber,
+                                          size: 16,
+                                        );
+                                      }),
                                       const SizedBox(width: 4),
-                                      const Text(
-                                        '4.9',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
+                                      Text(
+                                        service.rating.toStringAsFixed(1),
+
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
                                         ),
                                       ),
-                                      const Text(
-                                        ' (256 reviews)',
+                                      Text(
+                                        '(${service.reviewCount} reviews)',
                                         style: TextStyle(
                                           fontSize: 14,
                                           color: AppColors.textSecondary,
@@ -282,7 +289,14 @@ class DetailJasa extends StatelessWidget {
                           const Text('Reviews', style: AppTextStyles.headline3),
                           TextButton(
                             onPressed: () {
-                              // context.push('/services/$serviceId/reviews');
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ServiceReviewsScreen(
+                                    serviceId: serviceId,
+                                  ),
+                                ),
+                              );
                             },
                             child: Text(
                               'See All',

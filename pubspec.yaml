@@ -44,6 +44,8 @@ dependencies:
   http: ^1.6.0
   cached_network_image: ^3.4.1
   date_format: ^2.0.9
+  flutter_rating_bar: ^4.0.1
+  image_picker: ^1.2.1
 
 dev_dependencies:
   flutter_test:

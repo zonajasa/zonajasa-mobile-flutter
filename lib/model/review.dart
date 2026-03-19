@@ -4,6 +4,7 @@ class Review {
   final String userId;
   final String userName;
   final String userImage;
+  final List<String> images;
   final double rating;
   final String comment;
   final DateTime createdAt;
@@ -14,6 +15,7 @@ class Review {
     required this.userId,
     required this.userName,
     required this.userImage,
+    required this.images,
     required this.rating,
     required this.comment,
     required this.createdAt,
@@ -26,6 +28,9 @@ class Review {
       userId: json['userId'] as String,
       userName: json['userName'] as String,
       userImage: json['userImage'] as String,
+      images: (json['images'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
       rating: (json['rating'] as num).toDouble(),
       comment: json['comment'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
@@ -39,6 +44,7 @@ class Review {
       'userId': userId,
       'userName': userName,
       'userImage': userImage,
+      'images': images,
       'rating': rating,
       'comment': comment,
       'createdAt': createdAt.toIso8601String(),
@@ -54,6 +60,10 @@ List<Review> demoReviews = [
     userId: 'user1',
     userName: 'Sarah Johnson',
     userImage: 'images/orang.png',
+    images: [
+      'https://images.unsplash.com/photo-1581578731548-c64695cc6952',
+      'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d',
+    ],
     rating: 5.0,
     comment:
         'Excellent service! They did a thorough job cleaning our apartment and were very professional. Will definitely book again.',
@@ -65,6 +75,10 @@ List<Review> demoReviews = [
     userId: 'user2',
     userName: 'Michael Brown',
     userImage: 'images/orang.png',
+    images: [
+      'https://images.unsplash.com/photo-1581578731548-c64695cc6952',
+      'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d',
+    ],
     rating: 4.5,
     comment:
         'Great cleaning service. They arrived on time and did a fantastic job. Just missed a few spots under the furniture.',
@@ -76,6 +90,10 @@ List<Review> demoReviews = [
     userId: 'user3',
     userName: 'Emily Davis',
     userImage: 'images/orang.png',
+    images: [
+      'https://images.unsplash.com/photo-1581578731548-c64695cc6952',
+      'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d',
+    ],
     rating: 5.0,
     comment:
         'I\'m very impressed with the cleaning service. My home hasn\'t been this clean in years! The staff was friendly and efficient.',
@@ -87,6 +105,10 @@ List<Review> demoReviews = [
     userId: 'user4',
     userName: 'James Wilson',
     userImage: 'images/orang.png',
+    images: [
+      'https://images.unsplash.com/photo-1581578731548-c64695cc6952',
+      'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d',
+    ],
     rating: 5.0,
     comment:
         'The deep cleaning service was worth every penny. They cleaned areas I didn\'t even think about. My house feels brand new!',
@@ -98,6 +120,10 @@ List<Review> demoReviews = [
     userId: 'user5',
     userName: 'Alex Thompson',
     userImage: 'images/orang.png',
+    images: [
+      'https://images.unsplash.com/photo-1581578731548-c64695cc6952',
+      'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d',
+    ],
     rating: 4.7,
     comment:
         'Quick response to my emergency leak. Fixed the problem efficiently and gave me advice on preventing future issues.',

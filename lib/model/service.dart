@@ -89,7 +89,7 @@ List<Service> demoServices = [
     categoryId: '1',
     jarak: '10 km',
     image: 'images/e.png',
-    rating: 4.8,
+    rating: 0.1,
     reviewCount: 245,
     bookingCount: 1250,
     images: ['images/b.png', 'images/c.png', 'images/a.png'],
