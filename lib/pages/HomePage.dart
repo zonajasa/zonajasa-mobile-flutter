@@ -36,11 +36,28 @@ class _buildHomeState extends State<_buildHome> {
   int selectedCategoryIndex = 0;
   bool isLoadingProviders = false;
   String currentLocation = "Mendeteksi lokasi...";
+  final ScrollController _scrollController = ScrollController();
+
+  double headerOpacity = 1.0;
+  double blurValue = 0;
   @override
   void initState() {
     super.initState();
     _getLocation();
     getProfile();
+
+    _scrollController.addListener(() {
+      double offset = _scrollController.offset;
+
+      double progress = (offset / 200).clamp(0.0, 1.0);
+
+      double newOpacity = 1 - progress;
+
+      setState(() {
+        headerOpacity = newOpacity;
+        blurValue = progress * 80; // 🔥 makin scroll → makin blur
+      });
+    });
   }
 
   String getCategoryName(String categoryId) {
@@ -145,70 +162,82 @@ class _buildHomeState extends State<_buildHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          color: const Color(0xffeeeefa),
-          child: Stack(
-            children: [
-              //layout header
-              _buildHeader(context),
-              //pencarian
-              _buildSearch(_refresh),
-              // foto profil
-              _buildUserAvatar(
-                isPressed: isNotifPressed,
-                onTapDown: () {
-                  setState(() {
-                    isNotifPressed = true;
-                  });
-                },
-                onTapUp: () {
-                  setState(() {
-                    isNotifPressed = false;
-                  });
-                  print("Profile ditekan");
-                },
-                onTapCancel: () {
-                  setState(() {
-                    isNotifPressed = false;
-                  });
-                },
-              ),
-              // konten welcome
-              _buildWelcome(namaLengkap),
-              // lokasi saat ini
-              _buildLocation(currentLocation),
-              //menu layanan
-              _buildMenu(
-                context: context,
-                menuItems: menuItems,
-                selectedIndex: selectedCategoryIndex,
-                onTapMenu: (index) async {
-                  setState(() {
-                    selectedCategoryIndex = index;
-                    isLoadingProviders = true;
-                  });
+      body: Stack(
+        children: [
+          /// 🔥 SCROLL AREA (semua isi lama)
+          SingleChildScrollView(
+            controller: _scrollController,
+            child: Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              color: const Color(0xffeeeefa),
+              child: Stack(
+                children: [
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    height:
+                        headerOpacity *
+                        MediaQuery.of(context).size.height *
+                        0.45,
+                    child: Opacity(
+                      opacity: headerOpacity,
+                      child: Stack(
+                        children: [
+                          _buildHeader(context),
+                          _buildWelcome(namaLengkap),
+                          _buildLocation(currentLocation),
+                        ],
+                      ),
+                    ),
+                  ),
+                  _buildMenu(
+                    context: context,
+                    menuItems: menuItems,
+                    selectedIndex: selectedCategoryIndex,
+                    headerOpacity: headerOpacity, // 🔥 kirim
+                    onTapMenu: (index) async {
+                      setState(() {
+                        selectedCategoryIndex = index;
+                        isLoadingProviders = true;
+                      });
 
-                  await Future.delayed(const Duration(milliseconds: 600));
+                      await Future.delayed(const Duration(milliseconds: 600));
 
-                  setState(() {
-                    isLoadingProviders = false;
-                  });
-                },
+                      setState(() {
+                        isLoadingProviders = false;
+                      });
+                    },
+                  ),
+
+                  _buildServiceSection(
+                    context: context,
+                    isLoading: isLoadingProviders,
+                    services: filteredServices,
+                    getCategoryName: getCategoryName,
+                    headerOpacity: headerOpacity, // 🔥 kirim
+                  ),
+                ],
               ),
-              //data layanan
-              _buildServiceSection(
-                context: context,
-                isLoading: isLoadingProviders,
-                services: filteredServices,
-                getCategoryName: getCategoryName,
-              ),
-              //end
-            ],
+            ),
           ),
-        ),
+
+          /// 🔥 FIXED SEARCH (GA IKUT SCROLL)
+          _buildSearch(_refresh),
+
+          /// 🔥 FIXED PROFILE (GA IKUT SCROLL)
+          _buildUserAvatar(
+            isPressed: isNotifPressed,
+            onTapDown: () {
+              setState(() => isNotifPressed = true);
+            },
+            onTapUp: () {
+              setState(() => isNotifPressed = false);
+            },
+            onTapCancel: () {
+              setState(() => isNotifPressed = false);
+            },
+          ),
+        ],
       ),
     );
   }
@@ -448,9 +477,15 @@ Widget _buildMenu({
   required List<Map<String, String>> menuItems,
   required int selectedIndex,
   required Function(int) onTapMenu,
+  required double headerOpacity, // 🔥 TAMBAH INI
 }) {
+  double baseTop = MediaQuery.of(context).size.height * 0.40;
+  double targetTop = 120;
   return Positioned(
-    top: MediaQuery.of(context).size.height * 0.40,
+    // top: MediaQuery.of(context).size.height * 0.40,
+    // // top: headerOpacity * MediaQuery.of(context).size.height * 0.60,
+    top: baseTop + (targetTop - baseTop) * (1 - headerOpacity),
+
     left: 15,
     right: 15,
     child: Container(
@@ -500,9 +535,15 @@ Widget _buildServiceSection({
   required bool isLoading,
   required List<Service> services,
   required String Function(String) getCategoryName,
+  required double headerOpacity,
 }) {
+  double baseTop = MediaQuery.of(context).size.height * 0.40;
+  double targetTop = 120;
   return Positioned(
-    top: MediaQuery.of(context).size.height * 0.40 + 115,
+    // top: MediaQuery.of(context).size.height * 0.40 + 115,
+    // // top: headerOpacity * MediaQuery.of(context).size.height * 0.60 + 115,
+    top: (baseTop + (targetTop - baseTop) * (1 - headerOpacity)) + 115,
+
     left: 15,
     right: 15,
     bottom: 15,
