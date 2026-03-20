@@ -40,6 +40,7 @@ class _buildHomeState extends State<_buildHome> {
 
   double headerOpacity = 1.0;
   double blurValue = 0;
+  double lastOffset = 0;
   @override
   void initState() {
     super.initState();
@@ -51,7 +52,17 @@ class _buildHomeState extends State<_buildHome> {
 
       double progress = (offset / 200).clamp(0.0, 1.0);
 
-      double newOpacity = 1 - progress;
+      // double newOpacity = 1 - progress;
+      // double newOpacity = 0.5 * (1 - progress);
+      double newOpacity;
+
+      if (offset > lastOffset) {
+        // 🔥 scroll turun
+        newOpacity = 0.5 * (1 - progress);
+      } else {
+        // 🔥 scroll naik
+        newOpacity = 1 * (1 - progress);
+      }
 
       setState(() {
         headerOpacity = newOpacity;
@@ -480,7 +491,7 @@ Widget _buildMenu({
   required double headerOpacity, // 🔥 TAMBAH INI
 }) {
   double baseTop = MediaQuery.of(context).size.height * 0.40;
-  double targetTop = 120;
+  double targetTop = 200;
   return Positioned(
     // top: MediaQuery.of(context).size.height * 0.40,
     // // top: headerOpacity * MediaQuery.of(context).size.height * 0.60,
@@ -538,7 +549,7 @@ Widget _buildServiceSection({
   required double headerOpacity,
 }) {
   double baseTop = MediaQuery.of(context).size.height * 0.40;
-  double targetTop = 120;
+  double targetTop = 200;
   return Positioned(
     // top: MediaQuery.of(context).size.height * 0.40 + 115,
     // // top: headerOpacity * MediaQuery.of(context).size.height * 0.60 + 115,
