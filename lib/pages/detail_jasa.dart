@@ -29,6 +29,9 @@ class DetailJasa extends StatelessWidget {
         .where((item) => item.serviceId == service.id)
         .toList();
 
+    final minHarga = layananList.isEmpty
+        ? 0
+        : layananList.map((e) => e.harga).reduce((a, b) => a < b ? a : b);
     return Scaffold(
       body: Stack(
         children: [
@@ -355,10 +358,10 @@ class DetailJasa extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text('Total Harga', style: AppTextStyles.body2),
+                  const Text('Harga Mulai', style: AppTextStyles.body2),
                   const SizedBox(height: 4),
                   Text(
-                    'Rp${NumberFormat('#,###').format(service.price * _quantity)}',
+                    '${NumberFormat.currency(locale: 'id_ID', symbol: 'Rp', decimalDigits: 0).format(minHarga)}',
                     style: AppTextStyles.headline2.copyWith(
                       color: AppColors.primary,
                     ),

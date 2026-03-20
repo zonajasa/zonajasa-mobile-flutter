@@ -20,7 +20,8 @@ class _BookingNowState extends State<BookingNow> {
   bool isLoading = false;
   DateTime _selectedDate = DateTime.now().add(const Duration(days: 1));
   String _selectedTime = '10:00 AM';
-  String? _selectedLayananId;
+  // String? _selectedLayananId;
+  List<String> _selectedLayananIds = [];
 
   final List<String> _availableTimes = [
     '09:00 AM',
@@ -48,10 +49,14 @@ class _BookingNowState extends State<BookingNow> {
     final layananList = demoLayananJasa
         .where((item) => item.serviceId == service.id)
         .toList();
-    final selectedLayanan = layananList.firstWhere(
-      (l) => l.id == _selectedLayananId,
-      orElse: () => layananList.first,
-    );
+    // final selectedLayanan = layananList.firstWhere(
+    //   (l) => l.id == _selectedLayananId,
+    //   orElse: () => layananList.first,
+    // );
+    double totalHarga = layananList
+        .where((l) => _selectedLayananIds.contains(l.id))
+        .fold(0, (sum, item) => sum + item.harga);
+
     return Scaffold(
       appBar: AppBar(title: const Text('Pesan Layanan')),
       body: Stack(
@@ -99,8 +104,14 @@ class _BookingNowState extends State<BookingNow> {
                                     style: AppTextStyles.headline3,
                                   ),
                                   const SizedBox(height: 4),
+                                  // Text(
+                                  //   '${NumberFormat.currency(locale: 'id_ID', symbol: 'Rp', decimalDigits: 0).format(selectedLayanan.harga)} - ${category.name}',
+                                  //   style: AppTextStyles.price,
+                                  // ),
                                   Text(
-                                    '${NumberFormat.currency(locale: 'id_ID', symbol: 'Rp', decimalDigits: 0).format(selectedLayanan.harga)} - ${category.name}',
+                                    _selectedLayananIds.isEmpty
+                                        ? "Rp0 - ${category.name}"
+                                        : "${NumberFormat.currency(locale: 'id_ID', symbol: 'Rp', decimalDigits: 0).format(totalHarga)} - ${category.name}",
                                     style: AppTextStyles.price,
                                   ),
                                 ],
@@ -274,12 +285,19 @@ class _BookingNowState extends State<BookingNow> {
             onPressed: isLoading
                 ? null
                 : () async {
+                    if (_selectedLayananIds.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Layanan jasa belum kamu pilih"),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                      return;
+                    }
+
                     setState(() => isLoading = true);
 
                     await Future.delayed(const Duration(seconds: 2));
-
-                    // kasih delay dikit biar user liat efeknya
-                    await Future.delayed(const Duration(milliseconds: 500));
 
                     Navigator.pushReplacement(
                       context,
@@ -322,12 +340,16 @@ class _BookingNowState extends State<BookingNow> {
   }
 
   Widget _buildJasaOption(LayananJasa item) {
-    final isSelected = _selectedLayananId == item.id;
+    final isSelected = _selectedLayananIds.contains(item.id);
 
     return GestureDetector(
       onTap: () {
         setState(() {
-          _selectedLayananId = item.id;
+          if (isSelected) {
+            _selectedLayananIds.remove(item.id); // unselect
+          } else {
+            _selectedLayananIds.add(item.id); // select
+          }
         });
       },
       child: Container(
@@ -343,12 +365,28 @@ class _BookingNowState extends State<BookingNow> {
           children: [
             const FaIcon(FontAwesomeIcons.businessTime, color: Colors.grey),
             const SizedBox(width: 16),
+
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [Text(item.name, style: AppTextStyles.body1)],
+                children: [
+                  Text(item.name, style: AppTextStyles.body1),
+
+                  // 🔥 optional harga kecil (biar lebih jelas)
+                  const SizedBox(height: 4),
+                  Text(
+                    NumberFormat.currency(
+                      locale: 'id_ID',
+                      symbol: 'Rp',
+                      decimalDigits: 0,
+                    ).format(item.harga),
+                    style: AppTextStyles.caption,
+                  ),
+                ],
               ),
             ),
+
+            // ✅ tetap pakai icon lama (clean look)
             if (isSelected)
               const Icon(Icons.check_circle, color: AppColors.primary),
           ],
