@@ -490,8 +490,20 @@ Widget _buildMenu({
   required Function(int) onTapMenu,
   required double headerOpacity, // 🔥 TAMBAH INI
 }) {
-  double baseTop = MediaQuery.of(context).size.height * 0.40;
-  double targetTop = 200;
+  // double baseTop = MediaQuery.of(context).size.height * 0.40;
+  // double targetTop = 200;
+  double screenHeight = MediaQuery.of(context).size.height;
+
+  double baseTop = screenHeight * 0.40;
+  double targetTop;
+
+  if (screenHeight < 700) {
+    targetTop = screenHeight * 0.24; // HP kecil
+  } else if (screenHeight > 900) {
+    targetTop = screenHeight * 0.20; // layar gede / tablet
+  } else {
+    targetTop = screenHeight * 0.22; // normal
+  }
   return Positioned(
     // top: MediaQuery.of(context).size.height * 0.40,
     // // top: headerOpacity * MediaQuery.of(context).size.height * 0.60,
@@ -548,8 +560,20 @@ Widget _buildServiceSection({
   required String Function(String) getCategoryName,
   required double headerOpacity,
 }) {
-  double baseTop = MediaQuery.of(context).size.height * 0.40;
-  double targetTop = 200;
+  // double baseTop = MediaQuery.of(context).size.height * 0.40;
+  // double targetTop = 200;
+  double screenHeight = MediaQuery.of(context).size.height;
+
+  double baseTop = screenHeight * 0.40;
+  double targetTop;
+
+  if (screenHeight < 700) {
+    targetTop = screenHeight * 0.24; // HP kecil
+  } else if (screenHeight > 900) {
+    targetTop = screenHeight * 0.20; // layar gede / tablet
+  } else {
+    targetTop = screenHeight * 0.22; // normal
+  }
   return Positioned(
     // top: MediaQuery.of(context).size.height * 0.40 + 115,
     // // top: headerOpacity * MediaQuery.of(context).size.height * 0.60 + 115,
