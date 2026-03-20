@@ -12,7 +12,6 @@ class Service {
   final String nomorwa;
   final int bookingCount;
   final List<String> images;
-  final List<String> layanan_jasa;
   final bool isFeatured;
   final bool isPopular;
 
@@ -30,7 +29,6 @@ class Service {
     required this.nomorwa,
     required this.bookingCount,
     required this.images,
-    required this.layanan_jasa,
     this.isFeatured = false,
     this.isPopular = false,
   });
@@ -52,9 +50,6 @@ class Service {
       images: (json['images'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
-      layanan_jasa: (json['layanan_jasa'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
       isFeatured: json['isFeatured'] as bool? ?? false,
       isPopular: json['isPopular'] as bool? ?? false,
     );
@@ -74,7 +69,6 @@ class Service {
       'nomorwa': nomorwa,
       'bookingCount': bookingCount,
       'images': images,
-      'layanan_jasa': layanan_jasa,
       'isFeatured': isFeatured,
       'isPopular': isPopular,
     };
@@ -98,13 +92,6 @@ List<Service> demoServices = [
     nomorwa: "6287770093583",
     bookingCount: 1250,
     images: ['images/b.png', 'images/c.png', 'images/a.png'],
-    layanan_jasa: [
-      'Service AC',
-      'Service Printer',
-      'Service Kulkas',
-      'Service hp',
-      'Service lampu',
-    ],
     isFeatured: true,
     isPopular: true,
   ),
@@ -123,13 +110,6 @@ List<Service> demoServices = [
     nomorwa: "6281804228935",
     bookingCount: 876,
     images: ['images/a.png', 'images/b.png', 'images/b.png'],
-    layanan_jasa: [
-      'Service AC',
-      'Service Printer',
-      'Service Kulkas',
-      'Service hp',
-      'Service lampu',
-    ],
     isFeatured: true,
   ),
   Service(
@@ -147,13 +127,6 @@ List<Service> demoServices = [
     nomorwa: "6287770093583",
     bookingCount: 735,
     images: ['images/a.png', 'images/b.png', 'images/b.png'],
-    layanan_jasa: [
-      'Service AC',
-      'Service Printer',
-      'Service Kulkas',
-      'Service hp',
-      'Service lampu',
-    ],
     isPopular: true,
   ),
   Service(
@@ -171,13 +144,6 @@ List<Service> demoServices = [
     nomorwa: "6281804228935",
     bookingCount: 450,
     images: ['images/a.png', 'images/b.png', 'images/b.png'],
-    layanan_jasa: [
-      'Service AC',
-      'Service Printer',
-      'Service Kulkas',
-      'Service hp',
-      'Service lampu',
-    ],
     isFeatured: true,
   ),
   Service(
@@ -195,13 +161,6 @@ List<Service> demoServices = [
     nomorwa: "6287770093583",
     bookingCount: 689,
     images: ['images/a.png', 'images/b.png', 'images/b.png'],
-    layanan_jasa: [
-      'Service AC',
-      'Service Printer',
-      'Service Kulkas',
-      'Service hp',
-      'Service lampu',
-    ],
     isPopular: true,
   ),
   Service(
@@ -219,13 +178,6 @@ List<Service> demoServices = [
     nomorwa: "6281804228935",
     bookingCount: 920,
     images: ['images/a.png', 'images/b.png', 'images/b.png'],
-    layanan_jasa: [
-      'Service AC',
-      'Service Printer',
-      'Service Kulkas',
-      'Service hp',
-      'Service lampu',
-    ],
     isFeatured: true,
     isPopular: true,
   ),

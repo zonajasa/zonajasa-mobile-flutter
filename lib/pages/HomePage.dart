@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:jasa_app/model/category.dart';
+import 'package:jasa_app/model/layanan_jasa.dart';
 import 'package:jasa_app/model/service.dart';
 import 'package:jasa_app/pages/detail_jasa.dart';
 import 'package:jasa_app/services/user_service.dart';
@@ -550,9 +551,16 @@ class _buildHomeState extends State<_buildHome> {
                               itemBuilder: (context, index) {
                                 // final provider = filteredProviders[index];
                                 final service = filteredServices[index];
-                                final layanan = service.layanan_jasa;
-                                final displayed = layanan.take(1).join(', ');
-                                final sisa = layanan.length - 1;
+                                final layananList = demoLayananJasa
+                                    .where(
+                                      (item) => item.serviceId == service.id,
+                                    )
+                                    .toList();
+
+                                final displayed = layananList.isNotEmpty
+                                    ? layananList.first.name
+                                    : "";
+                                final sisa = layananList.length - 1;
                                 return InkWell(
                                   borderRadius: BorderRadius.circular(15),
                                   onTap: () {
@@ -656,17 +664,17 @@ class _buildHomeState extends State<_buildHome> {
                                                 ],
                                               ),
                                               Text(
-                                                layanan.isEmpty
+                                                layananList.isEmpty
                                                     ? "${getCategoryName(service.categoryId)} • Tidak ada layanan"
                                                     : sisa > 0
                                                     ? "${getCategoryName(service.categoryId)} • $displayed +$sisa lainnya"
                                                     : "${getCategoryName(service.categoryId)} • $displayed",
                                                 style: TextStyle(
                                                   fontSize: 13,
-                                                  color: layanan.isEmpty
+                                                  color: layananList.isEmpty
                                                       ? Colors.grey
                                                       : Colors.black54,
-                                                  fontStyle: layanan.isEmpty
+                                                  fontStyle: layananList.isEmpty
                                                       ? FontStyle.italic
                                                       : FontStyle.normal,
                                                 ),

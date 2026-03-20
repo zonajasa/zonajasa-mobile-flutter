@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jasa_app/model/app_colors.dart';
 import 'package:jasa_app/model/app_text_styles.dart';
 import 'package:jasa_app/model/category.dart';
+import 'package:jasa_app/model/layanan_jasa.dart';
 import 'package:jasa_app/model/service.dart';
 import 'package:intl/intl.dart';
 import 'package:jasa_app/pages/booking/booking_success_screen.dart';
@@ -18,7 +20,7 @@ class _BookingNowState extends State<BookingNow> {
   bool isLoading = false;
   DateTime _selectedDate = DateTime.now().add(const Duration(days: 1));
   String _selectedTime = '10:00 AM';
-  String _selectedPaymentMethod = 'card';
+  String? _selectedLayananId;
 
   final List<String> _availableTimes = [
     '09:00 AM',
@@ -42,6 +44,13 @@ class _BookingNowState extends State<BookingNow> {
     final service = demoServices.firstWhere((s) => s.id == widget.serviceId);
     final category = demoCategories.firstWhere(
       (c) => c.id == service.categoryId,
+    );
+    final layananList = demoLayananJasa
+        .where((item) => item.serviceId == service.id)
+        .toList();
+    final selectedLayanan = layananList.firstWhere(
+      (l) => l.id == _selectedLayananId,
+      orElse: () => layananList.first,
     );
     return Scaffold(
       appBar: AppBar(title: const Text('Pesan Layanan')),
@@ -91,7 +100,7 @@ class _BookingNowState extends State<BookingNow> {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    'Rp${NumberFormat('#,###').format(service.price)} - ${category.name}',
+                                    '${NumberFormat.currency(locale: 'id_ID', symbol: 'Rp', decimalDigits: 0).format(selectedLayanan.harga)} - ${category.name}',
                                     style: AppTextStyles.price,
                                   ),
                                 ],
@@ -234,13 +243,19 @@ class _BookingNowState extends State<BookingNow> {
                         style: AppTextStyles.headline3,
                       ),
                       const SizedBox(height: 12),
-                      _buildJasaOption('paypal', 'Service AC', Icons.paypal),
-                      const SizedBox(height: 8),
-                      _buildJasaOption(
-                        'cash',
-                        'Instalasi Listrik',
-                        Icons.money,
-                      ),
+                      layananList.isEmpty
+                          ? const Text(
+                              "Belum ada layanan tersedia",
+                              style: TextStyle(color: Colors.grey),
+                            )
+                          : Column(
+                              children: layananList.map((item) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 8),
+                                  child: _buildJasaOption(item),
+                                );
+                              }).toList(),
+                            ),
 
                       const SizedBox(height: 40),
                     ],
@@ -306,13 +321,13 @@ class _BookingNowState extends State<BookingNow> {
     );
   }
 
-  Widget _buildJasaOption(String value, String label, IconData icon) {
-    final isSelected = _selectedPaymentMethod == value;
+  Widget _buildJasaOption(LayananJasa item) {
+    final isSelected = _selectedLayananId == item.id;
 
     return GestureDetector(
       onTap: () {
         setState(() {
-          _selectedPaymentMethod = value;
+          _selectedLayananId = item.id;
         });
       },
       child: Container(
@@ -326,10 +341,14 @@ class _BookingNowState extends State<BookingNow> {
         ),
         child: Row(
           children: [
-            Icon(icon, color: isSelected ? AppColors.primary : AppColors.grey),
+            const FaIcon(FontAwesomeIcons.businessTime, color: Colors.grey),
             const SizedBox(width: 16),
-            Text(label, style: AppTextStyles.body1),
-            const Spacer(),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [Text(item.name, style: AppTextStyles.body1)],
+              ),
+            ),
             if (isSelected)
               const Icon(Icons.check_circle, color: AppColors.primary),
           ],

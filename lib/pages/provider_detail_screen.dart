@@ -10,6 +10,7 @@ import 'package:jasa_app/model/service.dart';
 import 'package:jasa_app/pages/review/service_reviews_screen.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:intl/intl.dart';
 
 class ProviderDetailScreen extends StatefulWidget {
   final String serviceId;
@@ -25,7 +26,7 @@ class _ProviderDetailScreenState extends State<ProviderDetailScreen> {
   late Service service;
   late Category category;
   int _serviceVisibleCount = 4;
-  int _reviewVisibleCount = 3; 
+  int _reviewVisibleCount = 3;
   final ScrollController _serviceScrollController = ScrollController();
   final ScrollController _reviewScrollController = ScrollController();
 
@@ -673,7 +674,11 @@ class _ProviderDetailScreenState extends State<ProviderDetailScreen> {
                       const SizedBox(height: 4),
 
                       Text(
-                        "Rp ${item.harga.toStringAsFixed(0)}",
+                        NumberFormat.currency(
+                          locale: 'id_ID',
+                          symbol: 'Rp',
+                          decimalDigits: 0,
+                        ).format(item.harga),
                         style: AppTextStyles.price,
                       ),
                     ],

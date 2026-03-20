@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jasa_app/model/app_colors.dart';
 import 'package:jasa_app/model/app_text_styles.dart';
 import 'package:jasa_app/model/category.dart';
+import 'package:jasa_app/model/layanan_jasa.dart';
 import 'package:jasa_app/model/review.dart';
 import 'package:jasa_app/model/review_card.dart';
 import 'package:jasa_app/pages/booking/booking_screen.dart';
@@ -24,6 +25,9 @@ class DetailJasa extends StatelessWidget {
     final category = demoCategories.firstWhere(
       (c) => c.id == service.categoryId,
     );
+    final layananList = demoLayananJasa
+        .where((item) => item.serviceId == service.id)
+        .toList();
 
     return Scaffold(
       body: Stack(
@@ -134,32 +138,36 @@ class DetailJasa extends StatelessWidget {
 
                       // Features
                       const Text(
-                        'Layanan Jasa',
+                        'Layanan jasa yang tersedia',
                         style: AppTextStyles.headline3,
                       ),
                       const SizedBox(height: 12),
-                      ...service.layanan_jasa.map(
-                        (feature) => Padding(
-                          padding: const EdgeInsets.only(bottom: 8),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Icon(
-                                Icons.check_circle,
-                                color: Colors.green,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  feature,
-                                  style: AppTextStyles.body1,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      layananList.isEmpty
+                          ? const Text(
+                              "Belum ada layanan tersedia",
+                              style: TextStyle(color: Colors.grey),
+                            )
+                          : Column(
+                              children: layananList
+                                  .map(
+                                    (item) => Padding(
+                                      padding: const EdgeInsets.only(bottom: 8),
+                                      child: Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.check_circle,
+                                            color: Colors.green,
+                                            size: 20,
+                                          ),
+                                          const SizedBox(width: 12),
+                                          Expanded(child: Text(item.name)),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                      // end
                     ],
                   ),
                 ),
