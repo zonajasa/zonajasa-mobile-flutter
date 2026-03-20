@@ -5,6 +5,7 @@ import 'package:jasa_app/model/category.dart';
 import 'package:jasa_app/model/review.dart';
 import 'package:jasa_app/model/review_card.dart';
 import 'package:jasa_app/pages/booking/booking_screen.dart';
+import 'package:jasa_app/pages/provider_detail_screen.dart';
 import 'package:jasa_app/pages/review/service_reviews_screen.dart';
 import 'package:jasa_app/pages/service_image_carousel.dart';
 import 'package:jasa_app/model/service.dart';
@@ -179,8 +180,13 @@ class DetailJasa extends StatelessWidget {
                       const SizedBox(height: 12),
                       InkWell(
                         onTap: () {
-                          // Navigate to provider details
-                          // context.push('/providers/1');
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ProviderDetailScreen(serviceId: service.id),
+                            ),
+                          );
                         },
                         child: Row(
                           children: [
@@ -299,7 +305,7 @@ class DetailJasa extends StatelessWidget {
                               );
                             },
                             child: Text(
-                              'See All',
+                              'Lihat semua',
                               style: AppTextStyles.body2.copyWith(
                                 color: AppColors.primary,
                               ),

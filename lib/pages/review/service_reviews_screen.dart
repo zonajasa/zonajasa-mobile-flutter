@@ -526,13 +526,13 @@ class _ServiceReviewsScreenState extends State<ServiceReviewsScreen>
                                       SnackBar(
                                         backgroundColor: Colors.green,
                                         behavior: SnackBarBehavior.floating,
-                                        margin: const EdgeInsets.all(20),
+                                        margin: const EdgeInsets.all(10),
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(
-                                            15,
+                                            10,
                                           ),
                                         ),
-                                        duration: const Duration(seconds: 5),
+                                        duration: const Duration(seconds: 2),
                                         content: const Row(
                                           children: [
                                             FaIcon(
@@ -555,7 +555,7 @@ class _ServiceReviewsScreenState extends State<ServiceReviewsScreen>
                                       ),
                                     );
                                   }
-                                : null, // ⬅️ ini auto disable button
+                                : null,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: rating > 0
                                   ? AppColors.primary

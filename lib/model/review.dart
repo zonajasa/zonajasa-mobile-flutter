@@ -129,4 +129,34 @@ List<Review> demoReviews = [
         'Quick response to my emergency leak. Fixed the problem efficiently and gave me advice on preventing future issues.',
     createdAt: DateTime.now().subtract(const Duration(days: 3)),
   ),
+  Review(
+    id: '6',
+    serviceId: '1',
+    userId: 'user1',
+    userName: 'Sarah Kun',
+    userImage: 'images/orang.png',
+    images: [
+      'https://images.unsplash.com/photo-1581578731548-c64695cc6952',
+      'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d',
+    ],
+    rating: 5.0,
+    comment:
+        'Excellent service! They did a thorough job cleaning our apartment and were very professional. Will definitely book again.',
+    createdAt: DateTime.now().subtract(const Duration(days: 2)),
+  ),
+  Review(
+    id: '7',
+    serviceId: '1',
+    userId: 'user1',
+    userName: 'Sarah ',
+    userImage: 'images/orang.png',
+    images: [
+      'https://images.unsplash.com/photo-1581578731548-c64695cc6952',
+      'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d',
+    ],
+    rating: 5.0,
+    comment:
+        'Excellent service! They did a thorough job cleaning our apartment and were very professional. Will definitely book again.',
+    createdAt: DateTime.now().subtract(const Duration(days: 2)),
+  ),
 ];

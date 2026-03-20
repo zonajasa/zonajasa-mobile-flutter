@@ -46,6 +46,8 @@ dependencies:
   date_format: ^2.0.9
   flutter_rating_bar: ^4.0.1
   image_picker: ^1.2.1
+  url_launcher: ^6.3.2
+  share_plus: ^11.1.0
 
 dev_dependencies:
   flutter_test:
@@ -91,6 +93,7 @@ flutter:
     - images/d.png
     - images/e.png
     - images/f.png
+    - images/people.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
