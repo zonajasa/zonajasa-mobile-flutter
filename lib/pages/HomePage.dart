@@ -36,8 +36,10 @@ class _buildHomeState extends State<_buildHome> {
   int selectedCategoryIndex = 0;
   bool isLoadingProviders = false;
   String currentLocation = "Mendeteksi lokasi...";
-  final ScrollController _scrollController = ScrollController();
-
+  // final ScrollController _scrollController = ScrollController();
+  int _visibleCount = 3; // tampil 3 dulu 🔥
+  final ScrollController _mainScrollController = ScrollController();
+  final ScrollController _listScrollController = ScrollController();
   double headerOpacity = 1.0;
   double blurValue = 0;
   double lastOffset = 0;
@@ -47,28 +49,71 @@ class _buildHomeState extends State<_buildHome> {
     _getLocation();
     getProfile();
 
-    _scrollController.addListener(() {
-      double offset = _scrollController.offset;
+    _mainScrollController.addListener(() {
+      double offset = _mainScrollController.offset;
 
       double progress = (offset / 200).clamp(0.0, 1.0);
 
-      // double newOpacity = 1 - progress;
-      // double newOpacity = 0.5 * (1 - progress);
       double newOpacity;
 
       if (offset > lastOffset) {
-        // 🔥 scroll turun
         newOpacity = 0.5 * (1 - progress);
       } else {
-        // 🔥 scroll naik
         newOpacity = 1 * (1 - progress);
       }
 
       setState(() {
         headerOpacity = newOpacity;
-        blurValue = progress * 80; // 🔥 makin scroll → makin blur
+        blurValue = progress * 80;
+        lastOffset = offset;
       });
     });
+
+    /// 🔥 INFINITE SCROLL pindah ke LIST controller
+    _listScrollController.addListener(() {
+      if (_listScrollController.position.pixels >=
+          _listScrollController.position.maxScrollExtent - 50) {
+        if (_visibleCount < filteredServices.length) {
+          setState(() {
+            _visibleCount += 2;
+          });
+        }
+      }
+    });
+    // _scrollController.addListener(() {
+    //   double offset = _scrollController.offset;
+
+    //   double progress = (offset / 200).clamp(0.0, 1.0);
+
+    //   // double newOpacity = 1 - progress;
+    //   // double newOpacity = 0.5 * (1 - progress);
+    //   double newOpacity;
+
+    //   if (offset > lastOffset) {
+    //     // 🔥 scroll turun
+    //     newOpacity = 0.5 * (1 - progress);
+    //   } else {
+    //     // 🔥 scroll naik
+    //     newOpacity = 1 * (1 - progress);
+    //   }
+
+    //   setState(() {
+    //     headerOpacity = newOpacity;
+    //     blurValue = progress * 80; // 🔥 makin scroll → makin blur
+    //   });
+
+    //   /// 🔥 INFINITE SCROLL
+    //   _scrollController.addListener(() {
+    //     if (_scrollController.position.pixels >=
+    //         _scrollController.position.maxScrollExtent - 50) {
+    //       if (_visibleCount < filteredServices.length) {
+    //         setState(() {
+    //           _visibleCount += 2;
+    //         });
+    //       }
+    //     }
+    //   });
+    // });
   }
 
   String getCategoryName(String categoryId) {
@@ -177,7 +222,7 @@ class _buildHomeState extends State<_buildHome> {
         children: [
           /// 🔥 SCROLL AREA (semua isi lama)
           SingleChildScrollView(
-            controller: _scrollController,
+            controller: _mainScrollController,
             child: Container(
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
@@ -226,6 +271,8 @@ class _buildHomeState extends State<_buildHome> {
                     services: filteredServices,
                     getCategoryName: getCategoryName,
                     headerOpacity: headerOpacity, // 🔥 kirim
+                    visibleCount: _visibleCount,
+                    scrollController: _listScrollController,
                   ),
                 ],
               ),
@@ -559,6 +606,8 @@ Widget _buildServiceSection({
   required List<Service> services,
   required String Function(String) getCategoryName,
   required double headerOpacity,
+  required int visibleCount,
+  required ScrollController scrollController,
 }) {
   // double baseTop = MediaQuery.of(context).size.height * 0.40;
   // double targetTop = 200;
@@ -574,6 +623,8 @@ Widget _buildServiceSection({
   } else {
     targetTop = screenHeight * 0.22; // normal
   }
+  final visibleServices = services.take(visibleCount).toList();
+
   return Positioned(
     // top: MediaQuery.of(context).size.height * 0.40 + 115,
     // // top: headerOpacity * MediaQuery.of(context).size.height * 0.60 + 115,
@@ -622,17 +673,29 @@ Widget _buildServiceSection({
         Expanded(
           child: isLoading
               ? ListView.builder(
+                  controller: scrollController,
                   itemCount: 5,
                   itemBuilder: (_, __) => _buildSkeleton(),
                 )
               : ListView.separated(
                   // itemCount: filteredProviders.length,
-                  itemCount: services.length,
+                  itemCount: visibleServices.length + 1,
+                  controller: scrollController,
+                  // itemCount: services.length,
                   padding: EdgeInsets.only(top: 5),
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (context, index) {
+                    if (index == visibleServices.length) {
+                      return visibleCount < services.length
+                          ? const Padding(
+                              padding: EdgeInsets.all(16),
+                              child: Center(child: CircularProgressIndicator()),
+                            )
+                          : const SizedBox();
+                    }
                     // final provider = filteredProviders[index];
-                    final service = services[index];
+                    final service = visibleServices[index];
+                    // final service = services[index];
                     final layananList = demoLayananJasa
                         .where((item) => item.serviceId == service.id)
                         .toList();
