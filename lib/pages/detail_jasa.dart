@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:jasa_app/model/app_colors.dart';
 import 'package:jasa_app/model/app_text_styles.dart';
 import 'package:jasa_app/model/category.dart';
@@ -12,16 +13,92 @@ import 'package:jasa_app/pages/service_image_carousel.dart';
 import 'package:jasa_app/model/service.dart';
 import 'package:intl/intl.dart';
 
-class DetailJasa extends StatelessWidget {
+class DetailJasa extends StatefulWidget {
   final String serviceId;
-  final int _quantity = 1;
 
   const DetailJasa({super.key, required this.serviceId});
 
   @override
+  State<DetailJasa> createState() => _DetailJasaState();
+}
+
+class _DetailJasaState extends State<DetailJasa> {
+  final int quantity = 1;
+  late MapboxMap mapboxMap;
+  PointAnnotationManager? _annotationManager;
+
+  Future<void> _onMapCreated(MapboxMap map) async {
+    mapboxMap = map;
+
+    // 🔥 buat annotation manager
+    _annotationManager = await mapboxMap.annotations
+        .createPointAnnotationManager();
+
+    final service = demoServices.firstWhere((s) => s.id == widget.serviceId);
+
+    // 🔥 tunggu style siap
+    await Future.delayed(const Duration(milliseconds: 800));
+
+    // 🔥 load image dari asset
+    final bytes = await DefaultAssetBundle.of(
+      context,
+    ).load("images/location.png");
+
+    final image = MbxImage(
+      width: 640, // 🔥 isi sesuai ukuran gambar kamu
+      height: 640,
+      data: bytes.buffer.asUint8List(),
+    );
+    // 🔥 ambil style (WAJIB di versi ini)
+    final style = await mapboxMap.style;
+
+    // 🔥 inject image ke mapbox
+    await style.addStyleImage(
+      "my-marker", // nama bebas
+      1.0,
+      image,
+      false,
+      [],
+      [],
+      null,
+    );
+
+    // 🔥 tambahin marker
+    await _addMarker(service);
+  }
+
+  Future<void> _addMarker(Service service) async {
+    if (_annotationManager == null) return;
+
+    final point = Point(
+      coordinates: Position(service.longitude, service.latitude),
+    );
+
+    await _annotationManager!.create(
+      PointAnnotationOptions(
+        geometry: point,
+        iconImage: "my-marker",
+        iconSize: 0.04,
+      ),
+    );
+
+    await mapboxMap.flyTo(
+      CameraOptions(
+        center: Point(
+          coordinates: Position(service.longitude, service.latitude),
+        ),
+        zoom: 14,
+      ),
+      MapAnimationOptions(duration: 500),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final service = demoServices.firstWhere((s) => s.id == serviceId);
-    final reviews = demoReviews.where((r) => r.serviceId == serviceId).toList();
+    final service = demoServices.firstWhere((s) => s.id == widget.serviceId);
+    final reviews = demoReviews
+        .where((r) => r.serviceId == widget.serviceId)
+        .toList();
     final category = demoCategories.firstWhere(
       (c) => c.id == service.categoryId,
     );
@@ -175,6 +252,58 @@ class DetailJasa extends StatelessWidget {
                   ),
                 ),
               ),
+              // MAP LOKASI
+              SliverToBoxAdapter(
+                child: Container(
+                  margin: const EdgeInsets.only(top: 8),
+                  padding: const EdgeInsets.all(16),
+                  color: AppColors.white,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Lokasi', style: AppTextStyles.headline3),
+                      const SizedBox(height: 12),
+
+                      /// MAP
+                      Container(
+                        height: 200,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        clipBehavior: Clip.hardEdge,
+                        child: MapWidget(
+                          key: const ValueKey("mapWidget"),
+
+                          onMapCreated: _onMapCreated, // 🔥 INI PENTING BANGET
+
+                          cameraOptions: CameraOptions(
+                            center: Point(
+                              coordinates: Position(
+                                service.longitude,
+                                service.latitude,
+                              ),
+                            ),
+                            zoom: 14,
+                          ),
+
+                          styleUri: MapboxStyles
+                              .MAPBOX_STREETS, // 🔥 WAJIB BIAR GAK PUTIH
+                        ),
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      /// ALAMAT TEXT
+                      Text(
+                        service.address,
+                        style: AppTextStyles.body2.copyWith(
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
               // AKUN PEMILIK JASA
               SliverToBoxAdapter(
                 child: Container(
@@ -310,7 +439,7 @@ class DetailJasa extends StatelessWidget {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => ServiceReviewsScreen(
-                                    serviceId: serviceId,
+                                    serviceId: widget.serviceId,
                                   ),
                                 ),
                               );

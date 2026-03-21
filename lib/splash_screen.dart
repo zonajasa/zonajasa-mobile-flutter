@@ -102,12 +102,14 @@ class _SplashSState extends State<SplashS> {
                       alignment: selectedIndex == 1
                           ? Alignment.centerLeft
                           : Alignment.centerRight,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width / 2 - 40,
-                        margin: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(5),
+                      child: FractionallySizedBox(
+                        widthFactor: 0.5,
+                        child: Container(
+                          margin: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
                         ),
                       ),
                     ),
