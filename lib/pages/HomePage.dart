@@ -36,7 +36,8 @@ class _buildHomeState extends State<_buildHome> {
   int selectedCategoryIndex = 0;
   bool isLoadingProviders = false;
   String currentLocation = "Mendeteksi lokasi...";
-  int _visibleCount = 3; 
+  bool isLoadingMore = false;
+  int _visibleCount = 3;
   final ScrollController _mainScrollController = ScrollController();
   final ScrollController _listScrollController = ScrollController();
   double headerOpacity = 1.0;
@@ -69,14 +70,30 @@ class _buildHomeState extends State<_buildHome> {
     });
 
     /// 🔥 INFINITE SCROLL pindah ke LIST controller
+    // _listScrollController.addListener(() {
+    //   if (_listScrollController.position.pixels >=
+    //       _listScrollController.position.maxScrollExtent - 50) {
+    //     if (_visibleCount < filteredServices.length) {
+    //       setState(() {
+    //         _visibleCount += 2;
+    //       });
+    //     }
+    //   }
+    // });
     _listScrollController.addListener(() {
       if (_listScrollController.position.pixels >=
-          _listScrollController.position.maxScrollExtent - 50) {
-        if (_visibleCount < filteredServices.length) {
+              _listScrollController.position.maxScrollExtent - 50 &&
+          !isLoadingMore &&
+          _visibleCount < filteredServices.length) {
+        isLoadingMore = true;
+
+        Future.delayed(const Duration(milliseconds: 300), () {
           setState(() {
             _visibleCount += 2;
           });
-        }
+
+          isLoadingMore = false;
+        });
       }
     });
   }
@@ -512,7 +529,7 @@ Widget _buildMenu({
   double targetTop;
 
   if (screenHeight < 700) {
-    targetTop = screenHeight * 0.24; 
+    targetTop = screenHeight * 0.24;
   } else if (screenHeight > 900) {
     targetTop = screenHeight * 0.20;
   } else {
@@ -583,7 +600,7 @@ Widget _buildServiceSection({
   if (screenHeight < 700) {
     targetTop = screenHeight * 0.24;
   } else if (screenHeight > 900) {
-    targetTop = screenHeight * 0.20; 
+    targetTop = screenHeight * 0.20;
   } else {
     targetTop = screenHeight * 0.22;
   }
@@ -642,7 +659,7 @@ Widget _buildServiceSection({
               : ListView.separated(
                   // itemCount: filteredProviders.length,
                   controller: scrollController,
-                  shrinkWrap: true, // 🔥 WAJIB
+                  // shrinkWrap: true, // 🔥 WAJIB
                   physics: const BouncingScrollPhysics(),
                   itemCount: visibleServices.length + 1,
                   // itemCount: services.length,
