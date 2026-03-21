@@ -52,6 +52,7 @@ class _buildHomeState extends State<_buildHome> {
     _mainScrollController.addListener(() {
       double offset = _mainScrollController.offset;
 
+      /// ===== HEADER ANIMATION =====
       double progress = (offset / 200).clamp(0.0, 1.0);
 
       double newOpacity;
@@ -62,6 +63,24 @@ class _buildHomeState extends State<_buildHome> {
         newOpacity = 1 * (1 - progress);
       }
 
+      /// ===== INFINITE SCROLL =====
+      double maxScroll = _mainScrollController.position.maxScrollExtent;
+
+      if (offset >= maxScroll - 120 &&
+          !isLoadingMore &&
+          _visibleCount < filteredServices.length) {
+        isLoadingMore = true;
+
+        Future.delayed(const Duration(seconds: 2), () {
+          setState(() {
+            _visibleCount += 2;
+          });
+
+          isLoadingMore = false;
+        });
+      }
+
+      /// ===== UPDATE UI =====
       setState(() {
         headerOpacity = newOpacity;
         blurValue = progress * 80;
@@ -69,17 +88,6 @@ class _buildHomeState extends State<_buildHome> {
       });
     });
 
-    /// 🔥 INFINITE SCROLL pindah ke LIST controller
-    // _listScrollController.addListener(() {
-    //   if (_listScrollController.position.pixels >=
-    //       _listScrollController.position.maxScrollExtent - 50) {
-    //     if (_visibleCount < filteredServices.length) {
-    //       setState(() {
-    //         _visibleCount += 2;
-    //       });
-    //     }
-    //   }
-    // });
     _listScrollController.addListener(() {
       if (_listScrollController.position.pixels >=
               _listScrollController.position.maxScrollExtent - 50 &&
@@ -87,7 +95,7 @@ class _buildHomeState extends State<_buildHome> {
           _visibleCount < filteredServices.length) {
         isLoadingMore = true;
 
-        Future.delayed(const Duration(milliseconds: 300), () {
+        Future.delayed(const Duration(seconds: 2), () {
           setState(() {
             _visibleCount += 2;
           });
