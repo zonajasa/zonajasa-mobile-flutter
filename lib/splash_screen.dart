@@ -13,7 +13,7 @@ class SplashS extends StatefulWidget {
 
 class _SplashSState extends State<SplashS> {
   int selectedIndex = 0;
-  final PageController _pageController = PageController();
+  final PageController pageController = PageController();
 
   bool userClicked = false;
 

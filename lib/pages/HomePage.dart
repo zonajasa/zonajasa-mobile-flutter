@@ -72,6 +72,8 @@ class _buildHomeState extends State<_buildHome> {
         isLoadingMore = true;
 
         Future.delayed(const Duration(seconds: 2), () {
+          if (!mounted) return;
+
           setState(() {
             _visibleCount += 2;
           });
@@ -96,6 +98,8 @@ class _buildHomeState extends State<_buildHome> {
         isLoadingMore = true;
 
         Future.delayed(const Duration(seconds: 2), () {
+          if (!mounted) return;
+
           setState(() {
             _visibleCount += 2;
           });

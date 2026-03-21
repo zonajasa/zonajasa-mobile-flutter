@@ -29,41 +29,25 @@ class _DetailJasaState extends State<DetailJasa> {
 
   Future<void> _onMapCreated(MapboxMap map) async {
     mapboxMap = map;
-
-    // 🔥 buat annotation manager
     _annotationManager = await mapboxMap.annotations
         .createPointAnnotationManager();
 
     final service = demoServices.firstWhere((s) => s.id == widget.serviceId);
-
-    // 🔥 tunggu style siap
     await Future.delayed(const Duration(milliseconds: 800));
 
-    // 🔥 load image dari asset
     final bytes = await DefaultAssetBundle.of(
       context,
     ).load("images/location.png");
 
     final image = MbxImage(
-      width: 640, // 🔥 isi sesuai ukuran gambar kamu
+      width: 640,
       height: 640,
       data: bytes.buffer.asUint8List(),
     );
-    // 🔥 ambil style (WAJIB di versi ini)
     final style = await mapboxMap.style;
 
-    // 🔥 inject image ke mapbox
-    await style.addStyleImage(
-      "my-marker", // nama bebas
-      1.0,
-      image,
-      false,
-      [],
-      [],
-      null,
-    );
+    await style.addStyleImage("my-marker", 1.0, image, false, [], [], null);
 
-    // 🔥 tambahin marker
     await _addMarker(service);
   }
 
