@@ -36,8 +36,7 @@ class _buildHomeState extends State<_buildHome> {
   int selectedCategoryIndex = 0;
   bool isLoadingProviders = false;
   String currentLocation = "Mendeteksi lokasi...";
-  // final ScrollController _scrollController = ScrollController();
-  int _visibleCount = 3; // tampil 3 dulu 🔥
+  int _visibleCount = 3; 
   final ScrollController _mainScrollController = ScrollController();
   final ScrollController _listScrollController = ScrollController();
   double headerOpacity = 1.0;
@@ -80,40 +79,6 @@ class _buildHomeState extends State<_buildHome> {
         }
       }
     });
-    // _scrollController.addListener(() {
-    //   double offset = _scrollController.offset;
-
-    //   double progress = (offset / 200).clamp(0.0, 1.0);
-
-    //   // double newOpacity = 1 - progress;
-    //   // double newOpacity = 0.5 * (1 - progress);
-    //   double newOpacity;
-
-    //   if (offset > lastOffset) {
-    //     // 🔥 scroll turun
-    //     newOpacity = 0.5 * (1 - progress);
-    //   } else {
-    //     // 🔥 scroll naik
-    //     newOpacity = 1 * (1 - progress);
-    //   }
-
-    //   setState(() {
-    //     headerOpacity = newOpacity;
-    //     blurValue = progress * 80; // 🔥 makin scroll → makin blur
-    //   });
-
-    //   /// 🔥 INFINITE SCROLL
-    //   _scrollController.addListener(() {
-    //     if (_scrollController.position.pixels >=
-    //         _scrollController.position.maxScrollExtent - 50) {
-    //       if (_visibleCount < filteredServices.length) {
-    //         setState(() {
-    //           _visibleCount += 2;
-    //         });
-    //       }
-    //     }
-    //   });
-    // });
   }
 
   String getCategoryName(String categoryId) {
@@ -194,6 +159,8 @@ class _buildHomeState extends State<_buildHome> {
 
   bool isNotifPressed = false;
 
+  List<Service> currentServices = [];
+
   List<Service> get filteredServices {
     String categoryId = demoCategories[selectedCategoryIndex].id;
 
@@ -224,7 +191,9 @@ class _buildHomeState extends State<_buildHome> {
           SingleChildScrollView(
             controller: _mainScrollController,
             child: Container(
-              height: MediaQuery.of(context).size.height,
+              constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height,
+              ),
               width: MediaQuery.of(context).size.width,
               color: const Color(0xffeeeefa),
               child: Stack(
@@ -537,23 +506,19 @@ Widget _buildMenu({
   required Function(int) onTapMenu,
   required double headerOpacity, // 🔥 TAMBAH INI
 }) {
-  // double baseTop = MediaQuery.of(context).size.height * 0.40;
-  // double targetTop = 200;
   double screenHeight = MediaQuery.of(context).size.height;
 
   double baseTop = screenHeight * 0.40;
   double targetTop;
 
   if (screenHeight < 700) {
-    targetTop = screenHeight * 0.24; // HP kecil
+    targetTop = screenHeight * 0.24; 
   } else if (screenHeight > 900) {
-    targetTop = screenHeight * 0.20; // layar gede / tablet
+    targetTop = screenHeight * 0.20;
   } else {
-    targetTop = screenHeight * 0.22; // normal
+    targetTop = screenHeight * 0.22;
   }
   return Positioned(
-    // top: MediaQuery.of(context).size.height * 0.40,
-    // // top: headerOpacity * MediaQuery.of(context).size.height * 0.60,
     top: baseTop + (targetTop - baseTop) * (1 - headerOpacity),
 
     left: 15,
@@ -567,6 +532,7 @@ Widget _buildMenu({
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.08),
             blurRadius: 15,
             offset: const Offset(0, 6),
@@ -609,25 +575,21 @@ Widget _buildServiceSection({
   required int visibleCount,
   required ScrollController scrollController,
 }) {
-  // double baseTop = MediaQuery.of(context).size.height * 0.40;
-  // double targetTop = 200;
   double screenHeight = MediaQuery.of(context).size.height;
 
   double baseTop = screenHeight * 0.40;
   double targetTop;
 
   if (screenHeight < 700) {
-    targetTop = screenHeight * 0.24; // HP kecil
+    targetTop = screenHeight * 0.24;
   } else if (screenHeight > 900) {
-    targetTop = screenHeight * 0.20; // layar gede / tablet
+    targetTop = screenHeight * 0.20; 
   } else {
-    targetTop = screenHeight * 0.22; // normal
+    targetTop = screenHeight * 0.22;
   }
   final visibleServices = services.take(visibleCount).toList();
 
   return Positioned(
-    // top: MediaQuery.of(context).size.height * 0.40 + 115,
-    // // top: headerOpacity * MediaQuery.of(context).size.height * 0.60 + 115,
     top: (baseTop + (targetTop - baseTop) * (1 - headerOpacity)) + 115,
 
     left: 15,
@@ -679,8 +641,10 @@ Widget _buildServiceSection({
                 )
               : ListView.separated(
                   // itemCount: filteredProviders.length,
-                  itemCount: visibleServices.length + 1,
                   controller: scrollController,
+                  shrinkWrap: true, // 🔥 WAJIB
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: visibleServices.length + 1,
                   // itemCount: services.length,
                   padding: EdgeInsets.only(top: 5),
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
