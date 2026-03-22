@@ -22,10 +22,18 @@ class Booking {
 final List<Booking> demoBookings = [
   Booking(
     id: "1",
-    service: demoServices[0],
-    layananDipilih: [demoLayananJasa.firstWhere((e) => e.serviceId == '1')],
+    service: demoServices.firstWhere((s) => s.id == '1'),
+    layananDipilih: demoLayananJasa.where((e) => e.serviceId == '1').toList(),
     tanggal: DateTime.now(),
     totalHarga: 120000,
-    status: "progress",
+    status: "on_the_way",
+  ),
+  Booking(
+    id: "2",
+    service: demoServices.firstWhere((s) => s.id == '2'),
+    layananDipilih: demoLayananJasa.where((e) => e.serviceId == '2').toList(),
+    tanggal: DateTime.now(),
+    totalHarga: 120000,
+    status: "done",
   ),
 ];
