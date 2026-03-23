@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:jasa_app/model/app_colors.dart';
 
 class AppTextStyles {
@@ -44,6 +45,13 @@ class AppTextStyles {
     fontWeight: FontWeight.w500,
     color: AppColors.info,
     height: 1.3,
+  );
+
+  static TextStyle get titleLarge => GoogleFonts.inter(
+    fontSize: 17,
+    fontWeight: FontWeight.w600,
+    letterSpacing: 0,
+    height: 1.27,
   );
 
   // Body Styles

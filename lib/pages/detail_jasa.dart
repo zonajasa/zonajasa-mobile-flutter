@@ -258,7 +258,7 @@ class _DetailJasaState extends State<DetailJasa> {
                         child: MapWidget(
                           key: const ValueKey("mapWidget"),
 
-                          onMapCreated: _onMapCreated, // 🔥 INI PENTING BANGET
+                          onMapCreated: _onMapCreated, 
 
                           cameraOptions: CameraOptions(
                             center: Point(
@@ -271,7 +271,7 @@ class _DetailJasaState extends State<DetailJasa> {
                           ),
 
                           styleUri: MapboxStyles
-                              .MAPBOX_STREETS, // 🔥 WAJIB BIAR GAK PUTIH
+                              .MAPBOX_STREETS, 
                         ),
                       ),
 

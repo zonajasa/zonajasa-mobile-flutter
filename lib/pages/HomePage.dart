@@ -7,6 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:jasa_app/model/category.dart';
 import 'package:jasa_app/model/layanan_jasa.dart';
 import 'package:jasa_app/model/service.dart';
+import 'package:jasa_app/pages/allJasaScreen.dart';
 import 'package:jasa_app/pages/detail_jasa.dart';
 import 'package:jasa_app/services/user_service.dart';
 
@@ -224,7 +225,6 @@ class _buildHomeState extends State<_buildHome> {
                 minHeight: MediaQuery.of(context).size.height,
               ),
               width: MediaQuery.of(context).size.width,
-              color: const Color(0xffeeeefa),
               child: Stack(
                 children: [
                   AnimatedContainer(
@@ -277,10 +277,8 @@ class _buildHomeState extends State<_buildHome> {
             ),
           ),
 
-          /// 🔥 FIXED SEARCH (GA IKUT SCROLL)
           _buildSearch(_refresh),
 
-          /// 🔥 FIXED PROFILE (GA IKUT SCROLL)
           _buildUserAvatar(
             isPressed: isNotifPressed,
             onTapDown: () {
@@ -640,7 +638,12 @@ Widget _buildServiceSection({
               ),
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Alljasascreen()),
+                );
+              },
               style: TextButton.styleFrom(
                 padding: EdgeInsets.zero,
                 minimumSize: const Size(0, 0),
@@ -775,6 +778,14 @@ Widget _buildServiceItem(
     decoration: BoxDecoration(
       color: Colors.white,
       borderRadius: BorderRadius.circular(15),
+      boxShadow: [
+        BoxShadow(
+          // ignore: deprecated_member_use
+          color: Colors.black.withOpacity(0.05),
+          blurRadius: 10,
+          offset: const Offset(0, 5),
+        ),
+      ],
     ),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,

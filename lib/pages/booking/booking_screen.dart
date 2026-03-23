@@ -49,10 +49,7 @@ class _BookingNowState extends State<BookingNow> {
     final layananList = demoLayananJasa
         .where((item) => item.serviceId == service.id)
         .toList();
-    // final selectedLayanan = layananList.firstWhere(
-    //   (l) => l.id == _selectedLayananId,
-    //   orElse: () => layananList.first,
-    // );
+
     double totalHarga = layananList
         .where((l) => _selectedLayananIds.contains(l.id))
         .fold(0, (sum, item) => sum + item.harga);
@@ -372,7 +369,6 @@ class _BookingNowState extends State<BookingNow> {
                 children: [
                   Text(item.name, style: AppTextStyles.body1),
 
-                  // 🔥 optional harga kecil (biar lebih jelas)
                   const SizedBox(height: 4),
                   Text(
                     NumberFormat.currency(
@@ -386,7 +382,6 @@ class _BookingNowState extends State<BookingNow> {
               ),
             ),
 
-            // ✅ tetap pakai icon lama (clean look)
             if (isSelected)
               const Icon(Icons.check_circle, color: AppColors.primary),
           ],
