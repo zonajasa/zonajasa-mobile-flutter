@@ -36,6 +36,7 @@ class _buildHome extends StatefulWidget {
 class _buildHomeState extends State<_buildHome> {
   int selectedCategoryIndex = 0;
   bool isLoadingProviders = false;
+  Position? _userPosition;
   String currentLocation = "Mendeteksi lokasi...";
   bool isLoadingMore = false;
   int _visibleCount = 3;
@@ -182,6 +183,7 @@ class _buildHomeState extends State<_buildHome> {
     Placemark place = placemarks[0];
 
     setState(() {
+      _userPosition = position;
       currentLocation =
           "${place.subLocality ?? place.locality}, ${place.locality}";
     });
@@ -271,6 +273,7 @@ class _buildHomeState extends State<_buildHome> {
                     headerOpacity: headerOpacity, // 🔥 kirim
                     visibleCount: _visibleCount,
                     scrollController: _listScrollController,
+                    userPosition: _userPosition,
                   ),
                 ],
               ),
@@ -601,6 +604,7 @@ Widget _buildServiceSection({
   required double headerOpacity,
   required int visibleCount,
   required ScrollController scrollController,
+  required Position? userPosition,
 }) {
   double screenHeight = MediaQuery.of(context).size.height;
 
@@ -691,6 +695,15 @@ Widget _buildServiceSection({
                     }
                     // final provider = filteredProviders[index];
                     final service = visibleServices[index];
+                    double distance = userPosition != null
+                        ? Geolocator.distanceBetween(
+                                userPosition.latitude,
+                                userPosition.longitude,
+                                service.latitude,
+                                service.longitude,
+                              ) /
+                              1000
+                        : service.jarak;
                     // final service = services[index];
                     final layananList = demoLayananJasa
                         .where((item) => item.serviceId == service.id)
@@ -717,6 +730,7 @@ Widget _buildServiceSection({
                         displayed,
                         sisa,
                         getCategoryName,
+                        distance,
                       ),
                     );
                   },
@@ -771,6 +785,7 @@ Widget _buildServiceItem(
   String displayed,
   int sisa,
   String Function(String) getCategoryName,
+  double distance,
 ) {
   return Container(
     height: 110,
@@ -841,7 +856,7 @@ Widget _buildServiceItem(
 
                   /// Jarak
                   Text(
-                    service.jarak,
+                    "${distance.toStringAsFixed(1)} km",
                     style: const TextStyle(fontSize: 15, color: Colors.black54),
                   ),
                 ],

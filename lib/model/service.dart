@@ -7,7 +7,7 @@ class Service {
   final String categoryId;
   final String image;
   final double rating;
-  final String jarak;
+  final double jarak;
   final int reviewCount;
   final String nomorwa;
   final int bookingCount;
@@ -45,7 +45,7 @@ class Service {
       id: json['id'] as String,
       name: json['name'] as String,
       company: json['company'] as String,
-      jarak: json['jarak'] as String,
+      jarak: (json['jarak'] as num).toDouble(),
       description: json['description'] as String,
       price: (json['price'] as num).toDouble(),
       categoryId: json['categoryId'] as String,
@@ -98,7 +98,7 @@ List<Service> demoServices = [
         'Professional cleaning service to make your home spotless and fresh. Our team uses eco-friendly products and advanced cleaning techniques.',
     price: 120,
     categoryId: '1',
-    jarak: '10 km',
+    jarak: 10,
     image: 'images/people.png',
     rating: 0.1,
     reviewCount: 245,
@@ -119,7 +119,7 @@ List<Service> demoServices = [
         'A thorough cleaning service for homes that need extra attention. Includes cleaning inside appliances, behind furniture, and detailed scrubbing.',
     price: 220,
     categoryId: '1',
-    jarak: '5 km',
+    jarak: 5,
     image: 'images/people.png',
     rating: 4.9,
     reviewCount: 189,
@@ -139,7 +139,7 @@ List<Service> demoServices = [
         'Fast and reliable repair for any pipe leaks in your home. Our certified plumbers fix all types of pipe leaks to prevent water damage.',
     price: 90,
     categoryId: '2',
-    jarak: '10 km',
+    jarak: 15,
     image: 'images/people.png',
     rating: 4.7,
     reviewCount: 156,
@@ -159,7 +159,7 @@ List<Service> demoServices = [
         'Complete bathroom installation service including fixtures, plumbing, and finishing. Transform your bathroom with our expert plumbers.',
     price: 580,
     categoryId: '2',
-    jarak: '10 km',
+    jarak: 40,
     image: 'images/people.png',
     rating: 4.9,
     reviewCount: 122,
@@ -179,7 +179,7 @@ List<Service> demoServices = [
         'Professional electrical wiring service for new installations or rewiring existing systems. All work meets safety codes and regulations.',
     price: 150,
     categoryId: '3',
-    jarak: '30 km',
+    jarak: 30,
     image: 'images/people.png',
     rating: 4.8,
     reviewCount: 178,
@@ -200,7 +200,7 @@ List<Service> demoServices = [
         'Transform your space with our professional painting services. We use high-quality paints and techniques for a perfect finish.',
     price: 320,
     categoryId: '4',
-    jarak: '14 km',
+    jarak: 14,
     image: 'images/people.png',
     rating: 4.7,
     reviewCount: 205,
@@ -221,7 +221,7 @@ List<Service> demoServices = [
         'Professional cleaning service to make your home spotless and fresh. Our team uses eco-friendly products and advanced cleaning techniques.',
     price: 120,
     categoryId: '1',
-    jarak: '10 km',
+    jarak: 10,
     image: 'images/people.png',
     rating: 0.1,
     reviewCount: 245,
@@ -242,7 +242,7 @@ List<Service> demoServices = [
         'Professional programming to make your home spotless and fresh. Our team uses eco-friendly products and advanced cleaning techniques.',
     price: 120,
     categoryId: '1',
-    jarak: '20 km',
+    jarak: 20,
     image: 'images/people.png',
     rating: 5.0,
     reviewCount: 100,
@@ -263,7 +263,7 @@ List<Service> demoServices = [
         'Professional cleaning service to make your home spotless and fresh. Our team uses eco-friendly products and advanced cleaning techniques.',
     price: 120,
     categoryId: '1',
-    jarak: '10 km',
+    jarak: 10,
     image: 'images/people.png',
     rating: 0.1,
     reviewCount: 245,

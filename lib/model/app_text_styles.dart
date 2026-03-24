@@ -54,6 +54,20 @@ class AppTextStyles {
     height: 1.27,
   );
 
+  static TextStyle get headlineSmall => GoogleFonts.inter(
+    fontSize: 20,
+    fontWeight: FontWeight.w600,
+    letterSpacing: 0,
+    height: 1.33,
+  );
+
+  static TextStyle get bodyMedium => GoogleFonts.inter(
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+    letterSpacing: 0.25,
+    height: 1.43,
+  );
+
   // Body Styles
   static const TextStyle body1 = TextStyle(
     fontSize: 16,
