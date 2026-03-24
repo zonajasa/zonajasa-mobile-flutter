@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:jasa_app/core/constants/app_constants.dart';
+import 'package:jasa_app/core/widget/como_text_field.dart';
 import 'package:jasa_app/model/app_colors.dart';
 import 'package:jasa_app/model/app_text_styles.dart';
 import 'package:jasa_app/model/category.dart';
@@ -17,15 +18,11 @@ class Alljasascreen extends StatefulWidget {
 }
 
 class _AlljasascreenState extends State<Alljasascreen> {
+  final TextEditingController _searchController = TextEditingController();
   static const double defaultDistance = 50;
   final List<String> _selectedFilters = [];
   String _selectedCategory = 'All';
   String _selectedPriceRange = 'All';
-  String _selectedSortBy = 'Relevance';
-  String _selectedBrand = 'All';
-  double _selectedRating = 0.0;
-  bool _inStockOnly = false;
-  bool _onSaleOnly = false;
   final List<Category> _categories = demoCategories;
   List<Service> searchResults = [];
   List<Service> _allServices = demoServices;
@@ -69,6 +66,7 @@ class _AlljasascreenState extends State<Alljasascreen> {
 
   void _applyCurrentFilters([String query = ""]) {
     List<Service> filtered = _allServices;
+    print("TOTAL AWAL: ${filtered.length}");
 
     // 🔍 SEARCH
     if (query.isNotEmpty) {
@@ -76,6 +74,7 @@ class _AlljasascreenState extends State<Alljasascreen> {
         return service.name.toLowerCase().contains(query.toLowerCase()) ||
             service.description.toLowerCase().contains(query.toLowerCase());
       }).toList();
+      print("SETELAH SEARCH: ${filtered.length}");
     }
 
     // 🧩 CATEGORY
@@ -83,10 +82,11 @@ class _AlljasascreenState extends State<Alljasascreen> {
       filtered = filtered
           .where((service) => service.categoryId == _selectedCategory)
           .toList();
+      print("SETELAH CATEGORY: ${filtered.length}");
     }
 
     // 📍 DISTANCE FILTER
-    if (_userPosition != null) {
+    if (_userPosition != null && _maxDistance != defaultDistance) {
       filtered = filtered.where((service) {
         final distance =
             Geolocator.distanceBetween(
@@ -99,6 +99,7 @@ class _AlljasascreenState extends State<Alljasascreen> {
 
         return distance <= _maxDistance;
       }).toList();
+      print("SETELAH DISTANCE: ${filtered.length}");
 
       // 🔥 TARUH DI SINI (SETELAH FILTER)
       filtered.sort((a, b) {
@@ -148,11 +149,17 @@ class _AlljasascreenState extends State<Alljasascreen> {
           }
         });
       }).toList();
+
+      print("SETELAH PRICE: ${filtered.length}");
     }
 
     setState(() {
       searchResults = filtered;
     });
+  }
+
+  void _performSearch(String query) {
+    _applyCurrentFilters(query);
   }
 
   @override
@@ -166,7 +173,16 @@ class _AlljasascreenState extends State<Alljasascreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SafeArea(child: Column(children: [_buildHeader()])),
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildHeader(),
+            _buildSearchSection(),
+            _buildFilterChips(),
+            _buildResultsHeader(),
+          ],
+        ),
+      ),
     );
   }
 
@@ -210,7 +226,7 @@ class _AlljasascreenState extends State<Alljasascreen> {
                       width: 8,
                       height: 8,
                       decoration: const BoxDecoration(
-                        color: AppColors.accent,
+                        color: AppColors.secondary,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -223,9 +239,164 @@ class _AlljasascreenState extends State<Alljasascreen> {
     );
   }
 
+  // PENCARIAN
+  Widget _buildSearchSection() {
+    return Container(
+      color: AppColors.white,
+      padding: const EdgeInsets.fromLTRB(
+        AppConstants.paddingM,
+        0,
+        AppConstants.paddingM,
+        AppConstants.paddingM,
+      ),
+      child: ComoTextField(
+        controller: _searchController,
+        hint: 'Cari layanan di sini...',
+        prefixIcon: const HugeIcon(
+          icon: HugeIcons.strokeRoundedSearch01,
+          color: AppColors.textSecondary,
+          size: 25,
+          strokeWidth: 2,
+        ),
+        suffixIcon: _searchController.text.isNotEmpty
+            ? GestureDetector(
+                onTap: () {
+                  _searchController.clear();
+                  _performSearch('');
+                },
+                child: const HugeIcon(
+                  icon: HugeIcons.strokeRoundedCancel01,
+                  color: AppColors.textSecondary,
+                  size: 25,
+                  strokeWidth: 2,
+                ),
+              )
+            : null,
+        onChanged: (value) {
+          _performSearch(value);
+        },
+      ),
+    );
+  }
 
+  // HASIL RESULT HEADER
+  Widget _buildResultsHeader() {
+    return Container(
+      color: AppColors.white,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppConstants.paddingM,
+        vertical: AppConstants.paddingS,
+      ),
+      child: Row(
+        children: [
+          Text(
+            '${searchResults.length} Penyedia jasa yang Ditemukan',
+            style: AppTextStyles.bodyMedium.copyWith(
+              color: AppColors.textSecondary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-// ====================================== FILTER ============================================= //
+  // KALAU KATEGORINYA UDAH DI PILIH BISA DI HAPUS ==============================
+  Widget _buildFilterChips() {
+    if (_selectedFilters.isEmpty) return const SizedBox.shrink();
+    return Container(
+      color: AppColors.white,
+      padding: const EdgeInsets.fromLTRB(
+        AppConstants.paddingM,
+        0,
+        AppConstants.paddingM,
+        AppConstants.paddingS,
+      ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            ...(_selectedFilters.map((filter) {
+              return Container(
+                margin: const EdgeInsets.only(right: AppConstants.paddingS),
+                child: Chip(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  label: Text(
+                    filter,
+                    style: AppTextStyles.caption.copyWith(
+                      color: AppColors.white,
+                    ),
+                  ),
+                  backgroundColor: AppColors.grey900,
+                  deleteIcon: const HugeIcon(
+                    icon: HugeIcons.strokeRoundedCancel01,
+                    color: AppColors.white,
+                    size: 16,
+                  ),
+                  onDeleted: () {
+                    setState(() {
+                      _selectedFilters.remove(filter);
+                      _clearSpecificFilter(filter);
+                    });
+                  },
+                ),
+              );
+            })),
+            if (_selectedFilters.isNotEmpty)
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    _selectedFilters.clear();
+                    _selectedCategory = 'All';
+                    _selectedPriceRange = 'All';
+                    _performSearch(_searchController.text);
+                  });
+                },
+                child: Text(
+                  'Hapus Semua',
+                  style: AppTextStyles.body2.copyWith(
+                    color: AppColors.secondary,
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _clearSpecificFilter(String filter) {
+    // CATEGORY
+    if (_categories.any((c) => c.name == filter)) {
+      _selectedCategory = 'All';
+    }
+    // PRICE
+    else if (_priceRanges.contains(filter)) {
+      _selectedPriceRange = 'All';
+    }
+    // DISTANCE
+    else if (filter.contains('km')) {
+      _maxDistance = defaultDistance;
+    }
+
+    _performSearch(_searchController.text);
+  }
+  //=============================================================================
+  //
+  //
+
+  // HASIL PENCARIAN DATA
+
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  // ====================================== FILTER ============================================= //
   //TAMPILAN DALAM FILTER
   void _showFilterBottomSheet() {
     showModalBottomSheet(
@@ -610,11 +781,6 @@ class _AlljasascreenState extends State<Alljasascreen> {
     int count = 0;
     if (_selectedCategory != 'All') count++;
     if (_selectedPriceRange != 'All') count++;
-    if (_selectedBrand != 'All') count++;
-    if (_selectedRating > 0) count++;
-    if (_inStockOnly) count++;
-    if (_onSaleOnly) count++;
-    if (_selectedSortBy != 'Relevance') count++;
     if (_maxDistance != defaultDistance) count++;
     return count;
   }
@@ -645,11 +811,6 @@ class _AlljasascreenState extends State<Alljasascreen> {
                         setModalState(() {
                           _selectedCategory = 'All';
                           _selectedPriceRange = 'All';
-                          _selectedBrand = 'All';
-                          _selectedRating = 0.0;
-                          _inStockOnly = false;
-                          _onSaleOnly = false;
-                          _selectedSortBy = 'Relevance';
                           _selectedFilters.clear();
                           _maxDistance = 50;
                         });
@@ -696,7 +857,7 @@ class _AlljasascreenState extends State<Alljasascreen> {
               flex: 2,
               child: ElevatedButton(
                 onPressed: () {
-                  _applyCurrentFilters(); // 🔥 APPLY BENERAN
+                  _applyFilters();
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
@@ -739,5 +900,35 @@ class _AlljasascreenState extends State<Alljasascreen> {
     );
   }
 
-// ============================================================================================= //
+  // ============================================================================================= //
+  //
+  //
+  //
+  //
+  void _applyFilters() {
+    _selectedFilters.clear();
+
+    if (_selectedCategory != 'All') {
+      final categoryName = _categories
+          .firstWhere((c) => c.id == _selectedCategory)
+          .name;
+
+      _selectedFilters.add(categoryName);
+    }
+
+    if (_selectedPriceRange != 'All') {
+      _selectedFilters.add(_selectedPriceRange);
+    }
+
+    if (_maxDistance != defaultDistance) {
+      _selectedFilters.add("${_maxDistance.toInt()} km");
+    }
+    _performSearch(_searchController.text);
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 }
