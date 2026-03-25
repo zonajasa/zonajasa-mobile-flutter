@@ -63,7 +63,13 @@ class _UiPinCodeState extends State<UiPinCode> {
   Future<void> validateOtp(String value) async {
     showLoadingDialog();
 
-    bool isValid = await AuthServices.verifyOtp(value);
+    bool isValid;
+
+    if (widget.mode == OtpMode.register) {
+      isValid = await AuthOtp.verifyRegisterOtp(value);
+    } else {
+      isValid = await AuthOtp.verifyResetOtp(value);
+    }
 
     if (!mounted) return;
 
@@ -185,7 +191,7 @@ class _UiPinCodeState extends State<UiPinCode> {
 
                       if (!mounted) return;
 
-                      handleNavigationAfterOtp(); 
+                      handleNavigationAfterOtp();
                     },
                     child: const Text(
                       "Continue",
@@ -409,3 +415,18 @@ class _UiPinCodeState extends State<UiPinCode> {
     }
   }
 }
+
+
+// POST /verify-register-otp
+// {
+//   "phone": "...",
+//   "otp": "...",
+//   "token": "register_token"
+// }
+
+// POST /verify-reset-otp
+// {
+//   "phone": "...",
+//   "otp": "...",
+//   "token": "reset_token"
+// }

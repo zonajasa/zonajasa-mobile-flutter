@@ -32,10 +32,20 @@ class AuthService {
 }
 
 // OTP DUMMY
-class AuthServices {
+class AuthOtp {
   static Future<bool> verifyOtp(String otp) async {
     await Future.delayed(const Duration(seconds: 2));
 
     return otp == "123456";
+  }
+
+  static Future<bool> verifyRegisterOtp(String otp) async {
+    await Future.delayed(const Duration(seconds: 1));
+    return otp == "123456";
+  }
+
+  static Future<bool> verifyResetOtp(String otp) async {
+    await Future.delayed(const Duration(seconds: 1));
+    return otp == "111222";
   }
 }
