@@ -1,14 +1,19 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:jasa_app/AppLoader.dart';
+import 'package:jasa_app/ForgotAuth/ResetPasswordPage.dart';
 import 'package:jasa_app/navigationPage.dart';
 import 'package:jasa_app/services/auth_service.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class UiPinCode extends StatefulWidget {
-  const UiPinCode({super.key});
+enum OtpMode { register, forgotPassword }
 
+class UiPinCode extends StatefulWidget {
+  final String phone;
+  final OtpMode mode;
+
+  const UiPinCode({super.key, required this.phone, required this.mode});
   @override
   State<UiPinCode> createState() => _UiPinCodeState();
 }
@@ -170,22 +175,17 @@ class _UiPinCodeState extends State<UiPinCode> {
                       ),
                     ),
                     onPressed: () async {
-                      Navigator.pop(context); // tutup dialog
+                      Navigator.pop(context);
 
                       setState(() {
                         isLoading = true;
                       });
 
-                      await Future.delayed(const Duration(seconds: 3));
+                      await Future.delayed(const Duration(seconds: 2));
 
                       if (!mounted) return;
 
-                      Navigator.pushReplacement(
-                        pageContext,
-                        MaterialPageRoute(
-                          builder: (context) => const Navigationpage(),
-                        ),
-                      );
+                      handleNavigationAfterOtp(); 
                     },
                     child: const Text(
                       "Continue",
@@ -392,5 +392,20 @@ class _UiPinCodeState extends State<UiPinCode> {
               ),
             ),
     );
+  }
+
+  void handleNavigationAfterOtp() {
+    if (widget.mode == OtpMode.register) {
+      Navigator.pushAndRemoveUntil(
+        pageContext,
+        MaterialPageRoute(builder: (_) => const Navigationpage()),
+        (route) => false,
+      );
+    } else {
+      Navigator.pushReplacement(
+        pageContext,
+        MaterialPageRoute(builder: (_) => const ResetpasswordPage()),
+      );
+    }
   }
 }

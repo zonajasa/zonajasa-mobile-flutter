@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:jasa_app/ForgotAuth/resetCard.dart';
 
-class Resetpasswordpage extends StatefulWidget {
-  const Resetpasswordpage({super.key});
+class ResetpasswordPage extends StatefulWidget {
+  const ResetpasswordPage({super.key});
 
   @override
-  State<Resetpasswordpage> createState() => _ResetpasswordpageState();
+  State<ResetpasswordPage> createState() => _ResetpasswordPageState();
 }
 
-class _ResetpasswordpageState extends State<Resetpasswordpage> {
+class _ResetpasswordPageState extends State<ResetpasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
