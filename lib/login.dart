@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jasa_app/AppLoader.dart';
+import 'package:jasa_app/ForgotAuth/ForgotPasswordPage.dart';
 import 'package:jasa_app/navigationPage.dart';
 import 'package:jasa_app/login_card.dart';
 import 'package:jasa_app/register.dart';
@@ -68,6 +69,11 @@ class _LoginState extends State<Login> {
                         child: TextButton(
                           onPressed: () {
                             // proses lupa password
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => Forgotpasswordpage(),
+                              ),
+                            );
                           },
                           child: const Text(
                             "Lupa kata sandi?",
