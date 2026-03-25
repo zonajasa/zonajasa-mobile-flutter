@@ -44,7 +44,7 @@ class _DetailJasaState extends State<DetailJasa> {
       height: 640,
       data: bytes.buffer.asUint8List(),
     );
-    final style = await mapboxMap.style;
+    final style = mapboxMap.style;
 
     await style.addStyleImage("my-marker", 1.0, image, false, [], [], null);
 
@@ -474,7 +474,7 @@ class _DetailJasaState extends State<DetailJasa> {
                   const Text('Harga Mulai', style: AppTextStyles.body2),
                   const SizedBox(height: 4),
                   Text(
-                    '${NumberFormat.currency(locale: 'id_ID', symbol: 'Rp', decimalDigits: 0).format(minHarga)}',
+                    NumberFormat.currency(locale: 'id_ID', symbol: 'Rp', decimalDigits: 0).format(minHarga),
                     style: AppTextStyles.headline2.copyWith(
                       color: AppColors.primary,
                     ),

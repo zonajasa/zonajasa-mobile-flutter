@@ -4,11 +4,14 @@ import 'package:geolocator/geolocator.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:jasa_app/core/constants/app_constants.dart';
 import 'package:jasa_app/core/widget/como_text_field.dart';
+import 'package:jasa_app/core/widget/service_card.dart';
 import 'package:jasa_app/model/app_colors.dart';
 import 'package:jasa_app/model/app_text_styles.dart';
 import 'package:jasa_app/model/category.dart';
 import 'package:jasa_app/model/layanan_jasa.dart';
 import 'package:jasa_app/model/service.dart';
+import 'package:jasa_app/pages/detail_jasa.dart';
+import 'package:intl/intl.dart';
 
 class Alljasascreen extends StatefulWidget {
   const Alljasascreen({super.key});
@@ -25,7 +28,7 @@ class _AlljasascreenState extends State<Alljasascreen> {
   String _selectedPriceRange = 'All';
   final List<Category> _categories = demoCategories;
   List<Service> searchResults = [];
-  List<Service> _allServices = demoServices;
+  final List<Service> _allServices = demoServices;
   Position? _userPosition;
   double _maxDistance = 50;
 
@@ -162,11 +165,29 @@ class _AlljasascreenState extends State<Alljasascreen> {
     _applyCurrentFilters(query);
   }
 
+  void _loadInitialProducts() {
+    setState(() {
+      _isLoading = true;
+      _selectedCategory = 'All';
+      _selectedPriceRange = 'All';
+      _maxDistance = defaultDistance;
+      _selectedFilters.clear();
+    });
+
+    Future.delayed(const Duration(milliseconds: 300), () {
+      setState(() {
+        searchResults = _allServices;
+        _isLoading = false;
+      });
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     _getUserLocation();
     searchResults = _allServices;
+    _loadInitialProducts();
   }
 
   @override
@@ -180,6 +201,9 @@ class _AlljasascreenState extends State<Alljasascreen> {
             _buildSearchSection(),
             _buildFilterChips(),
             _buildResultsHeader(),
+            Expanded(
+              child: _isLoading ? _buildLoadingState() : _buildSearchResults(),
+            ),
           ],
         ),
       ),
@@ -251,7 +275,7 @@ class _AlljasascreenState extends State<Alljasascreen> {
       ),
       child: ComoTextField(
         controller: _searchController,
-        hint: 'Cari layanan di sini...',
+        hint: 'Cari penyedia jasa di sini...',
         prefixIcon: const HugeIcon(
           icon: HugeIcons.strokeRoundedSearch01,
           color: AppColors.textSecondary,
@@ -383,17 +407,124 @@ class _AlljasascreenState extends State<Alljasascreen> {
     _performSearch(_searchController.text);
   }
   //=============================================================================
-  //
-  //
 
-  // HASIL PENCARIAN DATA
+  // HASIL PENCARIAN ================ LIST DATA =====================================
+  Widget _buildSearchResults() {
+    if (searchResults.isEmpty) {
+      return _buildEmptyState();
+    }
+    return GridView.builder(
+      padding: const EdgeInsets.all(AppConstants.paddingM),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 0.75,
+        crossAxisSpacing: AppConstants.paddingM,
+        mainAxisSpacing: AppConstants.paddingM,
+      ),
+      itemCount: searchResults.length,
+      itemBuilder: (context, index) {
+        final service = searchResults[index];
 
-  //
-  //
-  //
-  //
-  //
-  //
+        final layanan = demoLayananJasa
+            .where((l) => l.serviceId == service.id)
+            .toList();
+
+        double minPrice = 0;
+        if (layanan.isNotEmpty) {
+          minPrice = layanan
+              .map((e) => e.harga)
+              .reduce((a, b) => a < b ? a : b);
+        }
+
+        final displayed = layanan.take(1).map((e) => e.name).join(', ');
+
+        final sisa = layanan.length - 1;
+
+        final categoryName = getCategoryName(service.categoryId);
+
+        final servicesText = layanan.isEmpty
+            ? "Tidak ada layanan"
+            : sisa > 0
+            ? "$displayed +$sisa lainnya"
+            : displayed;
+
+        return ServiceCard(
+          imageUrl: service.image,
+          title: service.name,
+          category: categoryName,
+          services: servicesText,
+          price: minPrice > 0
+              ? NumberFormat.currency(
+                  locale: 'id_ID',
+                  symbol: 'Rp ',
+                  decimalDigits: 0,
+                ).format(minPrice)
+              : 'Harga N/A',
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DetailJasa(serviceId: service.id),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // KALAU DATANYA / LIST DATA NYA KOSONG ===========================================
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const HugeIcon(
+            icon: HugeIcons.strokeRoundedSearch01,
+            size: 64,
+            color: AppColors.textSecondary,
+          ),
+          const SizedBox(height: AppConstants.paddingL),
+          Text(
+            'Tidak ditemukan penyedia jasa',
+            style: AppTextStyles.titleMedium.copyWith(
+              color: AppColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: AppConstants.paddingS),
+          Text(
+            'Coba cari dengan kata kunci yang berbeda \natau sesuaikan filter Anda',
+            textAlign: TextAlign.center,
+            style: AppTextStyles.bodyMedium.copyWith(
+              color: AppColors.textSecondary,
+            ),
+          ),
+          const SizedBox(height: AppConstants.paddingL),
+          OutlinedButton(
+            onPressed: () {
+              FocusScope.of(context).unfocus();
+              _searchController.clear();
+              _loadInitialProducts();
+            },
+            child: Text(
+              'Hapus Pencarian',
+              style: AppTextStyles.titleMedium.copyWith(
+                color: AppColors.textPrimary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // LOADING LIST DATA
+  Widget _buildLoadingState() {
+    return const Center(
+      child: CircularProgressIndicator(color: AppColors.grey900),
+    );
+  }
+
   //
   //
   // ====================================== FILTER ============================================= //
@@ -528,7 +659,7 @@ class _AlljasascreenState extends State<Alljasascreen> {
                 ),
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -593,7 +724,7 @@ class _AlljasascreenState extends State<Alljasascreen> {
                 ),
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -924,6 +1055,20 @@ class _AlljasascreenState extends State<Alljasascreen> {
       _selectedFilters.add("${_maxDistance.toInt()} km");
     }
     _performSearch(_searchController.text);
+  }
+
+  String getCategoryName(String categoryId) {
+    final category = _categories.firstWhere(
+      (c) => c.id == categoryId,
+      orElse: () => Category(
+        id: '',
+        name: 'Unknown',
+        icon: '',
+        image: '',
+        description: '',
+      ),
+    );
+    return category.name;
   }
 
   @override

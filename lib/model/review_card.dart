@@ -7,7 +7,7 @@ import 'package:jasa_app/model/review.dart';
 class ReviewCard extends StatelessWidget {
   final Review review;
 
-  const ReviewCard({Key? key, required this.review}) : super(key: key);
+  const ReviewCard({super.key, required this.review});
 
   @override
   Widget build(BuildContext context) {

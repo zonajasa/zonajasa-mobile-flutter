@@ -21,7 +21,7 @@ class _BookingNowState extends State<BookingNow> {
   DateTime _selectedDate = DateTime.now().add(const Duration(days: 1));
   String _selectedTime = '10:00 AM';
   // String? _selectedLayananId;
-  List<String> _selectedLayananIds = [];
+  final List<String> _selectedLayananIds = [];
 
   final List<String> _availableTimes = [
     '09:00 AM',

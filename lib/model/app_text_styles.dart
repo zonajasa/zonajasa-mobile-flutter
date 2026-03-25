@@ -68,6 +68,41 @@ class AppTextStyles {
     height: 1.43,
   );
 
+  static TextStyle get labelSmall => GoogleFonts.inter(
+    fontSize: 11,
+    fontWeight: FontWeight.w500,
+    letterSpacing: 0.5,
+    height: 1.45,
+  );
+
+  static TextStyle get productPrice => GoogleFonts.inter(
+    fontSize: 18,
+    fontWeight: FontWeight.w700,
+    letterSpacing: 0,
+    height: 1.2,
+  );
+
+  static TextStyle get bodySmall => GoogleFonts.inter(
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+    letterSpacing: 0.4,
+    height: 1.33,
+  );
+
+  static TextStyle get titleMedium => GoogleFonts.inter(
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+    letterSpacing: 0.15,
+    height: 1.50,
+  );
+
+  static TextStyle get categoryTitle => GoogleFonts.inter(
+    fontSize: 14,
+    fontWeight: FontWeight.w500,
+    letterSpacing: 0.1,
+    height: 1.2,
+  );
+
   // Body Styles
   static const TextStyle body1 = TextStyle(
     fontSize: 16,
