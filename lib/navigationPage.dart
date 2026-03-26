@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jasa_app/pages/HomePage.dart';
+import 'package:jasa_app/pages/notifikasiScreen.dart';
 import 'package:jasa_app/pages/pesanan/ui_pemesanan.dart';
 import 'package:jasa_app/pages/profileUI.dart';
 
@@ -24,7 +25,7 @@ class _NavigationpageState extends State<Navigationpage> {
   final List<Widget> _pages = [
     HomePage(),
     PemesananPage(),
-    Container(),
+    Notifikasiscreen(),
     Profileui(),
   ];
   @override

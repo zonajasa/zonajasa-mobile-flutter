@@ -476,44 +476,46 @@ class _AlljasascreenState extends State<Alljasascreen> {
   // KALAU DATANYA / LIST DATA NYA KOSONG ===========================================
   Widget _buildEmptyState() {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const HugeIcon(
-            icon: HugeIcons.strokeRoundedSearch01,
-            size: 64,
-            color: AppColors.textSecondary,
-          ),
-          const SizedBox(height: AppConstants.paddingL),
-          Text(
-            'Tidak ditemukan penyedia jasa',
-            style: AppTextStyles.titleMedium.copyWith(
-              color: AppColors.textPrimary,
-            ),
-          ),
-          const SizedBox(height: AppConstants.paddingS),
-          Text(
-            'Coba cari dengan kata kunci yang berbeda \natau sesuaikan filter Anda',
-            textAlign: TextAlign.center,
-            style: AppTextStyles.bodyMedium.copyWith(
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const HugeIcon(
+              icon: HugeIcons.strokeRoundedSearch01,
+              size: 64,
               color: AppColors.textSecondary,
             ),
-          ),
-          const SizedBox(height: AppConstants.paddingL),
-          OutlinedButton(
-            onPressed: () {
-              FocusScope.of(context).unfocus();
-              _searchController.clear();
-              _loadInitialProducts();
-            },
-            child: Text(
-              'Hapus Pencarian',
+            const SizedBox(height: AppConstants.paddingL),
+            Text(
+              'Tidak ditemukan penyedia jasa',
               style: AppTextStyles.titleMedium.copyWith(
                 color: AppColors.textPrimary,
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: AppConstants.paddingS),
+            Text(
+              'Coba cari dengan kata kunci yang berbeda \natau sesuaikan filter Anda',
+              textAlign: TextAlign.center,
+              style: AppTextStyles.bodyMedium.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            ),
+            const SizedBox(height: AppConstants.paddingL),
+            OutlinedButton(
+              onPressed: () {
+                FocusScope.of(context).unfocus();
+                _searchController.clear();
+                _loadInitialProducts();
+              },
+              child: Text(
+                'Hapus Pencarian',
+                style: AppTextStyles.titleMedium.copyWith(
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
