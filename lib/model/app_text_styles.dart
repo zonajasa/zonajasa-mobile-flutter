@@ -53,6 +53,19 @@ class AppTextStyles {
     letterSpacing: 0,
     height: 1.27,
   );
+  static TextStyle get titleLarges => GoogleFonts.inter(
+    fontSize: 22,
+    fontWeight: FontWeight.w600,
+    letterSpacing: 0,
+    height: 1.27,
+  );
+
+  static TextStyle get labelMedium => GoogleFonts.inter(
+    fontSize: 12,
+    fontWeight: FontWeight.w500,
+    letterSpacing: 0.5,
+    height: 1.33,
+  );
 
   static TextStyle get headlineSmall => GoogleFonts.inter(
     fontSize: 20,

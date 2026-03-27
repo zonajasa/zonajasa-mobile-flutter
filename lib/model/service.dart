@@ -4,7 +4,7 @@ class Service {
   final String company;
   final String description;
   final double price;
-  final String categoryId;
+  final List<String> categoryId;
   final String image;
   final double rating;
   final double jarak;
@@ -48,7 +48,9 @@ class Service {
       jarak: (json['jarak'] as num).toDouble(),
       description: json['description'] as String,
       price: (json['price'] as num).toDouble(),
-      categoryId: json['categoryId'] as String,
+      categoryId: (json['categoryId'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
       image: json['image'] as String,
       rating: (json['rating'] as num).toDouble(),
       reviewCount: json['reviewCount'] as int,
@@ -97,7 +99,7 @@ List<Service> demoServices = [
     description:
         'Professional cleaning service to make your home spotless and fresh. Our team uses eco-friendly products and advanced cleaning techniques.',
     price: 120,
-    categoryId: '1',
+    categoryId: ['1', '2'],
     jarak: 10,
     image: 'images/people.png',
     rating: 0.1,
@@ -118,7 +120,7 @@ List<Service> demoServices = [
     description:
         'A thorough cleaning service for homes that need extra attention. Includes cleaning inside appliances, behind furniture, and detailed scrubbing.',
     price: 220,
-    categoryId: '1',
+    categoryId: ['1'],
     jarak: 5,
     image: 'images/people.png',
     rating: 4.9,
@@ -138,7 +140,7 @@ List<Service> demoServices = [
     description:
         'Fast and reliable repair for any pipe leaks in your home. Our certified plumbers fix all types of pipe leaks to prevent water damage.',
     price: 90,
-    categoryId: '2',
+    categoryId: ['2'],
     jarak: 15,
     image: 'images/people.png',
     rating: 4.7,
@@ -158,7 +160,7 @@ List<Service> demoServices = [
     description:
         'Complete bathroom installation service including fixtures, plumbing, and finishing. Transform your bathroom with our expert plumbers.',
     price: 580,
-    categoryId: '2',
+    categoryId: ['2'],
     jarak: 40,
     image: 'images/people.png',
     rating: 4.9,
@@ -178,7 +180,7 @@ List<Service> demoServices = [
     description:
         'Professional electrical wiring service for new installations or rewiring existing systems. All work meets safety codes and regulations.',
     price: 150,
-    categoryId: '3',
+    categoryId: ['3'],
     jarak: 30,
     image: 'images/people.png',
     rating: 4.8,
@@ -199,7 +201,7 @@ List<Service> demoServices = [
     description:
         'Transform your space with our professional painting services. We use high-quality paints and techniques for a perfect finish.',
     price: 320,
-    categoryId: '4',
+    categoryId: ['4'],
     jarak: 14,
     image: 'images/people.png',
     rating: 4.7,
@@ -220,7 +222,7 @@ List<Service> demoServices = [
     description:
         'Professional cleaning service to make your home spotless and fresh. Our team uses eco-friendly products and advanced cleaning techniques.',
     price: 120,
-    categoryId: '1',
+    categoryId: ['1'],
     jarak: 10,
     image: 'images/people.png',
     rating: 0.1,
@@ -241,7 +243,7 @@ List<Service> demoServices = [
     description:
         'Professional programming to make your home spotless and fresh. Our team uses eco-friendly products and advanced cleaning techniques.',
     price: 120,
-    categoryId: '1',
+    categoryId: ['1'],
     jarak: 20,
     image: 'images/people.png',
     rating: 5.0,
@@ -262,7 +264,7 @@ List<Service> demoServices = [
     description:
         'Professional cleaning service to make your home spotless and fresh. Our team uses eco-friendly products and advanced cleaning techniques.',
     price: 120,
-    categoryId: '1',
+    categoryId: ['1'],
     jarak: 10,
     image: 'images/people.png',
     rating: 0.1,
@@ -283,7 +285,7 @@ List<Service> demoServices = [
     description:
         'Professional cleaning service to make your home spotless and fresh. Our team uses eco-friendly products and advanced cleaning techniques.',
     price: 120,
-    categoryId: '1',
+    categoryId: ['1'],
     jarak: 10,
     image: 'images/people.png',
     rating: 0.1,
@@ -304,7 +306,7 @@ List<Service> demoServices = [
     description:
         'Professional cleaning service to make your home spotless and fresh. Our team uses eco-friendly products and advanced cleaning techniques.',
     price: 120,
-    categoryId: '1',
+    categoryId: ['1'],
     jarak: 10,
     image: 'images/people.png',
     rating: 0.1,

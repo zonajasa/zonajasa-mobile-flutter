@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jasa_app/pages/providerLayanan.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:jasa_app/model/app_colors.dart';
 import 'package:jasa_app/model/app_text_styles.dart';
@@ -84,7 +85,7 @@ class _DetailJasaState extends State<DetailJasa> {
         .where((r) => r.serviceId == widget.serviceId)
         .toList();
     final category = demoCategories.firstWhere(
-      (c) => c.id == service.categoryId,
+      (c) => service.categoryId.contains(c.id),
     );
     final layananList = demoLayananJasa
         .where((item) => item.serviceId == service.id)
@@ -181,9 +182,46 @@ class _DetailJasaState extends State<DetailJasa> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
-                            child: Text(
-                              category.name,
-                              style: AppTextStyles.headline4,
+                            child: Wrap(
+                              spacing: 8,
+                              children: service.categoryId.map((id) {
+                                final cat = demoCategories.firstWhere(
+                                  (c) => c.id == id,
+                                  orElse: () => Category(
+                                    id: '',
+                                    name: 'Unknown',
+                                    icon: '',
+                                    image: '',
+                                    description: '',
+                                  ),
+                                );
+
+                                return ActionChip(
+                                  label: Text(
+                                    cat.name,
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      color: Color(0xff0e86e4),
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  backgroundColor: const Color(0xffe3f2fd),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => Providerlayanan(
+                                          service: service,
+                                          categoryId: id,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              }).toList(),
                             ),
                           ),
                         ],
@@ -213,6 +251,7 @@ class _DetailJasaState extends State<DetailJasa> {
                             )
                           : Column(
                               children: layananList
+                                  .take(5) // 🔥 BATAS 5
                                   .map(
                                     (item) => Padding(
                                       padding: const EdgeInsets.only(bottom: 8),
@@ -231,6 +270,18 @@ class _DetailJasaState extends State<DetailJasa> {
                                   )
                                   .toList(),
                             ),
+                      if (layananList.length > 5)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Text(
+                            "+${layananList.length - 5} layanan lainnya",
+                            style: const TextStyle(
+                              fontSize: 13,
+                              color: Colors.grey,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ),
                       // end
                     ],
                   ),
@@ -258,7 +309,7 @@ class _DetailJasaState extends State<DetailJasa> {
                         child: MapWidget(
                           key: const ValueKey("mapWidget"),
 
-                          onMapCreated: _onMapCreated, 
+                          onMapCreated: _onMapCreated,
 
                           cameraOptions: CameraOptions(
                             center: Point(
@@ -270,8 +321,7 @@ class _DetailJasaState extends State<DetailJasa> {
                             zoom: 14,
                           ),
 
-                          styleUri: MapboxStyles
-                              .MAPBOX_STREETS, 
+                          styleUri: MapboxStyles.MAPBOX_STREETS,
                         ),
                       ),
 
@@ -474,7 +524,11 @@ class _DetailJasaState extends State<DetailJasa> {
                   const Text('Harga Mulai', style: AppTextStyles.body2),
                   const SizedBox(height: 4),
                   Text(
-                    NumberFormat.currency(locale: 'id_ID', symbol: 'Rp', decimalDigits: 0).format(minHarga),
+                    NumberFormat.currency(
+                      locale: 'id_ID',
+                      symbol: 'Rp',
+                      decimalDigits: 0,
+                    ).format(minHarga),
                     style: AppTextStyles.headline2.copyWith(
                       color: AppColors.primary,
                     ),

@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoding/geocoding.dart';
@@ -153,7 +151,7 @@ class _buildHomeState extends State<_buildHome> {
     String categoryId = demoCategories[selectedCategoryIndex].id;
 
     return demoServices
-        .where((service) => service.categoryId == categoryId)
+        .where((service) => service.categoryId.contains(categoryId))
         .toList();
   }
 
@@ -184,7 +182,7 @@ class _buildHomeState extends State<_buildHome> {
               setState(() {
                 selectedCategoryIndex = index;
                 isLoadingProviders = true;
-                _visibleCount = 3;
+                _visibleCount = 4; // 🔥 konsisten
               });
 
               await Future.delayed(const Duration(milliseconds: 600));
@@ -637,10 +635,10 @@ Widget _buildServiceItem(
               ),
               Text(
                 layananList.isEmpty
-                    ? "${getCategoryName(service.categoryId)} • Tidak ada layanan"
+                    ? "${getCategoryName(service.categoryId.first)} • Tidak ada layanan"
                     : sisa > 0
-                    ? "${getCategoryName(service.categoryId)} • $displayed +$sisa lainnya"
-                    : "${getCategoryName(service.categoryId)} • $displayed",
+                    ? "${getCategoryName(service.categoryId.first)} • $displayed +$sisa lainnya"
+                    : "${getCategoryName(service.categoryId.first)} • $displayed",
                 style: TextStyle(
                   fontSize: 13,
                   color: layananList.isEmpty ? Colors.grey : Colors.black54,

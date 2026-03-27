@@ -83,7 +83,7 @@ class _AlljasascreenState extends State<Alljasascreen> {
     // 🧩 CATEGORY
     if (_selectedCategory != 'All') {
       filtered = filtered
-          .where((service) => service.categoryId == _selectedCategory)
+          .where((service) => service.categoryId.contains(_selectedCategory))
           .toList();
       print("SETELAH CATEGORY: ${filtered.length}");
     }
@@ -440,8 +440,10 @@ class _AlljasascreenState extends State<Alljasascreen> {
 
         final sisa = layanan.length - 1;
 
-        final categoryName = getCategoryName(service.categoryId);
-
+        final categoryName = _selectedCategory != 'All'
+            ? getCategoryName(_selectedCategory)
+            : getCategoryName(service.categoryId.first);
+            
         final servicesText = layanan.isEmpty
             ? "Tidak ada layanan"
             : sisa > 0
