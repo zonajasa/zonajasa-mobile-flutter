@@ -74,6 +74,13 @@ class AppTextStyles {
     height: 1.33,
   );
 
+  static TextStyle get titleSmall => GoogleFonts.inter(
+    fontSize: 14,
+    fontWeight: FontWeight.w600,
+    letterSpacing: 0.1,
+    height: 1.43,
+  );
+
   static TextStyle get bodyMedium => GoogleFonts.inter(
     fontSize: 14,
     fontWeight: FontWeight.w400,
