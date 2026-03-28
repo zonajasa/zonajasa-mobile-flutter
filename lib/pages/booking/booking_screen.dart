@@ -22,6 +22,7 @@ class BookingNow extends StatefulWidget {
 }
 
 class _BookingNowState extends State<BookingNow> {
+  final ScrollController _scrollController = ScrollController();
   String? _selectedCategoryId;
   bool isLoading = false;
   DateTime _selectedDate = DateTime.now().add(const Duration(days: 1));
@@ -43,6 +44,7 @@ class _BookingNowState extends State<BookingNow> {
 
   @override
   void dispose() {
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -65,9 +67,6 @@ class _BookingNowState extends State<BookingNow> {
   Widget build(BuildContext context) {
     final isValid = _selectedLayananIds.isNotEmpty;
     final service = demoServices.firstWhere((s) => s.id == widget.serviceId);
-    final category = demoCategories.firstWhere(
-      (c) => service.categoryId.contains(c.id),
-    );
     final layananList = demoLayananJasa
         .where(
           (item) =>
@@ -76,6 +75,22 @@ class _BookingNowState extends State<BookingNow> {
                   item.categoryId == _selectedCategoryId),
         )
         .toList();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_selectedLayananIds.isNotEmpty) {
+        final index = layananList.indexWhere(
+          (l) => l.id == _selectedLayananIds.first,
+        );
+
+        if (index != -1) {
+          _scrollController.animateTo(
+            index * 80,
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.easeInOut,
+          );
+        }
+      }
+    });
 
     double totalHarga = layananList
         .where((l) => _selectedLayananIds.contains(l.id))
@@ -341,13 +356,20 @@ class _BookingNowState extends State<BookingNow> {
                               "Tidak ada layanan di kategori ini",
                               style: TextStyle(color: Colors.grey),
                             )
-                          : Column(
-                              children: layananList.map((item) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(bottom: 8),
-                                  child: _buildJasaOption(item),
-                                );
-                              }).toList(),
+                          : SizedBox(
+                              height: 320,
+                              child: ListView.builder(
+                                controller: _scrollController,
+                                itemCount: layananList.length,
+                                itemBuilder: (context, index) {
+                                  final item = layananList[index];
+
+                                  return Padding(
+                                    padding: const EdgeInsets.only(bottom: 8),
+                                    child: _buildJasaOption(item),
+                                  );
+                                },
+                              ),
                             ),
 
                       const SizedBox(height: 40),

@@ -124,7 +124,7 @@ class _PemesananPageState extends State<PemesananPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            _formatLayanan(booking.layananDipilih ?? []),
+                            _formatLayanan(booking.layananDipilih),
                             style: const TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,

@@ -12,7 +12,6 @@ import 'package:jasa_app/pages/provider_detail_screen.dart';
 import 'package:jasa_app/pages/review/service_reviews_screen.dart';
 import 'package:jasa_app/pages/service_image_carousel.dart';
 import 'package:jasa_app/model/service.dart';
-import 'package:intl/intl.dart';
 
 class DetailJasa extends StatefulWidget {
   final String serviceId;
@@ -84,16 +83,9 @@ class _DetailJasaState extends State<DetailJasa> {
     final reviews = demoReviews
         .where((r) => r.serviceId == widget.serviceId)
         .toList();
-    final category = demoCategories.firstWhere(
-      (c) => service.categoryId.contains(c.id),
-    );
     final layananList = demoLayananJasa
         .where((item) => item.serviceId == service.id)
         .toList();
-
-    final minHarga = layananList.isEmpty
-        ? 0
-        : layananList.map((e) => e.harga).reduce((a, b) => a < b ? a : b);
     return Scaffold(
       body: Stack(
         children: [
