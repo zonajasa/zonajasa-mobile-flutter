@@ -7,6 +7,7 @@ import 'package:jasa_app/model/layanan_jasa.dart';
 import 'package:jasa_app/model/service.dart';
 import 'package:jasa_app/pages/allJasaScreen.dart';
 import 'package:jasa_app/pages/detail_jasa.dart';
+import 'package:jasa_app/pages/searchResultPage.dart';
 import 'package:jasa_app/services/user_service.dart';
 
 class HomePage extends StatefulWidget {
@@ -168,6 +169,17 @@ class _buildHomeState extends State<_buildHome> {
     setState(() {});
   }
 
+  void _goToSearch(String query) {
+    if (query.trim().isEmpty) return;
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Searchresultpage(searchQuery: query),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -202,7 +214,7 @@ class _buildHomeState extends State<_buildHome> {
             userPosition: _userPosition,
             categoryId: demoCategories[selectedCategoryIndex].id,
           ),
-          _buildSearch(_refresh),
+          _buildSearch(_refresh, _goToSearch),
           _buildUserAvatar(
             isPressed: isNotifPressed,
             onTapDown: () => setState(() => isNotifPressed = true),
@@ -233,7 +245,7 @@ Widget _buildHeader(BuildContext context) {
   );
 }
 
-Widget _buildSearch(VoidCallback refresh) {
+Widget _buildSearch(VoidCallback refresh, Function(String) onSearch) {
   return Positioned(
     top: 55,
     left: 20,
@@ -273,7 +285,7 @@ Widget _buildSearch(VoidCallback refresh) {
                 color: Color(0xff0e86e4),
               ),
               onPressed: () {
-                print("Menu kategori ditekan");
+                onSearch(controller.text);
               },
             ),
             if (controller.text.isNotEmpty)
@@ -287,6 +299,10 @@ Widget _buildSearch(VoidCallback refresh) {
           ],
           onChanged: (_) {
             refresh();
+          },
+
+          onSubmitted: (value) {
+            onSearch(value);
           },
         );
       },

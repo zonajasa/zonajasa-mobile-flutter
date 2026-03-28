@@ -184,4 +184,12 @@ List<LayananJasa> demoLayananJasa = [
     harga: 120000,
     image: 'images/c.png',
   ),
+  LayananJasa(
+    id: '19',
+    serviceId: '7',
+    categoryId: '1',
+    name: "Perbaikan Kompor",
+    harga: 100000,
+    image: 'images/c.png',
+  ),
 ];
