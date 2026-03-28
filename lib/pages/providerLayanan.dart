@@ -179,15 +179,15 @@ class Providerlayanan extends StatelessWidget {
                   height: 30,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => BookingNow(
-                            serviceId: item.serviceId,
-                            selectedLayananId: item.id,
-                          ),
-                        ),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (_) => BookingNow(
+                      //       serviceId: item.serviceId,
+                      //       selectedLayananId: item.id,
+                      //     ),
+                      //   ),
+                      // );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xffe3f2fd),

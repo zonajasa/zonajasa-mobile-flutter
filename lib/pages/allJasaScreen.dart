@@ -425,13 +425,17 @@ class _AlljasascreenState extends State<Alljasascreen> {
       itemBuilder: (context, index) {
         final service = searchResults[index];
 
-        final layanan = demoLayananJasa
-            .where((l) => l.serviceId == service.id)
-            .toList();
-
         final categoryId = _selectedCategory != 'All'
             ? _selectedCategory
             : (service.categoryId.isNotEmpty ? service.categoryId.first : '');
+
+        final layanan = demoLayananJasa
+            .where(
+              (l) =>
+                  l.serviceId == service.id &&
+                  (categoryId.isEmpty || l.categoryId == categoryId),
+            )
+            .toList();
 
         double minPrice = 0;
         if (layanan.isNotEmpty) {

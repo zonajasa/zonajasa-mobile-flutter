@@ -140,7 +140,7 @@ List<Service> demoServices = [
     description:
         'Fast and reliable repair for any pipe leaks in your home. Our certified plumbers fix all types of pipe leaks to prevent water damage.',
     price: 90,
-    categoryId: ['2'],
+    categoryId: ['2', '3'],
     jarak: 15,
     image: 'images/people.png',
     rating: 4.7,

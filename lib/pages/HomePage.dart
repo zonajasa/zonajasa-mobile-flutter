@@ -200,6 +200,7 @@ class _buildHomeState extends State<_buildHome> {
             visibleCount: _visibleCount,
             scrollController: _listScrollController,
             userPosition: _userPosition,
+            categoryId: demoCategories[selectedCategoryIndex].id,
           ),
           _buildSearch(_refresh),
           _buildUserAvatar(
@@ -389,6 +390,7 @@ Widget _buildServiceSection({
   required int visibleCount,
   required ScrollController scrollController,
   required Position? userPosition,
+  required String categoryId,
 }) {
   final visibleServices = services
       .take(visibleCount.clamp(0, services.length))
@@ -476,7 +478,11 @@ Widget _buildServiceSection({
                         : service.jarak;
 
                     final layananList = demoLayananJasa
-                        .where((item) => item.serviceId == service.id)
+                        .where(
+                          (item) =>
+                              item.serviceId == service.id &&
+                              item.categoryId == categoryId,
+                        )
                         .toList();
 
                     final displayed = layananList.isNotEmpty
@@ -503,6 +509,7 @@ Widget _buildServiceSection({
                         sisa,
                         getCategoryName,
                         distance,
+                        categoryId,
                       ),
                     );
                   },
@@ -558,6 +565,7 @@ Widget _buildServiceItem(
   int sisa,
   String Function(String) getCategoryName,
   double distance,
+  String categoryId,
 ) {
   return Container(
     height: 110,
@@ -635,10 +643,10 @@ Widget _buildServiceItem(
               ),
               Text(
                 layananList.isEmpty
-                    ? "${getCategoryName(service.categoryId.first)} • Tidak ada layanan"
+                    ? "${getCategoryName(categoryId)} • Tidak ada layanan"
                     : sisa > 0
-                    ? "${getCategoryName(service.categoryId.first)} • $displayed +$sisa lainnya"
-                    : "${getCategoryName(service.categoryId.first)} • $displayed",
+                    ? "${getCategoryName(categoryId)} • $displayed +$sisa lainnya"
+                    : "${getCategoryName(categoryId)} • $displayed",
                 style: TextStyle(
                   fontSize: 13,
                   color: layananList.isEmpty ? Colors.grey : Colors.black54,
