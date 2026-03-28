@@ -10,8 +10,8 @@ import 'package:jasa_app/model/app_text_styles.dart';
 import 'package:jasa_app/model/category.dart';
 import 'package:jasa_app/model/layanan_jasa.dart';
 import 'package:jasa_app/model/service.dart';
-import 'package:jasa_app/pages/detail_jasa.dart';
 import 'package:intl/intl.dart';
+import 'package:jasa_app/pages/providerLayanan.dart';
 
 class Alljasascreen extends StatefulWidget {
   const Alljasascreen({super.key});
@@ -429,6 +429,10 @@ class _AlljasascreenState extends State<Alljasascreen> {
             .where((l) => l.serviceId == service.id)
             .toList();
 
+        final categoryId = _selectedCategory != 'All'
+            ? _selectedCategory
+            : (service.categoryId.isNotEmpty ? service.categoryId.first : '');
+
         double minPrice = 0;
         if (layanan.isNotEmpty) {
           minPrice = layanan
@@ -443,7 +447,7 @@ class _AlljasascreenState extends State<Alljasascreen> {
         final categoryName = _selectedCategory != 'All'
             ? getCategoryName(_selectedCategory)
             : getCategoryName(service.categoryId.first);
-            
+
         final servicesText = layanan.isEmpty
             ? "Tidak ada layanan"
             : sisa > 0
@@ -466,7 +470,10 @@ class _AlljasascreenState extends State<Alljasascreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => DetailJasa(serviceId: service.id),
+                builder: (_) => Providerlayanan(
+                  service: service,
+                  categoryId: categoryId, // 👈 INI YANG BENAR
+                ),
               ),
             );
           },
