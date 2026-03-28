@@ -251,7 +251,7 @@ class _DetailJasaState extends State<DetailJasa> {
                             )
                           : Column(
                               children: layananList
-                                  .take(5) // 🔥 BATAS 5
+                                  .take(5)
                                   .map(
                                     (item) => Padding(
                                       padding: const EdgeInsets.only(bottom: 8),
@@ -514,63 +514,34 @@ class _DetailJasaState extends State<DetailJasa> {
               ),
             ],
           ),
-          child: Row(
-            children: [
-              // 🔥 Total Price
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text('Harga Mulai', style: AppTextStyles.body2),
-                  const SizedBox(height: 4),
-                  Text(
-                    NumberFormat.currency(
-                      locale: 'id_ID',
-                      symbol: 'Rp',
-                      decimalDigits: 0,
-                    ).format(minHarga),
-                    style: AppTextStyles.headline2.copyWith(
-                      color: AppColors.primary,
-                    ),
+          child: SizedBox(
+            height: 50,
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BookingNow(serviceId: service.id),
                   ),
-                ],
-              ),
-
-              const SizedBox(width: 16),
-
-              // 🔥 BUTTON FULL WIDTH
-              Expanded(
-                child: SizedBox(
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              BookingNow(serviceId: service.id),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                    ),
-                    child: const Text(
-                      "Pesan Sekarang",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
                 ),
               ),
-            ],
+              child: const Text(
+                "Pilih Layanan",
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+            ),
           ),
         ),
       ),

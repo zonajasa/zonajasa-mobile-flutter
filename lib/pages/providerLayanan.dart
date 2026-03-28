@@ -179,15 +179,15 @@ class Providerlayanan extends StatelessWidget {
                   height: 30,
                   child: ElevatedButton(
                     onPressed: () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (_) => BookingNow(
-                      //       serviceId: item.serviceId,
-                      //       selectedLayananId: item.id,
-                      //     ),
-                      //   ),
-                      // );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => BookingNow(
+                            serviceId: item.serviceId,
+                            selectedLayananId: item.id,
+                          ),
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xffe3f2fd),
@@ -198,7 +198,7 @@ class Providerlayanan extends StatelessWidget {
                       padding: EdgeInsets.zero,
                     ),
                     child: const Text(
-                      "Pesan sekarang",
+                      "Pilih",
                       style: TextStyle(
                         fontSize: 12,
                         color: Color(0xff0e86e4),

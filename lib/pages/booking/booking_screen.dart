@@ -10,13 +10,19 @@ import 'package:jasa_app/pages/booking/booking_success_screen.dart';
 
 class BookingNow extends StatefulWidget {
   final String serviceId;
-  const BookingNow({super.key, required this.serviceId});
+  final String? selectedLayananId;
+  const BookingNow({
+    super.key,
+    required this.serviceId,
+    this.selectedLayananId,
+  });
 
   @override
   State<BookingNow> createState() => _BookingNowState();
 }
 
 class _BookingNowState extends State<BookingNow> {
+  String? _selectedCategoryId;
   bool isLoading = false;
   DateTime _selectedDate = DateTime.now().add(const Duration(days: 1));
   String _selectedTime = '10:00 AM';
@@ -41,13 +47,34 @@ class _BookingNowState extends State<BookingNow> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    if (widget.selectedLayananId != null) {
+      _selectedLayananIds.add(widget.selectedLayananId!);
+
+      final layanan = demoLayananJasa.firstWhere(
+        (l) => l.id == widget.selectedLayananId,
+      );
+
+      _selectedCategoryId = layanan.categoryId;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final isValid = _selectedLayananIds.isNotEmpty;
     final service = demoServices.firstWhere((s) => s.id == widget.serviceId);
     final category = demoCategories.firstWhere(
-      (c) => c.id == service.categoryId,
+      (c) => service.categoryId.contains(c.id),
     );
     final layananList = demoLayananJasa
-        .where((item) => item.serviceId == service.id)
+        .where(
+          (item) =>
+              item.serviceId == service.id &&
+              (_selectedCategoryId == null ||
+                  item.categoryId == _selectedCategoryId),
+        )
         .toList();
 
     double totalHarga = layananList
@@ -97,19 +124,20 @@ class _BookingNowState extends State<BookingNow> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    service.name,
+                                    service.company,
                                     style: AppTextStyles.headline3,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                   const SizedBox(height: 4),
-                                  // Text(
-                                  //   '${NumberFormat.currency(locale: 'id_ID', symbol: 'Rp', decimalDigits: 0).format(selectedLayanan.harga)} - ${category.name}',
-                                  //   style: AppTextStyles.price,
-                                  // ),
+
                                   Text(
-                                    _selectedLayananIds.isEmpty
-                                        ? "Rp0 - ${category.name}"
-                                        : "${NumberFormat.currency(locale: 'id_ID', symbol: 'Rp', decimalDigits: 0).format(totalHarga)} - ${category.name}",
-                                    style: AppTextStyles.price,
+                                    service.name,
+                                    style: AppTextStyles.body2.copyWith(
+                                      color: Colors.black,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ],
                               ),
@@ -245,15 +273,72 @@ class _BookingNowState extends State<BookingNow> {
 
                       const SizedBox(height: 24),
 
+                      //PILIH KATEGORI
+                      const Text(
+                        'Pilih Kategori',
+                        style: AppTextStyles.headline3,
+                      ),
+                      const SizedBox(height: 12),
+
+                      SizedBox(
+                        height: 40,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: service.categoryId.map((id) {
+                            final cat = demoCategories.firstWhere(
+                              (c) => c.id == id,
+                            );
+                            final isSelected = _selectedCategoryId == id;
+
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 8, left: 4),
+                              child: ChoiceChip(
+                                label: Text(cat.name),
+                                selected: isSelected,
+                                onSelected: (_) {
+                                  setState(() {
+                                    _selectedCategoryId = id;
+                                    _selectedLayananIds.clear();
+                                  });
+                                },
+                                selectedColor: AppColors.primary,
+                                labelStyle: TextStyle(
+                                  color: isSelected
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
                       // PILIHAN JASA
                       const Text(
                         'Pilih Layanan jasa',
                         style: AppTextStyles.headline3,
                       ),
                       const SizedBox(height: 12),
-                      layananList.isEmpty
+
+                      _selectedCategoryId == null
+                          ? const Row(
+                              children: [
+                                Icon(
+                                  Icons.info_outline,
+                                  size: 16,
+                                  color: Colors.grey,
+                                ),
+                                SizedBox(width: 6),
+                                Text(
+                                  "Silakan pilih kategori terlebih dahulu",
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                              ],
+                            )
+                          : layananList.isEmpty
                           ? const Text(
-                              "Belum ada layanan tersedia",
+                              "Tidak ada layanan di kategori ini",
                               style: TextStyle(color: Colors.grey),
                             )
                           : Column(
@@ -276,60 +361,95 @@ class _BookingNowState extends State<BookingNow> {
       ),
       bottomNavigationBar: SafeArea(
         child: Container(
-          margin: const EdgeInsets.all(16),
-          height: 55,
-          child: ElevatedButton(
-            onPressed: isLoading
-                ? null
-                : () async {
-                    if (_selectedLayananIds.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Layanan jasa belum kamu pilih"),
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
-                      return;
-                    }
-
-                    setState(() => isLoading = true);
-
-                    await Future.delayed(const Duration(seconds: 2));
-
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (_) => BookingBerhasil()),
-                    );
-                  },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
-              elevation: 6,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.shadow,
+                blurRadius: 10,
+                offset: const Offset(0, -2),
               ),
-            ),
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              child: isLoading
-                  ? const SizedBox(
-                      key: ValueKey('loading'),
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
-                      ),
-                    )
-                  : const Text(
-                      "Booking Now",
-                      key: ValueKey('text'),
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+            ],
+          ),
+          child: Row(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('Total harga', style: AppTextStyles.body2),
+                  const SizedBox(height: 4),
+                  Text(
+                    _selectedLayananIds.isEmpty
+                        ? "Rp 0"
+                        : NumberFormat.currency(
+                            locale: 'id_ID',
+                            symbol: 'Rp',
+                            decimalDigits: 0,
+                          ).format(totalHarga),
+                    style: AppTextStyles.headline2.copyWith(
+                      color: AppColors.primary,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(width: 16),
+
+              Expanded(
+                child: SizedBox(
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: (!isValid || isLoading)
+                        ? null
+                        : () async {
+                            setState(() => isLoading = true);
+
+                            await Future.delayed(const Duration(seconds: 2));
+
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => BookingBerhasil(),
+                              ),
+                            );
+                          },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: isValid
+                          ? AppColors.primary
+                          : Colors.grey.shade400, // 🔥 abu-abu kalau disabled
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
                       ),
                     ),
-            ),
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
+                      child: isLoading
+                          ? const SizedBox(
+                              key: ValueKey('loading'),
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Text(
+                              "Booking Sekarang",
+                              key: ValueKey('text'),
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
