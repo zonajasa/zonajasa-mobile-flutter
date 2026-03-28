@@ -128,12 +128,11 @@ class _SearchresultpageState extends State<Searchresultpage> {
           ),
 
           Positioned(
-            bottom: 50,
+            bottom: 60,
             left: 0,
             right: 0,
-            child: Container(
-              height: 110,
-              padding: const EdgeInsets.symmetric(vertical: 10),
+            child: SizedBox(
+              height: 120,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: filteredServices.length,
@@ -169,7 +168,7 @@ class _SearchresultpageState extends State<Searchresultpage> {
       },
 
       child: Container(
-        width: 260,
+        width: 250,
         margin: const EdgeInsets.symmetric(horizontal: 10),
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(

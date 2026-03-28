@@ -75,7 +75,7 @@ class ServiceCard extends StatelessWidget {
                         fontSize: 14,
                         height: 1.2,
                       ),
-                      maxLines: 2,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
 

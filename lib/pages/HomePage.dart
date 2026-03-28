@@ -183,45 +183,47 @@ class _buildHomeState extends State<_buildHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          _buildHeader(context),
-          _buildMenu(
-            context: context,
-            menuItems: menuItems,
-            selectedIndex: selectedCategoryIndex,
-            onTapMenu: (index) async {
-              setState(() {
-                selectedCategoryIndex = index;
-                isLoadingProviders = true;
-                _visibleCount = 4; // 🔥 konsisten
-              });
+      body: SafeArea(
+        child: Stack(
+          children: [
+            _buildHeader(context),
+            _buildMenu(
+              context: context,
+              menuItems: menuItems,
+              selectedIndex: selectedCategoryIndex,
+              onTapMenu: (index) async {
+                setState(() {
+                  selectedCategoryIndex = index;
+                  isLoadingProviders = true;
+                  _visibleCount = 4; // 🔥 konsisten
+                });
 
-              await Future.delayed(const Duration(milliseconds: 600));
+                await Future.delayed(const Duration(milliseconds: 600));
 
-              setState(() {
-                isLoadingProviders = false;
-              });
-            },
-          ),
-          _buildServiceSection(
-            context: context,
-            isLoading: isLoadingProviders,
-            services: filteredServices,
-            getCategoryName: getCategoryName,
-            visibleCount: _visibleCount,
-            scrollController: _listScrollController,
-            userPosition: _userPosition,
-            categoryId: demoCategories[selectedCategoryIndex].id,
-          ),
-          _buildSearch(_refresh, _goToSearch),
-          _buildUserAvatar(
-            isPressed: isNotifPressed,
-            onTapDown: () => setState(() => isNotifPressed = true),
-            onTapUp: () => setState(() => isNotifPressed = false),
-            onTapCancel: () => setState(() => isNotifPressed = false),
-          ),
-        ],
+                setState(() {
+                  isLoadingProviders = false;
+                });
+              },
+            ),
+            _buildServiceSection(
+              context: context,
+              isLoading: isLoadingProviders,
+              services: filteredServices,
+              getCategoryName: getCategoryName,
+              visibleCount: _visibleCount,
+              scrollController: _listScrollController,
+              userPosition: _userPosition,
+              categoryId: demoCategories[selectedCategoryIndex].id,
+            ),
+            _buildSearch(_refresh, _goToSearch),
+            _buildUserAvatar(
+              isPressed: isNotifPressed,
+              onTapDown: () => setState(() => isNotifPressed = true),
+              onTapUp: () => setState(() => isNotifPressed = false),
+              onTapCancel: () => setState(() => isNotifPressed = false),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -357,7 +359,7 @@ Widget _buildMenu({
     left: 15,
     right: 15,
     child: Container(
-      height: 101,
+      height: 105,
       padding: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -584,7 +586,6 @@ Widget _buildServiceItem(
   String categoryId,
 ) {
   return Container(
-    height: 110,
     padding: const EdgeInsets.symmetric(vertical: 8),
     decoration: BoxDecoration(
       color: Colors.white,

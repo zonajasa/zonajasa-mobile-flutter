@@ -350,7 +350,7 @@ class _DetailJasaState extends State<DetailJasa> {
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  ProviderDetailScreen(serviceId: service.id),
+                                  ProviderDetailScreen(service: service),
                             ),
                           );
                         },

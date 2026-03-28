@@ -151,17 +151,27 @@ class _BookingBerhasilState extends State<BookingBerhasil> {
 
   Widget _buildInfoRow(String label, String value) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start, // 🔥 penting
       children: [
-        Text(
-          label,
-          style: AppTextStyles.body2.copyWith(color: AppColors.textSecondary),
+        Expanded(
+          flex: 4,
+          child: Text(
+            label,
+            style: AppTextStyles.body2.copyWith(color: AppColors.textSecondary),
+          ),
         ),
-        Text(
-          value,
-          style: AppTextStyles.body1.copyWith(
-            fontWeight: FontWeight.w600,
-            fontSize: 14,
+
+        const SizedBox(width: 8),
+
+        Expanded(
+          flex: 6,
+          child: Text(
+            value,
+            textAlign: TextAlign.right,
+            style: AppTextStyles.body1.copyWith(
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+            ),
           ),
         ),
       ],

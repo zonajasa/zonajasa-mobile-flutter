@@ -10,12 +10,10 @@ import 'package:jasa_app/model/service.dart';
 import 'package:jasa_app/pages/review/service_reviews_screen.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:intl/intl.dart';
 
 class ProviderDetailScreen extends StatefulWidget {
-  final String serviceId;
-
-  const ProviderDetailScreen({super.key, required this.serviceId});
+  final Service service;
+  const ProviderDetailScreen({super.key, required this.service});
 
   @override
   State<ProviderDetailScreen> createState() => _ProviderDetailScreenState();
@@ -34,9 +32,11 @@ class _ProviderDetailScreenState extends State<ProviderDetailScreen> {
   void initState() {
     super.initState();
 
-    service = demoServices.firstWhere((s) => s.id == widget.serviceId);
-    category = demoCategories.firstWhere((c) => c.id == service.categoryId);
-
+    service = widget.service;
+    category = demoCategories.firstWhere(
+      (c) => c.id == service.categoryId,
+      orElse: () => demoCategories.first, // fallback
+    );
     _serviceScrollController.addListener(() {
       if (_serviceScrollController.position.pixels ==
           _serviceScrollController.position.maxScrollExtent) {
@@ -448,7 +448,7 @@ class _ProviderDetailScreenState extends State<ProviderDetailScreen> {
   //buat konten atau informasi dalam akun pemilik jasa/provider
   Widget _buildTabSection() {
     return DefaultTabController(
-      length: 3,
+      length: 2,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -457,8 +457,7 @@ class _ProviderDetailScreenState extends State<ProviderDetailScreen> {
             padding: EdgeInsets.symmetric(horizontal: 10),
             child: TabBar(
               tabs: [
-                Tab(text: 'Layanan Jasa'),
-                Tab(text: 'Info Company'),
+                Tab(text: 'Tentang Perusahaan'),
                 Tab(text: 'Reviews'),
               ],
               labelColor: AppColors.primary,
@@ -468,13 +467,7 @@ class _ProviderDetailScreenState extends State<ProviderDetailScreen> {
           ),
           SizedBox(
             height: 580, // Fixed height for demo purposes
-            child: TabBarView(
-              children: [
-                _buildServicesTab(),
-                _buildAboutTab(),
-                _buildReviewsTab(),
-              ],
-            ),
+            child: TabBarView(children: [_buildAboutTab(), _buildReviewsTab()]),
           ),
         ],
       ),
@@ -568,103 +561,6 @@ class _ProviderDetailScreenState extends State<ProviderDetailScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  //layanan jasa AMAN SCROLLING
-  Widget _buildServicesTab() {
-    final layananList = demoLayananJasa
-        .where((item) => item.serviceId == service.id)
-        .toList();
-
-    if (layananList.isEmpty) {
-      return const Center(child: Text("Belum ada layanan tersedia"));
-    }
-
-    final visibleList = layananList.take(_serviceVisibleCount).toList();
-
-    return ListView.separated(
-      controller: _serviceScrollController,
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
-      physics: const BouncingScrollPhysics(),
-      itemCount: visibleList.length + 1,
-      separatorBuilder: (context, index) => const SizedBox(height: 16),
-      itemBuilder: (context, index) {
-        if (index == visibleList.length) {
-          return _serviceVisibleCount < layananList.length
-              ? const Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Center(child: CircularProgressIndicator()),
-                )
-              : const SizedBox();
-        }
-
-        final item = visibleList[index];
-
-        return Container(
-          decoration: BoxDecoration(
-            color: AppColors.background,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                // ignore: deprecated_member_use
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 5),
-              ),
-            ],
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                // ICON / IMAGE (sementara pakai icon dulu)
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    // ignore: deprecated_member_use
-                    color: AppColors.primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(Icons.build, color: AppColors.primary),
-                ),
-
-                const SizedBox(width: 16),
-
-                // INFO
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(item.name, style: AppTextStyles.headline3),
-                      const SizedBox(height: 6),
-
-                      Text(
-                        "Harga mulai",
-                        style: AppTextStyles.caption.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-
-                      const SizedBox(height: 4),
-
-                      Text(
-                        NumberFormat.currency(
-                          locale: 'id_ID',
-                          symbol: 'Rp',
-                          decimalDigits: 0,
-                        ).format(item.harga),
-                        style: AppTextStyles.price,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
     );
   }
 
