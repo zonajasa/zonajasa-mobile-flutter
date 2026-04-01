@@ -29,11 +29,25 @@ class _DetailJasaState extends State<DetailJasa> {
 
   Future<void> _onMapCreated(MapboxMap map) async {
     mapboxMap = map;
+
+    await mapboxMap.gestures.updateSettings(
+      GesturesSettings(
+        pinchToZoomEnabled: false,
+        scrollEnabled: false,
+        rotateEnabled: false,
+        pitchEnabled: false,
+        doubleTapToZoomInEnabled: false,
+        doubleTouchToZoomOutEnabled: false,
+      ),
+    );
+
     _annotationManager = await mapboxMap.annotations
         .createPointAnnotationManager();
 
     final service = demoServices.firstWhere((s) => s.id == widget.serviceId);
     await Future.delayed(const Duration(milliseconds: 800));
+
+    if (!mounted) return;
 
     final bytes = await DefaultAssetBundle.of(
       context,
@@ -48,6 +62,7 @@ class _DetailJasaState extends State<DetailJasa> {
 
     await style.addStyleImage("my-marker", 1.0, image, false, [], [], null);
 
+    if (!mounted) return;
     await _addMarker(service);
   }
 
@@ -58,6 +73,7 @@ class _DetailJasaState extends State<DetailJasa> {
       coordinates: Position(service.longitude, service.latitude),
     );
 
+    if (!mounted) return;
     await _annotationManager!.create(
       PointAnnotationOptions(
         geometry: point,
@@ -66,6 +82,7 @@ class _DetailJasaState extends State<DetailJasa> {
       ),
     );
 
+    if (!mounted) return;
     await mapboxMap.flyTo(
       CameraOptions(
         center: Point(
@@ -79,7 +96,10 @@ class _DetailJasaState extends State<DetailJasa> {
 
   @override
   Widget build(BuildContext context) {
-    final service = demoServices.firstWhere((s) => s.id == widget.serviceId);
+    final service = demoServices.firstWhere(
+      (s) => s.id == widget.serviceId,
+      orElse: () => demoServices.first,
+    );
     final reviews = demoReviews
         .where((r) => r.serviceId == widget.serviceId)
         .toList();
@@ -310,7 +330,7 @@ class _DetailJasaState extends State<DetailJasa> {
                                 service.latitude,
                               ),
                             ),
-                            zoom: 14,
+                            zoom: 10,
                           ),
 
                           styleUri: MapboxStyles.MAPBOX_STREETS,

@@ -385,6 +385,7 @@ class _ServiceReviewsScreenState extends State<ServiceReviewsScreen>
 
   // === TAMPILAN FORM TAMBAH REVIEW
   void _showWriteReviewBottomSheet() {
+    String? imageError;
     double rating = 0;
     final commentController = TextEditingController();
     List<File> selectedImages = [];
@@ -492,17 +493,19 @@ class _ServiceReviewsScreenState extends State<ServiceReviewsScreen>
                             ),
                             const SizedBox(width: 8),
                             TextButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 if (selectedImages.length >= 3) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Maksimal 3 foto saja'),
-                                      duration: Duration(seconds: 2),
-                                    ),
-                                  );
+                                  setState(() {
+                                    imageError = "Maksimal hanya 3 foto";
+                                  });
                                   return;
                                 }
-                                pickImage(setState, selectedImages);
+
+                                setState(() {
+                                  imageError = null; 
+                                });
+
+                                await pickImage(setState, selectedImages);
                               },
                               child: Text(
                                 'Tambahkan Foto',
@@ -524,6 +527,17 @@ class _ServiceReviewsScreenState extends State<ServiceReviewsScreen>
                             );
                           }).toList(),
                         ),
+                        if (imageError != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8),
+                            child: Text(
+                              imageError!,
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
                         const SizedBox(height: 24),
                         SizedBox(
                           width: double.infinity,
@@ -607,10 +621,16 @@ class _ServiceReviewsScreenState extends State<ServiceReviewsScreen>
 
     final pickedFiles = await picker.pickMultiImage();
 
-    if (pickedFiles.isNotEmpty) {
-      setState(() {
-        selectedImages.addAll(pickedFiles.map((e) => File(e.path)));
-      });
-    }
+    if (pickedFiles.isEmpty) return;
+
+    final remaining = 3 - selectedImages.length;
+
+    if (remaining <= 0) return;
+
+    final limitedFiles = pickedFiles.take(remaining).toList();
+
+    setState(() {
+      selectedImages.addAll(limitedFiles.map((e) => File(e.path)));
+    });
   }
 }

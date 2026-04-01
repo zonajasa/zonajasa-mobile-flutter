@@ -141,49 +141,12 @@ class _NotifikasiscreenState extends State<Notifikasiscreen>
         unselectedLabelStyle: AppTextStyles.labelMedium,
         indicatorColor: AppColors.primary,
         indicatorWeight: 2,
-        isScrollable: true,
 
-        tabs: [
-          Tab(
-            child: FittedBox(
-              // 🔥 kunci anti overflow
-              fit: BoxFit.scaleDown,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text('Semua'),
-                  const SizedBox(width: 4), // 🔥 kecilin spacing
-                  if (count > 0)
-                    Container(
-                      constraints: const BoxConstraints(
-                        minWidth: 16, // 🔥 kecilin dikit
-                        minHeight: 16,
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 4,
-                        vertical: 1,
-                      ),
-                      decoration: const BoxDecoration(
-                        color: AppColors.error,
-                        shape: BoxShape.circle,
-                      ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        display,
-                        style: AppTextStyles.labelSmall.copyWith(
-                          color: AppColors.white,
-                          fontSize: 9, // 🔥 kecilin dikit biar muat
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ),
-
-          const Tab(text: 'Pesanan'),
-          const Tab(text: 'Promosi'),
-          const Tab(text: 'General'),
+        tabs: const [
+          Tab(text: 'Semua'),
+          Tab(text: 'Pesanan'),
+          Tab(text: 'Promosi'),
+          Tab(text: 'General'),
         ],
       ),
     );
