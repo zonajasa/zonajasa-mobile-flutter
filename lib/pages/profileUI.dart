@@ -35,6 +35,8 @@ class _ProfileuiState extends State<Profileui> {
   Future<void> getProfile() async {
     final result = await UserService.getProfile();
 
+    if (!mounted) return;
+
     if (result == null) {
       debugPrint("Gagal load profile");
       return;
@@ -55,6 +57,8 @@ class _ProfileuiState extends State<Profileui> {
   Future<void> checkLogin() async {
     String? token = await SessionManager.getToken();
 
+    if (!mounted) return;
+
     setState(() {
       isLogin = token != null;
     });
@@ -66,6 +70,7 @@ class _ProfileuiState extends State<Profileui> {
 
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
+      if (!mounted) return;
       setState(() {
         currentLocation = "GPS tidak aktif";
       });
@@ -89,17 +94,36 @@ class _ProfileuiState extends State<Profileui> {
       desiredAccuracy: LocationAccuracy.high,
     );
 
-    List<Placemark> placemarks = await placemarkFromCoordinates(
-      position.latitude,
-      position.longitude,
-    );
+    try {
+      final placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
 
-    Placemark place = placemarks[0];
+      if (!mounted) return;
 
-    setState(() {
-      currentLocation =
-          "${place.subLocality ?? place.locality}, ${place.locality}";
-    });
+      if (placemarks.isEmpty) {
+        setState(() {
+          currentLocation = "Lokasi tidak ditemukan";
+        });
+        return;
+      }
+
+      final place = placemarks.first;
+
+      setState(() {
+        currentLocation =
+            "${place.subLocality ?? place.locality ?? 'Unknown'}, ${place.locality ?? ''}";
+      });
+    } catch (e) {
+      debugPrint("Geocoding error: $e");
+
+      if (!mounted) return;
+
+      setState(() {
+        currentLocation = "Lokasi tidak ditemukan";
+      });
+    }
   }
 
   void showConfirmPemilikJasa() {
@@ -164,7 +188,11 @@ class _ProfileuiState extends State<Profileui> {
 
                           if (!mounted) return;
 
-                          Navigator.pop(context);
+                          if (Navigator.canPop(context)) {
+                            Navigator.pop(context);
+                          }
+
+                          if (!mounted) return;
 
                           setState(() {
                             switchValue = true;

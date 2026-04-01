@@ -126,12 +126,11 @@ class _SplashSState extends State<SplashS> {
                                 selectedIndex = 0;
                               });
 
-                              Navigator.pushAndRemoveUntil(
+                              Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => const Login(),
                                 ),
-                                (route) => false,
                               );
                             },
                             child: Center(
@@ -159,12 +158,11 @@ class _SplashSState extends State<SplashS> {
                                 selectedIndex = 1;
                               });
 
-                              Navigator.pushAndRemoveUntil(
+                              Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => const Register(),
                                 ),
-                                (route) => false,
                               );
                             },
                             child: Center(
@@ -256,7 +254,7 @@ class _SplashSState extends State<SplashS> {
                 const Divider(thickness: 1, indent: 30, endIndent: 30),
 
                 Transform.translate(
-                  offset: const Offset(0, -10), // minus = naik
+                  offset: const Offset(0, -10),
                   child: TextButton(
                     onPressed: () {
                       Navigator.pushAndRemoveUntil(

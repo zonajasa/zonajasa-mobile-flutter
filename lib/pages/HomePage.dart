@@ -48,6 +48,8 @@ class _buildHomeState extends State<_buildHome> {
     getProfile();
 
     _listScrollController.addListener(() {
+      if (!mounted) return;
+
       if (_listScrollController.position.pixels >=
               _listScrollController.position.maxScrollExtent - 100 &&
           !isLoadingMore &&
@@ -88,6 +90,8 @@ class _buildHomeState extends State<_buildHome> {
   Future<void> getProfile() async {
     final result = await UserService.getProfile();
 
+    if (!mounted) return;
+
     if (result == null) {
       debugPrint("Gagal load profile");
       return;
@@ -107,6 +111,7 @@ class _buildHomeState extends State<_buildHome> {
 
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
+      if (!mounted) return;
       setState(() {
         currentLocation = "GPS tidak aktif";
       });
@@ -130,18 +135,37 @@ class _buildHomeState extends State<_buildHome> {
       desiredAccuracy: LocationAccuracy.high,
     );
 
-    List<Placemark> placemarks = await placemarkFromCoordinates(
-      position.latitude,
-      position.longitude,
-    );
+    try {
+      final placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
 
-    Placemark place = placemarks[0];
+      if (!mounted) return;
 
-    setState(() {
-      _userPosition = position;
-      currentLocation =
-          "${place.subLocality ?? place.locality}, ${place.locality}";
-    });
+      if (placemarks.isEmpty) {
+        setState(() {
+          currentLocation = "Lokasi tidak ditemukan";
+        });
+        return;
+      }
+
+      final place = placemarks.first;
+
+      setState(() {
+        _userPosition = position;
+        currentLocation =
+            "${place.subLocality ?? place.locality ?? 'Unknown'}, ${place.locality ?? ''}";
+      });
+    } catch (e) {
+      debugPrint("Geocoding error: $e");
+
+      if (!mounted) return;
+
+      setState(() {
+        currentLocation = "Lokasi tidak ditemukan";
+      });
+    }
   }
 
   bool isNotifPressed = false;
@@ -178,6 +202,12 @@ class _buildHomeState extends State<_buildHome> {
         builder: (context) => Searchresultpage(searchQuery: query),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _listScrollController.dispose();
+    super.dispose();
   }
 
   @override

@@ -414,11 +414,11 @@ class _ProviderDetailScreenState extends State<ProviderDetailScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildStatItem('5 Tahun', 'Pengalaman kerja'),
+          _buildStatItem('5 Tahun', 'Pengalaman'),
           _buildVerticalDivider(),
-          _buildStatItem('120+', 'Total Jasa'),
+          _buildStatItem('120+', 'Layanan'),
           _buildVerticalDivider(),
-          _buildStatItem('95%', 'Tingkat Penyelesaian'),
+          _buildStatItem('95%', 'Selesai'),
         ],
       ),
     );

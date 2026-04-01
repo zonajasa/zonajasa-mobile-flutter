@@ -493,6 +493,15 @@ class _ServiceReviewsScreenState extends State<ServiceReviewsScreen>
                             const SizedBox(width: 8),
                             TextButton(
                               onPressed: () {
+                                if (selectedImages.length >= 3) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Maksimal 3 foto saja'),
+                                      duration: Duration(seconds: 2),
+                                    ),
+                                  );
+                                  return;
+                                }
                                 pickImage(setState, selectedImages);
                               },
                               child: Text(

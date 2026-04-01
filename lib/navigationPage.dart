@@ -15,6 +15,7 @@ class Navigationpage extends StatefulWidget {
 
 class _NavigationpageState extends State<Navigationpage> {
   late int _selectedIndex;
+  DateTime? lastBackPressed;
 
   @override
   void initState() {
@@ -30,44 +31,74 @@ class _NavigationpageState extends State<Navigationpage> {
   ];
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _pages[_selectedIndex],
+    // ignore: deprecated_member_use
+    return PopScope(
+      canPop: false,
+      // ignore: deprecated_member_use
+      onPopInvoked: (didPop) {
+        if (didPop) return;
 
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        selectedItemColor: const Color(0xff0e86e4),
-        unselectedItemColor: const Color(0xff757575),
-        type: BottomNavigationBarType.fixed,
-        onTap: (index) {
+        if (_selectedIndex != 0) {
           setState(() {
-            _selectedIndex = index;
+            _selectedIndex = 0;
           });
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.house),
-            activeIcon: FaIcon(FontAwesomeIcons.solidHouse),
-            label: 'Beranda',
-          ),
+          return;
+        }
 
-          BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.clipboardList),
-            activeIcon: FaIcon(FontAwesomeIcons.clipboardList),
-            label: 'Pemesanan',
-          ),
+        final now = DateTime.now();
 
-          BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.bell),
-            activeIcon: FaIcon(FontAwesomeIcons.solidBell),
-            label: 'Notifikasi',
-          ),
+        if (lastBackPressed == null ||
+            now.difference(lastBackPressed!) > const Duration(seconds: 2)) {
+          lastBackPressed = now;
 
-          BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.user),
-            activeIcon: FaIcon(FontAwesomeIcons.solidUser),
-            label: 'Akun',
-          ),
-        ],
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Tekan sekali lagi untuk keluar'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        } else {
+          Navigator.of(context).pop(); // 🔥 exit app
+        }
+      },
+      child: Scaffold(
+        body: _pages[_selectedIndex],
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          selectedItemColor: const Color(0xff0e86e4),
+          unselectedItemColor: const Color(0xff757575),
+          type: BottomNavigationBarType.fixed,
+          onTap: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
+          items: const [
+            BottomNavigationBarItem(
+              icon: FaIcon(FontAwesomeIcons.house),
+              activeIcon: FaIcon(FontAwesomeIcons.solidHouse),
+              label: 'Beranda',
+            ),
+
+            BottomNavigationBarItem(
+              icon: FaIcon(FontAwesomeIcons.clipboardList),
+              activeIcon: FaIcon(FontAwesomeIcons.clipboardList),
+              label: 'Pemesanan',
+            ),
+
+            BottomNavigationBarItem(
+              icon: FaIcon(FontAwesomeIcons.bell),
+              activeIcon: FaIcon(FontAwesomeIcons.solidBell),
+              label: 'Notifikasi',
+            ),
+
+            BottomNavigationBarItem(
+              icon: FaIcon(FontAwesomeIcons.user),
+              activeIcon: FaIcon(FontAwesomeIcons.solidUser),
+              label: 'Akun',
+            ),
+          ],
+        ),
       ),
     );
   }
