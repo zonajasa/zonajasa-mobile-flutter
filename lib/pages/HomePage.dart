@@ -37,6 +37,7 @@ class _buildHome extends StatefulWidget {
 }
 
 class _buildHomeState extends State<_buildHome> {
+  // ignore: unused_field
   int _currentPromoIndex = 0;
   int selectedCategoryIndex = 0;
   bool isLoadingProviders = false;
@@ -232,11 +233,12 @@ class _buildHomeState extends State<_buildHome> {
       'colors': [AppColors.accent, AppColors.secondaryDark],
     },
   ];
-  
-  final double promoHeight = 200;
-  final double menuHeight = 120;
+
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final double promoHeight = screenHeight * 0.20; // lebih adaptif
+    final double menuHeight = 110;
     return Scaffold(
       body: SafeArea(
         child: Stack(
@@ -326,23 +328,6 @@ class _buildHomeState extends State<_buildHome> {
               },
             ),
           ),
-          const SizedBox(height: AppConstants.paddingM),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: _promoItems.asMap().entries.map((entry) {
-              return Container(
-                width: 8,
-                height: 8,
-                margin: const EdgeInsets.symmetric(horizontal: 3),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: _currentPromoIndex == entry.key
-                      ? AppColors.primary
-                      : AppColors.grey300,
-                ),
-              );
-            }).toList(),
-          ),
         ],
       ),
     );
@@ -403,6 +388,7 @@ class _buildHomeState extends State<_buildHome> {
       ),
     );
   }
+  //END
 }
 
 Widget _buildHeader(BuildContext context) {
