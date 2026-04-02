@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:jasa_app/model/notification_data.dart';
 import 'package:jasa_app/pages/HomePage.dart';
 import 'package:jasa_app/pages/notifikasiScreen.dart';
 import 'package:jasa_app/pages/pesanan/ui_pemesanan.dart';
@@ -29,6 +30,42 @@ class _NavigationpageState extends State<Navigationpage> {
     Notifikasiscreen(),
     Profileui(),
   ];
+
+  // ================= BADGE ICON =================
+  Widget _buildNotificationIcon({bool isActive = false}) {
+    int count = getUnreadCount();
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        FaIcon(isActive ? FontAwesomeIcons.solidBell : FontAwesomeIcons.bell),
+
+        if (count > 0)
+          Positioned(
+            right: -6,
+            top: -3,
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+              decoration: BoxDecoration(
+                color: Colors.red,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                count > 99 ? '99+' : '$count',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 9,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // ignore: deprecated_member_use
@@ -58,46 +95,48 @@ class _NavigationpageState extends State<Navigationpage> {
             ),
           );
         } else {
-          Navigator.of(context).pop(); // 🔥 exit app
+          Navigator.of(context).pop();
         }
       },
       child: Scaffold(
         body: _pages[_selectedIndex],
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _selectedIndex,
-          selectedItemColor: const Color(0xff0e86e4),
-          unselectedItemColor: const Color(0xff757575),
-          type: BottomNavigationBarType.fixed,
-          onTap: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
+        bottomNavigationBar: ValueListenableBuilder<int>(
+          valueListenable: unreadCountNotifier,
+          builder: (context, _, __) {
+            return BottomNavigationBar(
+              currentIndex: _selectedIndex,
+              selectedItemColor: const Color(0xff0e86e4),
+              unselectedItemColor: const Color(0xff757575),
+              type: BottomNavigationBarType.fixed,
+              onTap: (index) {
+                setState(() {
+                  _selectedIndex = index;
+                });
+              },
+              items: [
+                BottomNavigationBarItem(
+                  icon: FaIcon(FontAwesomeIcons.house),
+                  activeIcon: FaIcon(FontAwesomeIcons.solidHouse),
+                  label: 'Beranda',
+                ),
+                BottomNavigationBarItem(
+                  icon: FaIcon(FontAwesomeIcons.clipboardList),
+                  activeIcon: FaIcon(FontAwesomeIcons.clipboardList),
+                  label: 'Pemesanan',
+                ),
+                BottomNavigationBarItem(
+                  icon: _buildNotificationIcon(),
+                  activeIcon: _buildNotificationIcon(isActive: true),
+                  label: 'Notifikasi',
+                ),
+                BottomNavigationBarItem(
+                  icon: FaIcon(FontAwesomeIcons.user),
+                  activeIcon: FaIcon(FontAwesomeIcons.solidUser),
+                  label: 'Akun',
+                ),
+              ],
+            );
           },
-          items: const [
-            BottomNavigationBarItem(
-              icon: FaIcon(FontAwesomeIcons.house),
-              activeIcon: FaIcon(FontAwesomeIcons.solidHouse),
-              label: 'Beranda',
-            ),
-
-            BottomNavigationBarItem(
-              icon: FaIcon(FontAwesomeIcons.clipboardList),
-              activeIcon: FaIcon(FontAwesomeIcons.clipboardList),
-              label: 'Pemesanan',
-            ),
-
-            BottomNavigationBarItem(
-              icon: FaIcon(FontAwesomeIcons.bell),
-              activeIcon: FaIcon(FontAwesomeIcons.solidBell),
-              label: 'Notifikasi',
-            ),
-
-            BottomNavigationBarItem(
-              icon: FaIcon(FontAwesomeIcons.user),
-              activeIcon: FaIcon(FontAwesomeIcons.solidUser),
-              label: 'Akun',
-            ),
-          ],
         ),
       ),
     );

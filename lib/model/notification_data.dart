@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class NotificationModel {
   final String id;
   final String type; // order, promotion, general
+  final String status; // detail kondisi
   final String title;
   final String message;
   final String time;
@@ -11,58 +13,122 @@ class NotificationModel {
   NotificationModel({
     required this.id,
     required this.type,
+    required this.status,
     required this.title,
     required this.message,
     required this.time,
     required this.isRead,
   });
+
+  /// ================= ICON =================
+  Object get icon {
+    switch (type) {
+      case 'order':
+        switch (status) {
+          case 'delivered':
+            return HugeIcons.strokeRoundedPackageDelivered;
+          case 'on_the_way':
+            return HugeIcons.strokeRoundedTruck;
+          default:
+            return HugeIcons.strokeRoundedPackage;
+        }
+
+      case 'promotion':
+        switch (status) {
+          case 'flash_sale':
+            return HugeIcons.strokeRoundedDiscount;
+          case 'new_arrival':
+            return HugeIcons.strokeRoundedNewReleases;
+          default:
+            return HugeIcons.strokeRoundedDiscount;
+        }
+
+      case 'general':
+        return HugeIcons.strokeRoundedGift;
+
+      default:
+        return Icons.notifications;
+    }
+  }
+
+  /// ================= COLOR =================
+  Color get color {
+    switch (type) {
+      case 'order':
+        switch (status) {
+          case 'delivered':
+            return Colors.green;
+          case 'on_the_way':
+            return Colors.orange;
+          default:
+            return Colors.blue;
+        }
+
+      case 'promotion':
+        return Colors.purple;
+
+      case 'general':
+        return Colors.blue;
+
+      default:
+        return Colors.grey;
+    }
+  }
 }
 
-/// 🔥 DATA DUMMY (sementara)
+/// ================= DATA DUMMY =================
 final List<NotificationModel> notifications = [
   NotificationModel(
     id: '1',
     type: 'order',
+    status: 'delivered',
     title: 'Order Delivered',
-    message: 'Your order #ORD-001 has been delivered successfully',
-    time: '2 hours ago',
+    message: 'Pesanan kamu sudah selesai',
+    time: '2 jam lalu',
     isRead: false,
   ),
   NotificationModel(
     id: '2',
     type: 'promotion',
-    title: 'Flash Sale Started!',
-    message: 'Up to 70% off on electronics. Limited time offer!',
-    time: '4 hours ago',
+    status: 'flash_sale',
+    title: 'Flash Sale!',
+    message: 'Diskon sampai 70%',
+    time: '4 jam lalu',
     isRead: false,
   ),
   NotificationModel(
     id: '3',
     type: 'order',
-    title: 'Order Shipped',
-    message: 'Your order #ORD-002 is on its way. Track your package.',
-    time: '1 day ago',
+    status: 'on_the_way',
+    title: 'Teknisi menuju lokasi',
+    message: 'Pesanan sedang di perjalanan',
+    time: '1 hari lalu',
     isRead: true,
   ),
   NotificationModel(
     id: '4',
     type: 'general',
-    title: 'Welcome to Como!',
-    message: 'Thank you for joining Como. Enjoy shopping with us!',
-    time: '2 days ago',
+    status: 'welcome',
+    title: 'Selamat datang',
+    message: 'Terima kasih sudah bergabung',
+    time: '2 hari lalu',
     isRead: true,
   ),
   NotificationModel(
     id: '5',
     type: 'promotion',
-    title: 'New Arrivals',
-    message: 'Check out the latest products in fashion category',
-    time: '3 days ago',
+    status: 'new_arrival',
+    title: 'Produk Baru',
+    message: 'Cek produk terbaru sekarang',
+    time: '3 hari lalu',
     isRead: true,
   ),
 ];
 
-/// 🔥 HELPER GLOBAL (biar gampang dipakai di mana aja)
+/// ================= HELPER =================
 int getUnreadCount() {
   return notifications.where((n) => !n.isRead).length;
 }
+
+ValueNotifier<int> unreadCountNotifier =
+    ValueNotifier(notifications.where((n) => !n.isRead).length);

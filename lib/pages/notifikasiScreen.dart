@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:jasa_app/model/app_colors.dart';
 import 'package:jasa_app/model/app_text_styles.dart';
+import 'package:jasa_app/model/notification_data.dart';
 import '../../core/constants/app_constants.dart';
 
 class Notifikasiscreen extends StatefulWidget {
@@ -15,60 +16,6 @@ class Notifikasiscreen extends StatefulWidget {
 class _NotifikasiscreenState extends State<Notifikasiscreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-
-  final List<Map<String, dynamic>> _notifications = [
-    {
-      'id': '1',
-      'type': 'order',
-      'title': 'Order Delivered',
-      'message': 'Your order #ORD-001 has been delivered successfully',
-      'time': '2 hours ago',
-      'isRead': false,
-      'icon': HugeIcons.strokeRoundedPackageDelivered,
-      'color': AppColors.success,
-    },
-    {
-      'id': '2',
-      'type': 'promotion',
-      'title': 'Flash Sale Started!',
-      'message': 'Up to 70% off on electronics. Limited time offer!',
-      'time': '4 hours ago',
-      'isRead': false,
-      'icon': HugeIcons.strokeRoundedDiscount,
-      'color': AppColors.secondary,
-    },
-    {
-      'id': '3',
-      'type': 'order',
-      'title': 'Order Shipped',
-      'message': 'Your order #ORD-002 is on its way. Track your package.',
-      'time': '1 day ago',
-      'isRead': true,
-      'icon': HugeIcons.strokeRoundedTruck,
-      'color': AppColors.info,
-    },
-    {
-      'id': '4',
-      'type': 'general',
-      'title': 'Welcome to Como!',
-      'message': 'Thank you for joining Como. Enjoy shopping with us!',
-      'time': '2 days ago',
-      'isRead': true,
-      'icon': HugeIcons.strokeRoundedGift,
-      'color': AppColors.primary,
-    },
-    {
-      'id': '5',
-      'type': 'promotion',
-      'title': 'New Arrivals',
-      'message': 'Check out the latest products in fashion category',
-      'time': '3 days ago',
-      'isRead': true,
-      'icon': HugeIcons.strokeRoundedNewReleases,
-      'color': AppColors.accent,
-    },
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -100,15 +47,15 @@ class _NotifikasiscreenState extends State<Notifikasiscreen>
             child: TabBarView(
               controller: _tabController,
               children: [
-                _buildNotificationsList(_notifications),
+                _buildNotificationsList(notifications),
                 _buildNotificationsList(
-                  _notifications.where((n) => n['type'] == 'Pesanan').toList(),
+                  notifications.where((n) => n.type == 'order').toList(),
                 ),
                 _buildNotificationsList(
-                  _notifications.where((n) => n['type'] == 'Promosi').toList(),
+                  notifications.where((n) => n.type == 'promotion').toList(),
                 ),
                 _buildNotificationsList(
-                  _notifications.where((n) => n['type'] == 'general').toList(),
+                  notifications.where((n) => n.type == 'general').toList(),
                 ),
               ],
             ),
@@ -128,9 +75,6 @@ class _NotifikasiscreenState extends State<Notifikasiscreen>
 
   // =========================== MENU TAB BAR ====================================================//
   Widget _buildTabBar() {
-    int count = _notifications.where((n) => !n['isRead']).length;
-    String display = count > 99 ? '99+' : '$count';
-
     return Container(
       color: AppColors.white,
       child: TabBar(
@@ -152,7 +96,7 @@ class _NotifikasiscreenState extends State<Notifikasiscreen>
     );
   }
 
-  Widget _buildNotificationsList(List<Map<String, dynamic>> notifications) {
+  Widget _buildNotificationsList(List<NotificationModel> notifications) {
     if (notifications.isEmpty) {
       return _buildEmptyState();
     }
@@ -202,9 +146,9 @@ class _NotifikasiscreenState extends State<Notifikasiscreen>
   }
 
   // ==================================== DATA NOTIFIKASI ===========================================//
-  Widget _buildNotificationCard(Map<String, dynamic> notification) {
+  Widget _buildNotificationCard(NotificationModel notification) {
     return Dismissible(
-      key: Key(notification['id']),
+      key: Key(notification.id),
       direction: DismissDirection.endToStart,
       background: Container(
         alignment: Alignment.centerRight,
@@ -221,14 +165,14 @@ class _NotifikasiscreenState extends State<Notifikasiscreen>
         ),
       ),
       onDismissed: (direction) {
-        _deleteNotification(notification['id']);
+        _deleteNotification(notification.id);
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: AppConstants.paddingM),
         decoration: BoxDecoration(
           color: AppColors.white,
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
-          border: notification['isRead']
+          border: notification.isRead
               ? null
               // ignore: deprecated_member_use
               : Border.all(color: AppColors.primary.withOpacity(0.3), width: 1),
@@ -241,7 +185,7 @@ class _NotifikasiscreenState extends State<Notifikasiscreen>
           ],
         ),
         child: InkWell(
-          onTap: () => _markAsRead(notification['id']),
+          onTap: () => _markAsRead(notification.id),
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
           child: Padding(
             padding: const EdgeInsets.all(AppConstants.paddingM),
@@ -251,12 +195,13 @@ class _NotifikasiscreenState extends State<Notifikasiscreen>
                 Container(
                   padding: const EdgeInsets.all(AppConstants.paddingS),
                   decoration: BoxDecoration(
-                    color: notification['color'].withOpacity(0.1),
+                    // ignore: deprecated_member_use
+                    color: notification.color.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(AppConstants.radiusS),
                   ),
                   child: HugeIcon(
-                    icon: notification['icon'],
-                    color: notification['color'],
+                    icon: notification.icon as dynamic,
+                    color: notification.color,
                     size: 20,
                   ),
                 ),
@@ -269,15 +214,15 @@ class _NotifikasiscreenState extends State<Notifikasiscreen>
                         children: [
                           Expanded(
                             child: Text(
-                              notification['title'],
+                              notification.title,
                               style: AppTextStyles.titleSmall.copyWith(
-                                fontWeight: notification['isRead']
+                                fontWeight: notification.isRead
                                     ? FontWeight.normal
                                     : FontWeight.w600,
                               ),
                             ),
                           ),
-                          if (!notification['isRead'])
+                          if (!notification.isRead)
                             Container(
                               width: 8,
                               height: 8,
@@ -290,7 +235,7 @@ class _NotifikasiscreenState extends State<Notifikasiscreen>
                       ),
                       const SizedBox(height: AppConstants.paddingXS),
                       Text(
-                        notification['message'],
+                        notification.message,
                         style: AppTextStyles.bodyMedium.copyWith(
                           color: AppColors.textSecondary,
                         ),
@@ -307,7 +252,7 @@ class _NotifikasiscreenState extends State<Notifikasiscreen>
                           ),
                           const SizedBox(width: AppConstants.paddingXS),
                           Text(
-                            notification['time'],
+                            notification.time,
                             style: AppTextStyles.bodySmall.copyWith(
                               color: AppColors.textSecondary,
                             ),
@@ -329,16 +274,27 @@ class _NotifikasiscreenState extends State<Notifikasiscreen>
 
   void _markAsRead(String notificationId) {
     setState(() {
-      final index = _notifications.indexWhere((n) => n['id'] == notificationId);
+      final index = notifications.indexWhere((n) => n.id == notificationId);
       if (index != -1) {
-        _notifications[index]['isRead'] = true;
+        notifications[index].isRead = true;
       }
     });
+
+    // 🔥 UPDATE GLOBAL BADGE
+    unreadCountNotifier.value = notifications.where((n) => !n.isRead).length;
   }
+  // void _markAsRead(String notificationId) {
+  //   setState(() {
+  //     final index = notifications.indexWhere((n) => n.id == notificationId);
+  //     if (index != -1) {
+  //       notifications[index].isRead = true;
+  //     }
+  //   });
+  // }
 
   void _deleteNotification(String notificationId) {
     setState(() {
-      _notifications.removeWhere((n) => n['id'] == notificationId);
+      notifications.removeWhere((n) => n.id == notificationId);
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
