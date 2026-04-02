@@ -1,7 +1,11 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:jasa_app/core/constants/app_constants.dart';
+import 'package:jasa_app/model/app_colors.dart';
+import 'package:jasa_app/model/app_text_styles.dart';
 import 'package:jasa_app/model/category.dart';
 import 'package:jasa_app/model/layanan_jasa.dart';
 import 'package:jasa_app/model/service.dart';
@@ -33,6 +37,7 @@ class _buildHome extends StatefulWidget {
 }
 
 class _buildHomeState extends State<_buildHome> {
+  int _currentPromoIndex = 0;
   int selectedCategoryIndex = 0;
   bool isLoadingProviders = false;
   Position? _userPosition;
@@ -210,6 +215,26 @@ class _buildHomeState extends State<_buildHome> {
     super.dispose();
   }
 
+  final List<Map<String, dynamic>> _promoItems = [
+    {
+      'title': 'Summer Mega Sale',
+      'subtitle': 'Up to 80% off on fashion items',
+      'colors': [AppColors.primary, AppColors.primaryDark],
+    },
+    {
+      'title': 'Tech Deals',
+      'subtitle': 'Latest gadgets at amazing prices',
+      'colors': [AppColors.secondary, AppColors.secondaryDark],
+    },
+    {
+      'title': 'Free Shipping',
+      'subtitle': 'On orders over \$50 worldwide',
+      'colors': [AppColors.accent, AppColors.secondaryDark],
+    },
+  ];
+  
+  final double promoHeight = 200;
+  final double menuHeight = 120;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -217,33 +242,50 @@ class _buildHomeState extends State<_buildHome> {
         child: Stack(
           children: [
             _buildHeader(context),
-            _buildMenu(
-              context: context,
-              menuItems: menuItems,
-              selectedIndex: selectedCategoryIndex,
-              onTapMenu: (index) async {
-                setState(() {
-                  selectedCategoryIndex = index;
-                  isLoadingProviders = true;
-                  _visibleCount = 4; // 🔥 konsisten
-                });
-
-                await Future.delayed(const Duration(milliseconds: 600));
-
-                setState(() {
-                  isLoadingProviders = false;
-                });
-              },
+            Positioned(
+              top: kToolbarHeight + 60,
+              left: 0,
+              right: 0,
+              child: _buildPromoSection(),
             ),
-            _buildServiceSection(
-              context: context,
-              isLoading: isLoadingProviders,
-              services: filteredServices,
-              getCategoryName: getCategoryName,
-              visibleCount: _visibleCount,
-              scrollController: _listScrollController,
-              userPosition: _userPosition,
-              categoryId: demoCategories[selectedCategoryIndex].id,
+            Positioned(
+              top: kToolbarHeight + 60 + promoHeight,
+              left: 15,
+              right: 15,
+              child: _buildMenu(
+                context: context,
+                menuItems: menuItems,
+                selectedIndex: selectedCategoryIndex,
+                onTapMenu: (index) async {
+                  setState(() {
+                    selectedCategoryIndex = index;
+                    isLoadingProviders = true;
+                    _visibleCount = 4; // 🔥 konsisten
+                  });
+
+                  await Future.delayed(const Duration(milliseconds: 600));
+
+                  setState(() {
+                    isLoadingProviders = false;
+                  });
+                },
+              ),
+            ),
+            Positioned(
+              top: kToolbarHeight + 60 + promoHeight + menuHeight,
+              left: 15,
+              right: 15,
+              bottom: 5,
+              child: _buildServiceSection(
+                context: context,
+                isLoading: isLoadingProviders,
+                services: filteredServices,
+                getCategoryName: getCategoryName,
+                visibleCount: _visibleCount,
+                scrollController: _listScrollController,
+                userPosition: _userPosition,
+                categoryId: demoCategories[selectedCategoryIndex].id,
+              ),
             ),
             _buildSearch(_refresh, _goToSearch),
             _buildUserAvatar(
@@ -257,6 +299,110 @@ class _buildHomeState extends State<_buildHome> {
       ),
     );
   }
+
+  //UNTUK IKLAN/PROMO
+  Widget _buildPromoSection() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: AppConstants.paddingM),
+      child: Column(
+        children: [
+          CarouselSlider.builder(
+            itemCount: _promoItems.length,
+            itemBuilder: (context, index, realIndex) {
+              final item = _promoItems[index];
+              return _buildPromoCard(item);
+            },
+            options: CarouselOptions(
+              // height: 180,
+              aspectRatio: 16 / 7,
+              viewportFraction: 1.0,
+              enlargeCenterPage: false,
+              autoPlay: true,
+              autoPlayInterval: const Duration(seconds: 5),
+              onPageChanged: (index, reason) {
+                setState(() {
+                  _currentPromoIndex = index;
+                });
+              },
+            ),
+          ),
+          const SizedBox(height: AppConstants.paddingM),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: _promoItems.asMap().entries.map((entry) {
+              return Container(
+                width: 8,
+                height: 8,
+                margin: const EdgeInsets.symmetric(horizontal: 3),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: _currentPromoIndex == entry.key
+                      ? AppColors.primary
+                      : AppColors.grey300,
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPromoCard(Map<String, dynamic> item) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.symmetric(horizontal: AppConstants.paddingS),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: item['colors'] as List<Color>,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(AppConstants.radiusL),
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            right: -20,
+            top: -20,
+            child: Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                // ignore: deprecated_member_use
+                color: AppColors.white.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(AppConstants.paddingL),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  item['title'] as String,
+                  style: AppTextStyles.headlineSmall.copyWith(
+                    color: AppColors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: AppConstants.paddingS),
+                Text(
+                  item['subtitle'] as String,
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    // ignore: deprecated_member_use
+                    color: AppColors.white.withOpacity(0.9),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 Widget _buildHeader(BuildContext context) {
@@ -265,7 +411,8 @@ Widget _buildHeader(BuildContext context) {
     left: 0,
     right: 0,
     child: Container(
-      height: MediaQuery.of(context).size.height / 6.5,
+      height:
+          MediaQuery.of(context).size.height / 8, // ini juga abis di naikkin
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
@@ -279,7 +426,7 @@ Widget _buildHeader(BuildContext context) {
 
 Widget _buildSearch(VoidCallback refresh, Function(String) onSearch) {
   return Positioned(
-    top: 55,
+    top: 30, // habis dinaikkin
     left: 20,
     right: 65,
     child: SearchAnchor(
@@ -352,7 +499,7 @@ Widget _buildUserAvatar({
   required VoidCallback onTapCancel,
 }) {
   return Positioned(
-    top: 58,
+    top: 30, // habis di naikkin
     right: 10,
     child: GestureDetector(
       onTapDown: (_) => onTapDown(),
@@ -384,48 +531,43 @@ Widget _buildMenu({
   required int selectedIndex,
   required Function(int) onTapMenu,
 }) {
-  return Positioned(
-    top: MediaQuery.of(context).size.height * 0.18,
-    left: 15,
-    right: 15,
-    child: Container(
-      height: 105,
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            // ignore: deprecated_member_use
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 15,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.only(top: 5),
-        itemCount: menuItems.length,
-        separatorBuilder: (context, index) => Container(
-          width: 1,
-          margin: const EdgeInsets.symmetric(vertical: 1),
-          color: Colors.grey[300],
+  return Container(
+    height: 105,
+    padding: const EdgeInsets.symmetric(vertical: 8),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(15),
+      boxShadow: [
+        BoxShadow(
+          // ignore: deprecated_member_use
+          color: Colors.black.withOpacity(0.08),
+          blurRadius: 15,
+          offset: const Offset(0, 6),
         ),
-        itemBuilder: (context, index) {
-          final item = menuItems[index];
-
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14),
-            child: AnimatedImageButton(
-              imagePath: item['imagePath']!,
-              label: item['label']!,
-              isSelected: selectedIndex == index,
-              onTap: () => onTapMenu(index),
-            ),
-          );
-        },
+      ],
+    ),
+    child: ListView.separated(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.only(top: 5),
+      itemCount: menuItems.length,
+      separatorBuilder: (context, index) => Container(
+        width: 1,
+        margin: const EdgeInsets.symmetric(vertical: 1),
+        color: Colors.grey[300],
       ),
+      itemBuilder: (context, index) {
+        final item = menuItems[index];
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          child: AnimatedImageButton(
+            imagePath: item['imagePath']!,
+            label: item['label']!,
+            isSelected: selectedIndex == index,
+            onTap: () => onTapMenu(index),
+          ),
+        );
+      },
     ),
   );
 }
@@ -443,128 +585,122 @@ Widget _buildServiceSection({
   final visibleServices = services
       .take(visibleCount.clamp(0, services.length))
       .toList();
-  return Positioned(
-    top: MediaQuery.of(context).size.height * 0.18 + 120,
-    left: 15,
-    right: 15,
-    bottom: 5,
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        /// ===== JUDUL ATAS =====
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              "Penyedia jasa terdekat",
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      /// ===== JUDUL ATAS =====
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text(
+            "Penyedia jasa terdekat",
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: Colors.black87,
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Alljasascreen()),
+              );
+            },
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.zero,
+              minimumSize: const Size(0, 0),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: const Text(
+              "Lihat semua",
               style: TextStyle(
                 fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: Colors.black87,
+                fontWeight: FontWeight.bold,
+                color: Color(0xff0e86e4),
               ),
             ),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Alljasascreen()),
-                );
-              },
-              style: TextButton.styleFrom(
-                padding: EdgeInsets.zero,
-                minimumSize: const Size(0, 0),
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          ),
+        ],
+      ),
+
+      const SizedBox(height: 5),
+
+      /// ===== LIST DATA =====
+      Expanded(
+        child: isLoading
+            ? ListView.builder(
+                controller: scrollController,
+                itemCount: 5,
+                itemBuilder: (_, __) => _buildSkeleton(),
+              )
+            : ListView.separated(
+                controller: scrollController,
+                physics: const BouncingScrollPhysics(),
+                itemCount: visibleServices.length + 1,
+                padding: const EdgeInsets.only(top: 5),
+                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                itemBuilder: (context, index) {
+                  if (index == visibleServices.length) {
+                    return visibleCount < services.length
+                        ? const Padding(
+                            padding: EdgeInsets.all(16),
+                            child: Center(child: CircularProgressIndicator()),
+                          )
+                        : const SizedBox();
+                  }
+
+                  final service = visibleServices[index];
+
+                  double distance = userPosition != null
+                      ? Geolocator.distanceBetween(
+                              userPosition.latitude,
+                              userPosition.longitude,
+                              service.latitude,
+                              service.longitude,
+                            ) /
+                            1000
+                      : service.jarak;
+
+                  final layananList = demoLayananJasa
+                      .where(
+                        (item) =>
+                            item.serviceId == service.id &&
+                            item.categoryId == categoryId,
+                      )
+                      .toList();
+
+                  final displayed = layananList.isNotEmpty
+                      ? layananList.first.name
+                      : "";
+
+                  final sisa = layananList.length - 1;
+
+                  return InkWell(
+                    borderRadius: BorderRadius.circular(15),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              DetailJasa(serviceId: service.id),
+                        ),
+                      );
+                    },
+                    child: _buildServiceItem(
+                      service,
+                      layananList,
+                      displayed,
+                      sisa,
+                      getCategoryName,
+                      distance,
+                      categoryId,
+                    ),
+                  );
+                },
               ),
-              child: const Text(
-                "Lihat semua",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xff0e86e4),
-                ),
-              ),
-            ),
-          ],
-        ),
-
-        const SizedBox(height: 5),
-
-        /// ===== LIST DATA =====
-        Expanded(
-          child: isLoading
-              ? ListView.builder(
-                  controller: scrollController,
-                  itemCount: 5,
-                  itemBuilder: (_, __) => _buildSkeleton(),
-                )
-              : ListView.separated(
-                  controller: scrollController,
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: visibleServices.length + 1,
-                  padding: const EdgeInsets.only(top: 5),
-                  separatorBuilder: (_, __) => const SizedBox(height: 12),
-                  itemBuilder: (context, index) {
-                    if (index == visibleServices.length) {
-                      return visibleCount < services.length
-                          ? const Padding(
-                              padding: EdgeInsets.all(16),
-                              child: Center(child: CircularProgressIndicator()),
-                            )
-                          : const SizedBox();
-                    }
-
-                    final service = visibleServices[index];
-
-                    double distance = userPosition != null
-                        ? Geolocator.distanceBetween(
-                                userPosition.latitude,
-                                userPosition.longitude,
-                                service.latitude,
-                                service.longitude,
-                              ) /
-                              1000
-                        : service.jarak;
-
-                    final layananList = demoLayananJasa
-                        .where(
-                          (item) =>
-                              item.serviceId == service.id &&
-                              item.categoryId == categoryId,
-                        )
-                        .toList();
-
-                    final displayed = layananList.isNotEmpty
-                        ? layananList.first.name
-                        : "";
-
-                    final sisa = layananList.length - 1;
-
-                    return InkWell(
-                      borderRadius: BorderRadius.circular(15),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                DetailJasa(serviceId: service.id),
-                          ),
-                        );
-                      },
-                      child: _buildServiceItem(
-                        service,
-                        layananList,
-                        displayed,
-                        sisa,
-                        getCategoryName,
-                        distance,
-                        categoryId,
-                      ),
-                    );
-                  },
-                ),
-        ),
-      ],
-    ),
+      ),
+    ],
   );
 }
 
