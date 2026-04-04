@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jasa_app/model/notification_data.dart';
 import 'package:jasa_app/pages/HomePage.dart';
@@ -95,7 +96,8 @@ class _NavigationpageState extends State<Navigationpage> {
             ),
           );
         } else {
-          Navigator.of(context).pop();
+          // Navigator.of(context).pop();
+          SystemNavigator.pop();
         }
       },
       child: Scaffold(

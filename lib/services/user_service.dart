@@ -4,7 +4,7 @@ import 'package:jasa_app/utils/session_manager.dart';
 
 //buat profile
 class UserService {
-  static const String baseUrl = "http://192.168.1.3:8085/api/v1";
+  static const String baseUrl = "https://api.zonajasa.com/api/v1";
 
   static Future<Map<String, dynamic>?> getProfile() async {
     // ambil token dari session
@@ -19,7 +19,7 @@ class UserService {
         "Authorization": "Bearer $token",
         "X-API-PLATFORM": "mobile",
         "X-API-VERSION": "1",
-        "X-API-CLIENT-KEY": "YMo38JAe9pug",
+        "X-API-CLIENT-KEY": "wcvHp8fCDa0V",
       },
     );
 

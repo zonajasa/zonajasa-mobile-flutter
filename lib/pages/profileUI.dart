@@ -5,6 +5,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:jasa_app/login.dart';
 import 'package:jasa_app/services/user_service.dart';
+import 'package:jasa_app/splash_screen.dart';
 import 'package:jasa_app/utils/session_manager.dart';
 
 class Profileui extends StatefulWidget {
@@ -47,7 +48,6 @@ class _ProfileuiState extends State<Profileui> {
 
     setState(() {
       namaLengkap = data["nama_lengkap"] ?? "";
-      email = data["email"] ?? "";
       noWhatsapp = data["no_whatsapp"] ?? "";
       isPemilikJasa = data["role"] == "pemilik_jasa";
       switchValue = isPemilikJasa;
@@ -721,15 +721,42 @@ class _ProfileuiState extends State<Profileui> {
 
                       onTap: () async {
                         if (isLogin) {
-                          await SessionManager.logout();
-
-                          if (!context.mounted) return;
-
-                          Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(builder: (context) => Login()),
-                            (route) => false,
+                          final bool? confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text("Logout"),
+                              content: const Text(
+                                "Yakin mau keluar dari akun?",
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.pop(context, false),
+                                  child: const Text("Batal"),
+                                ),
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context, true),
+                                  child: const Text(
+                                    "Logout",
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                              ],
+                            ),
                           );
+                          if (confirm ?? false) {
+                            await SessionManager.logout();
+
+                            if (!context.mounted) return;
+
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SplashS(),
+                              ),
+                              (route) => false,
+                            );
+                          }
                         } else {
                           Navigator.push(
                             context,

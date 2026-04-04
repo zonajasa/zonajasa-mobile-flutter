@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:jasa_app/login.dart';
 import 'package:jasa_app/model/app_colors.dart';
 import 'package:jasa_app/model/app_text_styles.dart';
 import 'package:jasa_app/model/category.dart';
@@ -7,6 +8,7 @@ import 'package:jasa_app/model/layanan_jasa.dart';
 import 'package:jasa_app/model/service.dart';
 import 'package:intl/intl.dart';
 import 'package:jasa_app/pages/booking/booking_success_screen.dart';
+import 'package:jasa_app/utils/session_manager.dart';
 
 class BookingNow extends StatefulWidget {
   final String serviceId;
@@ -418,7 +420,6 @@ class _BookingNowState extends State<BookingNow> {
               ),
 
               const SizedBox(width: 16),
-
               Expanded(
                 child: SizedBox(
                   height: 50,
@@ -426,26 +427,98 @@ class _BookingNowState extends State<BookingNow> {
                     onPressed: (!isValid || isLoading)
                         ? null
                         : () async {
+                            final token = await SessionManager.getToken();
+
+                            // =========================
+                            // BELUM LOGIN
+                            // =========================
+                            if (token == null) {
+                              final confirm = await showDialog<bool>(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text(
+                                    "Ups, belum login",
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                  content: const Text(
+                                    "Kamu perlu login dulu sebelum melakukan pesan layanan.",
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(context, false),
+                                      child: const Text("Batal"),
+                                    ),
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(context, true),
+                                      child: const Text(
+                                        "Login",
+                                        style: TextStyle(color: Colors.blue),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+
+                              // 👉 kalau user pilih login
+                              if (confirm == true) {
+                                if (!context.mounted) return;
+
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => Login()),
+                                );
+                              }
+
+                              return;
+                            }
+
+                            // =========================
+                            // SUDAH LOGIN → LANJUT BOOKING
+                            // =========================
                             setState(() => isLoading = true);
 
-                            await Future.delayed(const Duration(seconds: 2));
+                            try {
+                              await Future.delayed(const Duration(seconds: 2));
 
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => BookingBerhasil(),
-                              ),
-                            );
+                              if (!context.mounted) return;
+
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => BookingBerhasil(),
+                                ),
+                              );
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Gagal melakukan booking"),
+                                ),
+                              );
+                            } finally {
+                              if (mounted) {
+                                setState(() => isLoading = false);
+                              }
+                            }
                           },
+
+                    // =========================
+                    // STYLE BUTTON
+                    // =========================
                     style: ElevatedButton.styleFrom(
                       backgroundColor: isValid
                           ? AppColors.primary
-                          : Colors.grey.shade400, // 🔥 abu-abu kalau disabled
+                          : Colors.grey.shade400,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
                     ),
+
+                    // =========================
+                    // CONTENT (TEXT / LOADING)
+                    // =========================
                     child: AnimatedSwitcher(
                       duration: const Duration(milliseconds: 300),
                       child: isLoading

@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class AuthService {
-  static const String baseUrl = "http://192.168.1.3:8085/api/v1";
+  static const String baseUrl = "https://api.zonajasa.com/api/v1";
 
   static Future login(String ephone, String password) async {
     print("LOGIN REQUEST START");
@@ -15,10 +15,10 @@ class AuthService {
     request.headers.addAll({
       "X-API-PLATFORM": "mobile",
       "X-API-VERSION": "1",
-      "X-API-CLIENT-KEY": "YMo38JAe9pug",
+      "X-API-CLIENT-KEY": "wcvHp8fCDa0V",
     });
 
-    request.fields["ephone"] = ephone;
+    request.fields["nomor_whatsapp"] = ephone;
     request.fields["password"] = password;
 
     var response = await request.send();
