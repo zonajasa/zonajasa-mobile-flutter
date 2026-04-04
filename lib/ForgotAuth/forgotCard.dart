@@ -118,15 +118,15 @@ class _ForgotcardState extends State<Forgotcard> {
 
                             setState(() => _isLoading = false);
 
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => UiPinCode(
-                                  phone: normalizedPhone,
-                                  mode: OtpMode.forgotPassword,
-                                ),
-                              ),
-                            );
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (_) => UiPinCode(
+                            //       phone: normalizedPhone,
+                            //       mode: OtpMode.forgotPassword,
+                            //     ),
+                            //   ),
+                            // );
                           }
                         },
                   child: Padding(

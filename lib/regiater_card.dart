@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:jasa_app/services/auth_service.dart';
 import 'package:jasa_app/ui_otp.dart';
 
 class RegisterCard extends StatefulWidget {
@@ -85,7 +86,7 @@ class _RegisterCardState extends State<RegisterCard> {
                   final name = value.trim();
 
                   // minimal 3 karakter
-                  if (name.length < 3) {
+                  if (name.length < 10) {
                     return 'Nama terlalu pendek';
                   }
 
@@ -265,32 +266,51 @@ class _RegisterCardState extends State<RegisterCard> {
                       ? null
                       : () async {
                           if (_formKey.currentState!.validate()) {
-                            setState(() => _isLoading = true);
+                            try {
+                              if (!mounted) return;
+                              setState(() => _isLoading = true);
 
-                            final rawPhone = _phoneController.text;
-                            final normalizedPhone = normalizePhone(rawPhone);
+                              final rawPhone = _phoneController.text;
+                              final normalizedPhone = normalizePhone(rawPhone);
 
-                            final name = _nameController.text;
-                            final password = _passwordController.text;
+                              final name = _nameController.text;
+                              final password = _passwordController.text;
 
-                            await Future.delayed(
-                              const Duration(milliseconds: 800),
-                            ); // simulasi API
+                              final result = await AuthService.register(
+                                nama: name,
+                                noWhatsapp: normalizedPhone,
+                                password: password,
+                              );
 
-                            setState(() => _isLoading = false);
+                              final token = result['data']['wa_encrypted'];
 
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => UiPinCode(
-                                  phone: normalizedPhone,
-                                  mode: OtpMode.register,
-                                  // kalau mau kirim juga:
-                                  // name: name,
-                                  // password: password,
+                              if (!mounted) return;
+
+                              setState(() => _isLoading = false);
+
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => UiPinCode(
+                                    phone: normalizedPhone,
+                                    mode: OtpMode.register,
+                                    token: token,
+                                  ),
                                 ),
-                              ),
-                            );
+                              );
+                            } catch (e) {
+                              if (!mounted) return;
+
+                              setState(() => _isLoading = false);
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    e.toString().replaceAll("Exception: ", ""),
+                                  ),
+                                ),
+                              );
+                            }
                           }
                         },
                   child: Padding(

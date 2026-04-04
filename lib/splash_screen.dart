@@ -27,20 +27,17 @@ class _SplashSState extends State<SplashS> {
   void checkLogin() async {
     await Future.delayed(const Duration(seconds: 2));
 
-    // Jangan auto login kalau user udah klik tombol
     if (userClicked) return;
 
     String? token = await SessionManager.getToken();
 
     if (token != null && token.isNotEmpty) {
-      // Token valid → langsung ke Home
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const Navigationpage()),
       );
     }
-    // Kalau token null/empty → tetap di splash, user bisa klik Masuk/Daftar
   }
 
   @override

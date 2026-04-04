@@ -12,8 +12,14 @@ enum OtpMode { register, forgotPassword }
 class UiPinCode extends StatefulWidget {
   final String phone;
   final OtpMode mode;
+  final String token;
 
-  const UiPinCode({super.key, required this.phone, required this.mode});
+  const UiPinCode({
+    super.key,
+    required this.phone,
+    required this.mode,
+    required this.token,
+  });
   @override
   State<UiPinCode> createState() => _UiPinCodeState();
 }
@@ -22,7 +28,12 @@ class _UiPinCodeState extends State<UiPinCode> {
   bool isLoading = false;
   late BuildContext pageContext;
   final TextEditingController otpController = TextEditingController();
-  final String dummyCode = "123456";
+
+  String maskPhone(String phone) {
+    if (phone.length < 8) return phone;
+
+    return "${phone.substring(0, 4)} ${phone.substring(4, 6)}•• •••• ${phone.substring(phone.length - 3)}";
+  }
 
   bool isVerifying = false;
   StreamController<ErrorAnimationType>? errorController;
@@ -41,6 +52,7 @@ class _UiPinCodeState extends State<UiPinCode> {
     timer?.cancel();
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (secondsRemaining > 0) {
+        if (!mounted) return;
         setState(() {
           secondsRemaining--;
         });
@@ -66,7 +78,11 @@ class _UiPinCodeState extends State<UiPinCode> {
     bool isValid;
 
     if (widget.mode == OtpMode.register) {
-      isValid = await AuthOtp.verifyRegisterOtp(value);
+      // isValid = await AuthOtp.verifyRegisterOtp(value);
+      isValid = await AuthService.verifyOtp(
+        otp: value,
+        waEncrypted: widget.token,
+      );
     } else {
       isValid = await AuthOtp.verifyResetOtp(value);
     }
@@ -75,9 +91,11 @@ class _UiPinCodeState extends State<UiPinCode> {
 
     Navigator.of(context, rootNavigator: true).pop();
 
+    if (!mounted) return;
     if (isValid) {
       showVerificationSuccess();
     } else {
+      if (!mounted) return;
       setState(() {
         hasError = true;
       });
@@ -182,7 +200,7 @@ class _UiPinCodeState extends State<UiPinCode> {
                     ),
                     onPressed: () async {
                       Navigator.pop(context);
-
+                      if (!mounted) return;
                       setState(() {
                         isLoading = true;
                       });
@@ -269,8 +287,8 @@ class _UiPinCodeState extends State<UiPinCode> {
 
                               const SizedBox(height: 10),
 
-                              const Text(
-                                "We sent a 6-digit code to\n+62 8••• •••• 1234",
+                              Text(
+                                "Kami telah mengirimkan kode 6 digit ke\n${maskPhone(widget.phone)}",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(color: Colors.white70),
                               ),
@@ -365,6 +383,7 @@ class _UiPinCodeState extends State<UiPinCode> {
                                           )
                                         : TextButton(
                                             onPressed: () {
+                                              if (!mounted) return;
                                               setState(() {
                                                 secondsRemaining = 55;
                                               });
@@ -415,18 +434,3 @@ class _UiPinCodeState extends State<UiPinCode> {
     }
   }
 }
-
-
-// POST /verify-register-otp
-// {
-//   "phone": "...",
-//   "otp": "...",
-//   "token": "register_token"
-// }
-
-// POST /verify-reset-otp
-// {
-//   "phone": "...",
-//   "otp": "...",
-//   "token": "reset_token"
-// }
