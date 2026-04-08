@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:jasa_app/ui_otp.dart';
 
 class Forgotcard extends StatefulWidget {
   const Forgotcard({super.key});

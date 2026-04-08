@@ -5,7 +5,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:jasa_app/core/theme/DottedLine.dart';
 import 'package:jasa_app/login.dart';
-import 'package:jasa_app/pages/profil_datajasa.dart';
+import 'package:jasa_app/pages/pemilik_jasa/profil_datajasa.dart';
 import 'package:jasa_app/services/user_service.dart';
 import 'package:jasa_app/splash_screen.dart';
 import 'package:jasa_app/utils/session_manager.dart';
@@ -278,7 +278,6 @@ class _ProfileuiState extends State<Profileui> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // 🔥 ICON
                 Container(
                   padding: const EdgeInsets.all(15),
                   decoration: BoxDecoration(
