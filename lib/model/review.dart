@@ -1,7 +1,6 @@
 class Review {
   final String id;
   final String serviceId;
-  final String userId;
   final String userName;
   final String userImage;
   final List<String> images;
@@ -12,7 +11,6 @@ class Review {
   Review({
     required this.id,
     required this.serviceId,
-    required this.userId,
     required this.userName,
     required this.userImage,
     required this.images,
@@ -25,7 +23,6 @@ class Review {
     return Review(
       id: json['id'] as String,
       serviceId: json['serviceId'] as String,
-      userId: json['userId'] as String,
       userName: json['userName'] as String,
       userImage: json['userImage'] as String,
       images: (json['images'] as List<dynamic>)
@@ -41,7 +38,6 @@ class Review {
     return {
       'id': id,
       'serviceId': serviceId,
-      'userId': userId,
       'userName': userName,
       'userImage': userImage,
       'images': images,
@@ -57,7 +53,6 @@ List<Review> demoReviews = [
   Review(
     id: '1',
     serviceId: '1',
-    userId: 'user1',
     userName: 'Sarah Johnson',
     userImage: 'images/orang.png',
     images: [
@@ -72,7 +67,6 @@ List<Review> demoReviews = [
   Review(
     id: '2',
     serviceId: '1',
-    userId: 'user2',
     userName: 'Michael Brown',
     userImage: 'images/orang.png',
     images: [
@@ -87,7 +81,6 @@ List<Review> demoReviews = [
   Review(
     id: '3',
     serviceId: '1',
-    userId: 'user3',
     userName: 'Emily Davis',
     userImage: 'images/orang.png',
     images: [
@@ -102,7 +95,6 @@ List<Review> demoReviews = [
   Review(
     id: '4',
     serviceId: '2',
-    userId: 'user4',
     userName: 'James Wilson',
     userImage: 'images/orang.png',
     images: [
@@ -117,7 +109,6 @@ List<Review> demoReviews = [
   Review(
     id: '5',
     serviceId: '3',
-    userId: 'user5',
     userName: 'Alex Thompson',
     userImage: 'images/orang.png',
     images: [
@@ -132,7 +123,6 @@ List<Review> demoReviews = [
   Review(
     id: '6',
     serviceId: '1',
-    userId: 'user1',
     userName: 'Sarah Kun',
     userImage: 'images/orang.png',
     images: [
@@ -147,7 +137,6 @@ List<Review> demoReviews = [
   Review(
     id: '7',
     serviceId: '1',
-    userId: 'user1',
     userName: 'Sarah ',
     userImage: 'images/orang.png',
     images: [

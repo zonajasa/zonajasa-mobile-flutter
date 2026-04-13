@@ -45,7 +45,10 @@ class _DetailJasaState extends State<DetailJasa> {
     _annotationManager = await mapboxMap.annotations
         .createPointAnnotationManager();
 
-    final service = demoServices.firstWhere((s) => s.id == widget.serviceId);
+    final service = demoServices.firstWhere(
+      (s) => s.id == widget.serviceId,
+      orElse: () => demoServices.first,
+    );
     await Future.delayed(const Duration(milliseconds: 800));
 
     if (!mounted) return;
@@ -108,8 +111,9 @@ class _DetailJasaState extends State<DetailJasa> {
         .where((item) => item.serviceId == service.id)
         .toList();
     // ignore: unused_local_variable
-    final avg =
-        reviews.map((e) => e.rating).reduce((a, b) => a + b) / reviews.length;
+    final avg = reviews.isNotEmpty
+        ? reviews.map((e) => e.rating).reduce((a, b) => a + b) / reviews.length
+        : 0.0;
     return Scaffold(
       body: Stack(
         children: [
@@ -146,7 +150,7 @@ class _DetailJasaState extends State<DetailJasa> {
                   ),
                 ],
                 flexibleSpace: FlexibleSpaceBar(
-                  background: ServiceImageCarousel(images: service.images),
+                  background: ServiceImageCarousel(images: service.galeri),
                 ),
               ),
               // DETAIL JASA

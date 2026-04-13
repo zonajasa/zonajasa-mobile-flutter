@@ -235,8 +235,9 @@ class _ProviderDetailScreenState extends State<ProviderDetailScreen> {
         .where((r) => r.serviceId == service.id)
         .toList();
 
-    final avg =
-        reviews.map((e) => e.rating).reduce((a, b) => a + b) / reviews.length;
+    final avg = reviews.isNotEmpty
+        ? reviews.map((e) => e.rating).reduce((a, b) => a + b) / reviews.length
+        : 0.0;
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -613,8 +614,9 @@ class _ProviderDetailScreenState extends State<ProviderDetailScreen> {
   }
 
   Widget _buildReviewSummary(List<Review> reviews) {
-    final avg =
-        reviews.map((e) => e.rating).reduce((a, b) => a + b) / reviews.length;
+    final avg = reviews.isNotEmpty
+        ? reviews.map((e) => e.rating).reduce((a, b) => a + b) / reviews.length
+        : 0.0;
 
     return Row(
       children: [

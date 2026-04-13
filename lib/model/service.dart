@@ -7,13 +7,10 @@ class Service {
   final String foto_user;
   final double jarak;
   final String nomorwa;
-  final List<String> images;
+  final List<String> galeri;
   final String address;
   final double latitude;
   final double longitude;
-
-  final bool isFeatured;
-  final bool isPopular;
 
   Service({
     required this.id,
@@ -24,12 +21,10 @@ class Service {
     required this.foto_user,
     required this.jarak,
     required this.nomorwa,
-    required this.images,
+    required this.galeri,
     required this.address,
     required this.latitude,
     required this.longitude,
-    this.isFeatured = false,
-    this.isPopular = false,
   });
 
   factory Service.fromJson(Map<String, dynamic> json) {
@@ -44,14 +39,12 @@ class Service {
           .toList(),
       foto_user: json['foto_user'] as String,
       nomorwa: json['nomorwa'] as String,
-      images: (json['images'] as List<dynamic>)
+      galeri: (json['galeri'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
       address: json['address'] as String,
       latitude: (json['latitude'] as num).toDouble(),
       longitude: (json['longitude'] as num).toDouble(),
-      isFeatured: json['isFeatured'] as bool? ?? false,
-      isPopular: json['isPopular'] as bool? ?? false,
     );
   }
 
@@ -64,12 +57,10 @@ class Service {
       'categoryId': categoryId,
       'foto_user': foto_user,
       'nomorwa': nomorwa,
-      'images': images,
+      'galeri': galeri,
       'address': address,
       'latitude': latitude,
       'longitude': longitude,
-      'isFeatured': isFeatured,
-      'isPopular': isPopular,
     };
   }
 }
@@ -86,12 +77,10 @@ List<Service> demoServices = [
     jarak: 10,
     foto_user: 'images/people.png',
     nomorwa: "6287770093583",
-    images: ['images/b.png', 'images/c.png', 'images/a.png'],
+    galeri: ['images/b.png', 'images/c.png', 'images/a.png'],
     address: "Batam Center, Kepulauan Riau",
     latitude: -4.0083753,
     longitude: 122.5577568,
-    isFeatured: true,
-    isPopular: true,
   ),
   Service(
     id: '2',
@@ -103,11 +92,10 @@ List<Service> demoServices = [
     jarak: 5,
     foto_user: 'images/people.png',
     nomorwa: "6281804228935",
-    images: ['images/a.png', 'images/b.png', 'images/b.png'],
+    galeri: ['images/a.png', 'images/b.png', 'images/b.png'],
     address: "Batam Center, Kepulauan Riau",
     latitude: -4.000537,
     longitude: 122.5489654,
-    isFeatured: true,
   ),
   Service(
     id: '3',
@@ -119,11 +107,10 @@ List<Service> demoServices = [
     jarak: 15,
     foto_user: 'images/people.png',
     nomorwa: "6287770093583",
-    images: ['images/a.png', 'images/b.png', 'images/b.png'],
+    galeri: ['images/a.png', 'images/b.png', 'images/b.png'],
     address: "Batam Center, Kepulauan Riau",
     latitude: -0.9471,
     longitude: 104.0305,
-    isPopular: true,
   ),
   Service(
     id: '4',
@@ -135,11 +122,10 @@ List<Service> demoServices = [
     jarak: 40,
     foto_user: 'images/people.png',
     nomorwa: "6281804228935",
-    images: ['images/a.png', 'images/b.png', 'images/b.png'],
+    galeri: ['images/a.png', 'images/b.png', 'images/b.png'],
     address: "Batam Center, Kepulauan Riau",
     latitude: -0.9471,
     longitude: 104.0305,
-    isFeatured: true,
   ),
   Service(
     id: '5',
@@ -151,12 +137,10 @@ List<Service> demoServices = [
     jarak: 30,
     foto_user: 'images/people.png',
     nomorwa: "6287770093583",
-    images: ['images/a.png', 'images/b.png', 'images/b.png'],
+    galeri: ['images/a.png', 'images/b.png', 'images/b.png'],
     address: "Batam Center, Kepulauan Riau",
     latitude: -0.9471,
     longitude: 104.0305,
-    isFeatured: true,
-    isPopular: true,
   ),
   Service(
     id: '6',
@@ -168,12 +152,10 @@ List<Service> demoServices = [
     jarak: 14,
     foto_user: 'images/people.png',
     nomorwa: "6281804228935",
-    images: ['images/a.png', 'images/b.png', 'images/b.png'],
+    galeri: ['images/a.png', 'images/b.png', 'images/b.png'],
     address: "Batam Center, Kepulauan Riau",
     latitude: -0.9471,
     longitude: 104.0305,
-    isFeatured: true,
-    isPopular: true,
   ),
   Service(
     id: '7',
@@ -185,12 +167,10 @@ List<Service> demoServices = [
     jarak: 10,
     foto_user: 'images/people.png',
     nomorwa: "6287770093583",
-    images: ['images/b.png', 'images/c.png', 'images/a.png'],
+    galeri: ['images/b.png', 'images/c.png', 'images/a.png'],
     address: "Batam Center, Kepulauan Riau",
     latitude: -4.000537,
     longitude: 122.5489654,
-    isFeatured: true,
-    isPopular: true,
   ),
   Service(
     id: '8',
@@ -202,12 +182,10 @@ List<Service> demoServices = [
     jarak: 20,
     foto_user: 'images/people.png',
     nomorwa: "6287770093583",
-    images: ['images/b.png', 'images/c.png', 'images/a.png'],
+    galeri: ['images/b.png', 'images/c.png', 'images/a.png'],
     address: "Batam Center, Kepulauan Riau",
     latitude: -0.9471,
     longitude: 104.0305,
-    isFeatured: true,
-    isPopular: true,
   ),
   Service(
     id: '9',
@@ -219,12 +197,10 @@ List<Service> demoServices = [
     jarak: 10,
     foto_user: 'images/people.png',
     nomorwa: "6287770093583",
-    images: ['images/b.png', 'images/c.png', 'images/a.png'],
+    galeri: ['images/b.png', 'images/c.png', 'images/a.png'],
     address: "Batam Center, Kepulauan Riau",
     latitude: -0.9471,
     longitude: 104.0305,
-    isFeatured: true,
-    isPopular: true,
   ),
   Service(
     id: '10',
@@ -236,12 +212,10 @@ List<Service> demoServices = [
     jarak: 10,
     foto_user: 'images/people.png',
     nomorwa: "6287770093583",
-    images: ['images/b.png', 'images/c.png', 'images/a.png'],
+    galeri: ['images/b.png', 'images/c.png', 'images/a.png'],
     address: "Batam Center, Kepulauan Riau",
     latitude: -0.9471,
     longitude: 104.0305,
-    isFeatured: true,
-    isPopular: true,
   ),
   Service(
     id: '11',
@@ -253,11 +227,9 @@ List<Service> demoServices = [
     jarak: 10,
     foto_user: 'images/people.png',
     nomorwa: "6287770093583",
-    images: ['images/b.png', 'images/c.png', 'images/a.png'],
+    galeri: ['images/b.png', 'images/c.png', 'images/a.png'],
     address: "Batam Center, Kepulauan Riau",
     latitude: -0.9471,
     longitude: 104.0305,
-    isFeatured: true,
-    isPopular: true,
   ),
 ];
