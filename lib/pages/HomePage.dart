@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -8,6 +9,7 @@ import 'package:jasa_app/model/app_colors.dart';
 import 'package:jasa_app/model/app_text_styles.dart';
 import 'package:jasa_app/model/category.dart';
 import 'package:jasa_app/model/layanan_jasa.dart';
+import 'package:jasa_app/model/review.dart';
 import 'package:jasa_app/model/service.dart';
 import 'package:jasa_app/pages/allJasaScreen.dart';
 import 'package:jasa_app/pages/detail_jasa.dart';
@@ -751,6 +753,11 @@ Widget _buildServiceItem(
   double distance,
   String categoryId,
 ) {
+  final reviews = demoReviews.where((r) => r.serviceId == service.id).toList();
+
+  final avg = reviews.isNotEmpty
+      ? reviews.map((e) => e.rating).reduce((a, b) => a + b) / reviews.length
+      : 0.0;
   return Container(
     padding: const EdgeInsets.symmetric(vertical: 8),
     decoration: BoxDecoration(
@@ -794,17 +801,20 @@ Widget _buildServiceItem(
               ),
               Row(
                 children: [
-                  ...List.generate(5, (index) {
-                    double rating = service.rating;
-                    return Icon(
-                      index < rating.floor() ? Icons.star : Icons.star_border,
-                      color: Colors.amber,
-                      size: 16,
-                    );
-                  }),
+                  RatingBar.builder(
+                    initialRating: avg,
+                    minRating: 1,
+                    allowHalfRating: true,
+                    itemCount: 5,
+                    itemSize: 18,
+                    ignoreGestures: true,
+                    itemBuilder: (context, _) =>
+                        const Icon(Icons.star, color: AppColors.warning),
+                    onRatingUpdate: (_) {},
+                  ),
                   const SizedBox(width: 3),
                   Text(
-                    service.rating.toStringAsFixed(1),
+                    avg.toStringAsFixed(1),
 
                     style: const TextStyle(
                       fontSize: 15,

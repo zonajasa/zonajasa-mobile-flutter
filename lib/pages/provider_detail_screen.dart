@@ -231,6 +231,12 @@ class _ProviderDetailScreenState extends State<ProviderDetailScreen> {
 
   //data profile
   Widget _buildProviderInfo() {
+    final reviews = demoReviews
+        .where((r) => r.serviceId == service.id)
+        .toList();
+
+    final avg =
+        reviews.map((e) => e.rating).reduce((a, b) => a + b) / reviews.length;
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -278,7 +284,7 @@ class _ProviderDetailScreenState extends State<ProviderDetailScreen> {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          service.rating.toString(),
+                          avg.toStringAsFixed(1),
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
@@ -286,7 +292,7 @@ class _ProviderDetailScreenState extends State<ProviderDetailScreen> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          '(${service.reviewCount.toString()} reviews)',
+                          '(${reviews.length.toString()} ulasan)',
                           style: AppTextStyles.body2.copyWith(
                             color: AppColors.textSecondary,
                           ),

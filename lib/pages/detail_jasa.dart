@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:jasa_app/pages/providerLayanan.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:jasa_app/model/app_colors.dart';
@@ -106,6 +107,9 @@ class _DetailJasaState extends State<DetailJasa> {
     final layananList = demoLayananJasa
         .where((item) => item.serviceId == service.id)
         .toList();
+    // ignore: unused_local_variable
+    final avg =
+        reviews.map((e) => e.rating).reduce((a, b) => a + b) / reviews.length;
     return Scaffold(
       body: Stack(
         children: [
@@ -171,19 +175,22 @@ class _DetailJasaState extends State<DetailJasa> {
                       // Rating
                       Row(
                         children: [
-                          ...List.generate(5, (index) {
-                            double rating = service.rating;
-                            return Icon(
-                              index < rating.floor()
-                                  ? Icons.star
-                                  : Icons.star_border,
-                              color: Colors.amber,
-                              size: 16,
-                            );
-                          }),
+                          RatingBar.builder(
+                            initialRating: avg,
+                            minRating: 1,
+                            allowHalfRating: true,
+                            itemCount: 5,
+                            itemSize: 18,
+                            ignoreGestures: true,
+                            itemBuilder: (context, _) => const Icon(
+                              Icons.star,
+                              color: AppColors.warning,
+                            ),
+                            onRatingUpdate: (_) {},
+                          ),
                           const SizedBox(width: 8),
                           Text(
-                            '${service.rating} (${service.reviewCount} reviews)',
+                            '${avg.toStringAsFixed(1)} (${reviews.length} ulasan)',
                             style: AppTextStyles.body2,
                           ),
                         ],
@@ -425,27 +432,31 @@ class _DetailJasaState extends State<DetailJasa> {
                                   const SizedBox(height: 4),
                                   Row(
                                     children: [
-                                      ...List.generate(5, (index) {
-                                        double rating = service.rating;
-                                        return Icon(
-                                          index < rating.floor()
-                                              ? Icons.star
-                                              : Icons.star_border,
-                                          color: Colors.amber,
-                                          size: 16,
-                                        );
-                                      }),
+                                      RatingBar.builder(
+                                        initialRating: avg,
+                                        minRating: 1,
+                                        allowHalfRating: true,
+                                        itemCount: 5,
+                                        itemSize: 18,
+                                        ignoreGestures: true,
+                                        itemBuilder: (context, _) => const Icon(
+                                          Icons.star,
+                                          color: AppColors.warning,
+                                        ),
+                                        onRatingUpdate: (_) {},
+                                      ),
                                       const SizedBox(width: 4),
                                       Text(
-                                        service.rating.toStringAsFixed(1),
+                                        avg.toStringAsFixed(1),
 
                                         style: const TextStyle(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
+                                      const SizedBox(width: 4),
                                       Text(
-                                        '(${service.reviewCount} reviews)',
+                                        '(${reviews.length} ulasan)',
                                         style: TextStyle(
                                           fontSize: 14,
                                           color: AppColors.textSecondary,
@@ -476,7 +487,7 @@ class _DetailJasaState extends State<DetailJasa> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text('Reviews', style: AppTextStyles.headline3),
+                          const Text('Ulasan', style: AppTextStyles.headline3),
                           TextButton(
                             onPressed: () {
                               Navigator.push(
