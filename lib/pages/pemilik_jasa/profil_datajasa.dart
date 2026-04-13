@@ -11,6 +11,7 @@ class ProfilDatajasa extends StatefulWidget {
 }
 
 class _ProfilDatajasaState extends State<ProfilDatajasa> {
+  final GlobalKey<Step2FormState> step2Key = GlobalKey();
   final ScrollController _scrollController = ScrollController();
   double scrollOffset = 0;
   int currentStep = 1;
@@ -225,7 +226,7 @@ class _ProfilDatajasaState extends State<ProfilDatajasa> {
         );
 
       case 2:
-        return const Step2Form();
+        return Step2Form(key: step2Key);
       case 3:
         return const Text("STEP 3 - preview / submit");
 
@@ -269,6 +270,12 @@ class _ProfilDatajasaState extends State<ProfilDatajasa> {
               ),
             ),
             onPressed: () {
+              if (currentStep == 2) {
+                final isValid = step2Key.currentState?.validate() ?? false;
+
+                if (!isValid) return;
+              }
+
               if (currentStep < 3) {
                 setState(() => currentStep++);
               } else {
