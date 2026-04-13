@@ -459,7 +459,7 @@ class _AlljasascreenState extends State<Alljasascreen> {
             : displayed;
 
         return ServiceCard(
-          imageUrl: service.image,
+          imageUrl: service.foto_user,
           title: service.name,
           category: categoryName,
           services: servicesText,

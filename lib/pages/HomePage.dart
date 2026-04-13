@@ -79,11 +79,7 @@ class _buildHomeState extends State<_buildHome> {
   String getCategoryName(String categoryId) {
     final category = demoCategories.firstWhere(
       (cat) => cat.id == categoryId,
-      orElse: () => Category(
-        id: '',
-        name: 'Unknown',
-        image: '',
-      ),
+      orElse: () => Category(id: '', name: 'Unknown', image: ''),
     );
 
     return category.name;
@@ -184,15 +180,6 @@ class _buildHomeState extends State<_buildHome> {
         .toList();
   }
 
-  final List<Map<String, String>> menuItems = [
-    {'imagePath': 'images/BlueWrench.png', 'label': 'Tukang'},
-    {'imagePath': 'images/YellowLightning.png', 'label': 'Listrik'},
-    {'imagePath': 'images/BlueCircle.png', 'label': 'Kebersihan'},
-    {'imagePath': 'images/BlueCar.png', 'label': 'Service'},
-    {'imagePath': 'images/YellowLightning.png', 'label': 'Bangunan'},
-    {'imagePath': 'images/BlueCircle.png', 'label': 'Darurat'},
-  ];
-
   void _refresh() {
     setState(() {});
   }
@@ -241,6 +228,11 @@ class _buildHomeState extends State<_buildHome> {
       body: SafeArea(
         child: Stack(
           children: [
+            //
+            //
+            //
+            //
+            //=================================== HEADER ====================================//
             _buildHeader(context),
             Positioned(
               top: kToolbarHeight + 60,
@@ -248,19 +240,24 @@ class _buildHomeState extends State<_buildHome> {
               right: 0,
               child: _buildPromoSection(),
             ),
+            //
+            //
+            //
+            //
+            //==================================== MENU KATEGORI =============================//
             Positioned(
               top: kToolbarHeight + 60 + promoHeight,
               left: 15,
               right: 15,
               child: _buildMenu(
                 context: context,
-                menuItems: menuItems,
+                categories: demoCategories,
                 selectedIndex: selectedCategoryIndex,
                 onTapMenu: (index) async {
                   setState(() {
                     selectedCategoryIndex = index;
                     isLoadingProviders = true;
-                    _visibleCount = 4; // 🔥 konsisten
+                    _visibleCount = 4;
                   });
 
                   await Future.delayed(const Duration(milliseconds: 600));
@@ -271,6 +268,12 @@ class _buildHomeState extends State<_buildHome> {
                 },
               ),
             ),
+            //
+            //
+            //
+            //
+            //
+            //================================ DATA LAYANAN ================================//
             Positioned(
               top: kToolbarHeight + 60 + promoHeight + menuHeight,
               left: 15,
@@ -287,7 +290,18 @@ class _buildHomeState extends State<_buildHome> {
                 categoryId: demoCategories[selectedCategoryIndex].id,
               ),
             ),
+            //
+            //
+            //
+            //
+            //
+            //=============================== PENCARIAN ====================================//
             _buildSearch(_refresh, _goToSearch),
+            //
+            //
+            //
+            //
+            //=============================== USER ========================================//
             _buildUserAvatar(
               isPressed: isNotifPressed,
               onTapDown: () => setState(() => isNotifPressed = true),
@@ -386,6 +400,7 @@ class _buildHomeState extends State<_buildHome> {
       ),
     );
   }
+
   //END
 }
 
@@ -511,7 +526,7 @@ Widget _buildUserAvatar({
 
 Widget _buildMenu({
   required BuildContext context,
-  required List<Map<String, String>> menuItems,
+  required List<Category> categories,
   required int selectedIndex,
   required Function(int) onTapMenu,
 }) {
@@ -533,20 +548,21 @@ Widget _buildMenu({
     child: ListView.separated(
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.only(top: 5),
-      itemCount: menuItems.length,
+      itemCount: categories.length,
       separatorBuilder: (context, index) => Container(
         width: 1,
         margin: const EdgeInsets.symmetric(vertical: 1),
         color: Colors.grey[300],
       ),
       itemBuilder: (context, index) {
-        final item = menuItems[index];
+        // final item = menuItems[index];
+        final item = categories[index];
 
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 14),
           child: AnimatedImageButton(
-            imagePath: item['imagePath']!,
-            label: item['label']!,
+            imagePath: item.image,
+            label: item.name,
             isSelected: selectedIndex == index,
             onTap: () => onTapMenu(index),
           ),
@@ -756,7 +772,7 @@ Widget _buildServiceItem(
           padding: const EdgeInsets.only(left: 15, top: 8),
           child: CircleAvatar(
             radius: 35,
-            backgroundImage: AssetImage(service.image),
+            backgroundImage: AssetImage(service.foto_user),
           ),
         ),
         const SizedBox(width: 15),

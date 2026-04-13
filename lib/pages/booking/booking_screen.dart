@@ -129,7 +129,7 @@ class _BookingNowState extends State<BookingNow> {
                             ClipRRect(
                               borderRadius: BorderRadius.circular(8),
                               child: Image.asset(
-                                service.image,
+                                service.foto_user,
                                 width: 80,
                                 height: 80,
                                 fit: BoxFit.cover,

@@ -112,7 +112,7 @@ class _PemesananPageState extends State<PemesananPage> {
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: Image.asset(service.image, fit: BoxFit.cover),
+                        child: Image.asset(service.foto_user, fit: BoxFit.cover),
                       ),
                     ),
 

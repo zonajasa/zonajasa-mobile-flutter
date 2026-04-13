@@ -3,11 +3,7 @@ class Category {
   final String name;
   final String image;
 
-  Category({
-    required this.id,
-    required this.name,
-    required this.image,
-  });
+  Category({required this.id, required this.name, required this.image});
 
   factory Category.fromJson(Map<String, dynamic> json) {
     return Category(
@@ -24,34 +20,11 @@ class Category {
 
 // Example categories for demo
 List<Category> demoCategories = [
-  Category(
-    id: '1',
-    name: 'Tukang',
-    image: 'images/BlueWrench.png',
-  ),
-  Category(
-    id: '2',
-    name: 'Listrik',
-    image: 'images/YellowLightning.png',
-  ),
-  Category(
-    id: '3',
-    name: 'Kebersihan',
-    image: 'images/BlueCircle.png',
-  ),
-  Category(
-    id: '4',
-    name: 'Service',
-    image: 'images/BlueCar.png',
-  ),
-  Category(
-    id: '5',
-    name: 'Bangunan',
-    image: 'images/YellowLightning.png',
-  ),
-  Category(
-    id: '6',
-    name: 'Darurat',
-    image: 'images/BlueCircle.png',
-  ),
+  Category(id: '1', name: 'Tukang', image: 'images/BlueWrench.png'),
+  Category(id: '2', name: 'Listrik', image: 'images/YellowLightning.png'),
+  Category(id: '3', name: 'Kebersihan', image: 'images/BlueCircle.png'),
+  Category(id: '4', name: 'Service', image: 'images/BlueCar.png'),
+  Category(id: '5', name: 'Bangunan', image: 'images/YellowLightning.png'),
+  Category(id: '6', name: 'Darurat', image: 'images/BlueCircle.png'),
+  Category(id: '7', name: 'Otomotif', image: 'images/BlueCircle.png'),
 ];

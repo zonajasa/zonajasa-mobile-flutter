@@ -3,9 +3,8 @@ class Service {
   final String name;
   final String company;
   final String description;
-  final double price;
   final List<String> categoryId;
-  final String image;
+  final String foto_user;
   final double rating;
   final double jarak;
   final int reviewCount;
@@ -24,9 +23,8 @@ class Service {
     required this.name,
     required this.company,
     required this.description,
-    required this.price,
     required this.categoryId,
-    required this.image,
+    required this.foto_user,
     required this.rating,
     required this.jarak,
     required this.reviewCount,
@@ -47,11 +45,10 @@ class Service {
       company: json['company'] as String,
       jarak: (json['jarak'] as num).toDouble(),
       description: json['description'] as String,
-      price: (json['price'] as num).toDouble(),
       categoryId: (json['categoryId'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
-      image: json['image'] as String,
+      foto_user: json['foto_user'] as String,
       rating: (json['rating'] as num).toDouble(),
       reviewCount: json['reviewCount'] as int,
       nomorwa: json['nomorwa'] as String,
@@ -73,9 +70,8 @@ class Service {
       'name': name,
       'company': company,
       'description': description,
-      'price': price,
       'categoryId': categoryId,
-      'image': image,
+      'foto_user': foto_user,
       'rating': rating,
       'reviewCount': reviewCount,
       'nomorwa': nomorwa,
@@ -98,10 +94,9 @@ List<Service> demoServices = [
     company: 'CV. Budi Mandiri',
     description:
         'Professional cleaning service to make your home spotless and fresh. Our team uses eco-friendly products and advanced cleaning techniques.',
-    price: 120,
     categoryId: ['1', '2'],
     jarak: 10,
-    image: 'images/people.png',
+    foto_user: 'images/people.png',
     rating: 0.1,
     reviewCount: 245,
     nomorwa: "6287770093583",
@@ -119,10 +114,9 @@ List<Service> demoServices = [
     company: 'CV. Sari Jaya',
     description:
         'A thorough cleaning service for homes that need extra attention. Includes cleaning inside appliances, behind furniture, and detailed scrubbing.',
-    price: 220,
     categoryId: ['1'],
     jarak: 5,
-    image: 'images/people.png',
+    foto_user: 'images/people.png',
     rating: 4.9,
     reviewCount: 189,
     nomorwa: "6281804228935",
@@ -139,10 +133,9 @@ List<Service> demoServices = [
     company: 'CV. Anton Sejahtera',
     description:
         'Fast and reliable repair for any pipe leaks in your home. Our certified plumbers fix all types of pipe leaks to prevent water damage.',
-    price: 90,
     categoryId: ['2', '3'],
     jarak: 15,
-    image: 'images/people.png',
+    foto_user: 'images/people.png',
     rating: 4.7,
     reviewCount: 156,
     nomorwa: "6287770093583",
@@ -159,10 +152,9 @@ List<Service> demoServices = [
     company: 'CV. Rolem Ipsum',
     description:
         'Complete bathroom installation service including fixtures, plumbing, and finishing. Transform your bathroom with our expert plumbers.',
-    price: 580,
     categoryId: ['2'],
     jarak: 40,
-    image: 'images/people.png',
+    foto_user: 'images/people.png',
     rating: 4.9,
     reviewCount: 122,
     nomorwa: "6281804228935",
@@ -179,10 +171,9 @@ List<Service> demoServices = [
     company: 'CV. Anton Sejahtera',
     description:
         'Professional electrical wiring service for new installations or rewiring existing systems. All work meets safety codes and regulations.',
-    price: 150,
     categoryId: ['3'],
     jarak: 30,
-    image: 'images/people.png',
+    foto_user: 'images/people.png',
     rating: 4.8,
     reviewCount: 178,
     nomorwa: "6287770093583",
@@ -200,10 +191,9 @@ List<Service> demoServices = [
     company: 'CV. Anton Sejahtera',
     description:
         'Transform your space with our professional painting services. We use high-quality paints and techniques for a perfect finish.',
-    price: 320,
     categoryId: ['4'],
     jarak: 14,
-    image: 'images/people.png',
+    foto_user: 'images/people.png',
     rating: 4.7,
     reviewCount: 205,
     nomorwa: "6281804228935",
@@ -221,10 +211,9 @@ List<Service> demoServices = [
     company: 'CV. Budi Mandiri',
     description:
         'Professional cleaning service to make your home spotless and fresh. Our team uses eco-friendly products and advanced cleaning techniques.',
-    price: 120,
     categoryId: ['1'],
     jarak: 10,
-    image: 'images/people.png',
+    foto_user: 'images/people.png',
     rating: 0.1,
     reviewCount: 245,
     nomorwa: "6287770093583",
@@ -242,10 +231,9 @@ List<Service> demoServices = [
     company: 'CV. Greentech Studio',
     description:
         'Professional programming to make your home spotless and fresh. Our team uses eco-friendly products and advanced cleaning techniques.',
-    price: 120,
     categoryId: ['1'],
     jarak: 20,
-    image: 'images/people.png',
+    foto_user: 'images/people.png',
     rating: 5.0,
     reviewCount: 100,
     nomorwa: "6287770093583",
@@ -263,10 +251,9 @@ List<Service> demoServices = [
     company: 'CV. Budi Mandiri',
     description:
         'Professional cleaning service to make your home spotless and fresh. Our team uses eco-friendly products and advanced cleaning techniques.',
-    price: 120,
     categoryId: ['1'],
     jarak: 10,
-    image: 'images/people.png',
+    foto_user: 'images/people.png',
     rating: 0.1,
     reviewCount: 245,
     nomorwa: "6287770093583",
@@ -284,10 +271,9 @@ List<Service> demoServices = [
     company: 'CV. Budi Mandiri',
     description:
         'Professional cleaning service to make your home spotless and fresh. Our team uses eco-friendly products and advanced cleaning techniques.',
-    price: 120,
     categoryId: ['1'],
     jarak: 10,
-    image: 'images/people.png',
+    foto_user: 'images/people.png',
     rating: 0.1,
     reviewCount: 245,
     nomorwa: "6287770093583",
@@ -305,10 +291,9 @@ List<Service> demoServices = [
     company: 'CV. Budi Mandiri',
     description:
         'Professional cleaning service to make your home spotless and fresh. Our team uses eco-friendly products and advanced cleaning techniques.',
-    price: 120,
     categoryId: ['1'],
     jarak: 10,
-    image: 'images/people.png',
+    foto_user: 'images/people.png',
     rating: 0.1,
     reviewCount: 245,
     nomorwa: "6287770093583",

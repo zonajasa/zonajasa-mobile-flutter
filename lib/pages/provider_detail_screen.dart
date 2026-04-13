@@ -87,7 +87,7 @@ class _ProviderDetailScreenState extends State<ProviderDetailScreen> {
 
   void shareToApp(String app) async {
     final message =
-        "Halo! Lihat layanan ${service.name} dari ${service.company}.\nDeskripsi: ${service.description}\nHarga: Rp${service.price}";
+        "Halo! Lihat layanan ${service.name} dari ${service.company}.\nDeskripsi: ${service.description}";
 
     if (app == "whatsapp") {
       final uri = Uri.parse(
@@ -211,7 +211,7 @@ class _ProviderDetailScreenState extends State<ProviderDetailScreen> {
             SizedBox(
               width: double.infinity,
               height: double.infinity,
-              child: Image.asset(service.image, fit: BoxFit.cover),
+              child: Image.asset(service.foto_user, fit: BoxFit.cover),
             ),
             Container(
               decoration: BoxDecoration(
@@ -243,7 +243,7 @@ class _ProviderDetailScreenState extends State<ProviderDetailScreen> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Image.asset(
-                  service.image,
+                  service.foto_user,
                   width: 80,
                   height: 80,
                   fit: BoxFit.cover,
