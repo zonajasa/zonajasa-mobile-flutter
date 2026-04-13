@@ -1078,9 +1078,7 @@ class _AlljasascreenState extends State<Alljasascreen> {
       orElse: () => Category(
         id: '',
         name: 'Unknown',
-        icon: '',
         image: '',
-        description: '',
       ),
     );
     return category.name;

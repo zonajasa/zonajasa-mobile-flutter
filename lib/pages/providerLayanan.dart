@@ -25,9 +25,7 @@ class Providerlayanan extends StatelessWidget {
       orElse: () => Category(
         id: '',
         name: 'Unknown',
-        icon: '',
         image: '',
-        description: '',
       ),
     );
     return cat.name;

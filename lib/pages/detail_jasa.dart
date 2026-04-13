@@ -202,9 +202,7 @@ class _DetailJasaState extends State<DetailJasa> {
                                   orElse: () => Category(
                                     id: '',
                                     name: 'Unknown',
-                                    icon: '',
                                     image: '',
-                                    description: '',
                                   ),
                                 );
 

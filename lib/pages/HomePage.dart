@@ -82,9 +82,7 @@ class _buildHomeState extends State<_buildHome> {
       orElse: () => Category(
         id: '',
         name: 'Unknown',
-        icon: '',
         image: '',
-        description: '',
       ),
     );
 
