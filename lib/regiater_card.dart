@@ -294,12 +294,15 @@ class _RegisterCardState extends State<RegisterCard> {
                             final result = res["data"];
 
                             if (statusCode == 422 && result["errors"] != null) {
-                              final errors = result["errors"];
+                              final errors = result["errors"] ?? [];
 
                               Map<String, String> mappedErrors = {};
 
                               for (var e in errors) {
-                                mappedErrors[e["field"]] = e["message"];
+                                if (e["field"] != null &&
+                                    e["message"] != null) {
+                                  mappedErrors[e["field"]] = e["message"];
+                                }
                               }
 
                               if (!mounted) return;
@@ -314,7 +317,19 @@ class _RegisterCardState extends State<RegisterCard> {
                             }
 
                             if (statusCode == 200 || statusCode == 201) {
-                              final token = result['data']['wa_encrypted'];
+                              final token = result['data']?['wa_encrypted'];
+
+                              if (token == null) {
+                                if (!mounted) return;
+
+                                setState(() => _isLoading = false);
+
+                                AppSnackbar.showError(
+                                  context,
+                                  "Token tidak ditemukan, coba lagi",
+                                );
+                                return;
+                              }
 
                               if (!mounted) return;
 
