@@ -42,6 +42,7 @@ class _RegisterCardState extends State<RegisterCard> {
         padding: const EdgeInsets.only(left: 10, right: 10, top: 15),
         child: Form(
           key: _formKey,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             children: [
               //NAMA LENGKAP
@@ -243,23 +244,51 @@ class _RegisterCardState extends State<RegisterCard> {
                   onPressed: _isLoading
                       ? null
                       : () async {
-                          if (_formKey.currentState!.validate()) {
-                            try {
+                          if (!_formKey.currentState!.validate()) return;
+
+                          if (!mounted) return;
+                          setState(() => _isLoading = true);
+
+                          try {
+                            final rawPhone = _phoneController.text;
+                            final normalizedPhone = normalizePhone(rawPhone);
+
+                            final name = _nameController.text;
+                            final password = _passwordController.text;
+
+                            final res = await AuthService.register(
+                              nama: name,
+                              noWhatsapp: normalizedPhone,
+                              password: password,
+                            );
+
+                            final statusCode = res["statusCode"];
+                            final result = res["data"];
+
+                            // 🔥 HANDLE ERROR VALIDATION (INI YANG LU MAU)
+                            if (statusCode == 422) {
+                              final errors = result["errors"];
+
+                              Map<String, String> mappedErrors = {};
+
+                              for (var e in errors) {
+                                mappedErrors[e["field"]] = e["message"];
+                              }
+
                               if (!mounted) return;
-                              setState(() => _isLoading = true);
 
-                              final rawPhone = _phoneController.text;
-                              final normalizedPhone = normalizePhone(rawPhone);
+                              setState(() {
+                                fieldErrors = mappedErrors;
+                                _isLoading = false;
+                              });
 
-                              final name = _nameController.text;
-                              final password = _passwordController.text;
+                              _formKey.currentState!
+                                  .validate(); // 🔥 munculin error
+                              return; // ⛔ STOP disini (jangan lanjut)
+                            }
 
-                              final result = await AuthService.register(
-                                nama: name,
-                                noWhatsapp: normalizedPhone,
-                                password: password,
-                              );
-
+                            // ✅ SUCCESS
+                            if (statusCode == 200 || statusCode == 201) {
                               final token = result['data']['wa_encrypted'];
 
                               if (!mounted) return;
@@ -276,7 +305,8 @@ class _RegisterCardState extends State<RegisterCard> {
                                   ),
                                 ),
                               );
-                            } catch (e) {
+                            } else {
+                              // ❌ ERROR LAIN
                               if (!mounted) return;
 
                               setState(() => _isLoading = false);
@@ -284,11 +314,23 @@ class _RegisterCardState extends State<RegisterCard> {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
-                                    e.toString().replaceAll("Exception: ", ""),
+                                    result["message"] ?? "Terjadi kesalahan",
                                   ),
                                 ),
                               );
                             }
+                          } catch (e) {
+                            if (!mounted) return;
+
+                            setState(() => _isLoading = false);
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  e.toString().replaceAll("Exception: ", ""),
+                                ),
+                              ),
+                            );
                           }
                         },
                   child: Padding(
