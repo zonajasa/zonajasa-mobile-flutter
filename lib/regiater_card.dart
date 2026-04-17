@@ -18,6 +18,7 @@ class _RegisterCardState extends State<RegisterCard> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  Map<String, String> fieldErrors = {};
 
   @override
   Widget build(BuildContext context) {
@@ -222,6 +223,12 @@ class _RegisterCardState extends State<RegisterCard> {
                   return null;
                 },
               ),
+              //
+              //
+              //
+              //
+              //
+              //end
               SizedBox(height: 20),
               //tombol daftar
               SizedBox(
