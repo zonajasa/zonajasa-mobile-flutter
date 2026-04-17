@@ -43,6 +43,7 @@ class _RegisterCardState extends State<RegisterCard> {
           key: _formKey,
           child: Column(
             children: [
+              //NAMA LENGKAP
               TextFormField(
                 controller: _nameController,
                 keyboardType: TextInputType.name,
@@ -79,26 +80,21 @@ class _RegisterCardState extends State<RegisterCard> {
                   ),
                 ),
                 validator: (value) {
+                  // 🔥 PRIORITAS: error dari API
+                  if (fieldErrors["nama_lengkap"] != null) {
+                    return fieldErrors["nama_lengkap"];
+                  }
+
+                  // fallback basic aja
                   if (value == null || value.trim().isEmpty) {
                     return 'Masukkan nama lengkap';
-                  }
-
-                  final name = value.trim();
-
-                  // minimal 3 karakter
-                  if (name.length < 10) {
-                    return 'Nama terlalu pendek';
-                  }
-
-                  // hanya huruf & spasi
-                  if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(name)) {
-                    return 'Nama hanya boleh huruf';
                   }
 
                   return null;
                 },
               ),
               SizedBox(height: 10),
+              //NOMOR WHATSAPP
               TextFormField(
                 controller: _phoneController,
                 keyboardType: TextInputType.phone,
@@ -143,28 +139,19 @@ class _RegisterCardState extends State<RegisterCard> {
                   ),
                 ),
                 validator: (value) {
+                  if (fieldErrors["nomor_whatsapp"] != null) {
+                    return fieldErrors["nomor_whatsapp"];
+                  }
+
                   if (value == null || value.isEmpty) {
                     return 'Masukkan nomor WhatsApp';
-                  }
-
-                  final phone = value.replaceAll(' ', '');
-
-                  if (!RegExp(r'^[0-9]+$').hasMatch(phone)) {
-                    return 'Nomor harus berupa angka';
-                  }
-
-                  if (phone.length < 10 || phone.length > 15) {
-                    return 'Nomor tidak valid';
-                  }
-
-                  if (!phone.startsWith('08') && !phone.startsWith('62')) {
-                    return 'Gunakan format 08 atau 62';
                   }
 
                   return null;
                 },
               ),
               SizedBox(height: 10),
+              //PASSWORD
               TextFormField(
                 controller: _passwordController,
                 focusNode: _focusNode,
@@ -224,28 +211,12 @@ class _RegisterCardState extends State<RegisterCard> {
                   ),
                 ),
                 validator: (value) {
+                  if (fieldErrors["password"] != null) {
+                    return fieldErrors["password"];
+                  }
+
                   if (value == null || value.isEmpty) {
                     return 'Masukkan password';
-                  }
-
-                  if (value.length < 8) {
-                    return 'Minimal 8 karakter';
-                  }
-
-                  if (!RegExp(r'[A-Z]').hasMatch(value)) {
-                    return 'Harus ada huruf besar';
-                  }
-
-                  if (!RegExp(r'[a-z]').hasMatch(value)) {
-                    return 'Harus ada huruf kecil';
-                  }
-
-                  if (!RegExp(r'[0-9]').hasMatch(value)) {
-                    return 'Harus ada angka';
-                  }
-
-                  if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
-                    return 'Harus ada karakter spesial';
                   }
 
                   return null;

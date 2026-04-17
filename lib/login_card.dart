@@ -4,11 +4,14 @@ import 'package:flutter/services.dart';
 class CardLogin extends StatelessWidget {
   final TextEditingController noWaController;
   final TextEditingController passwordController;
-
+  final Map<String, String> fieldErrors;
+  final Function(String field)? onClearError;
   const CardLogin({
     super.key,
     required this.noWaController,
     required this.passwordController,
+    required this.fieldErrors,
+    this.onClearError,
   });
 
   @override
@@ -37,6 +40,10 @@ class CardLogin extends StatelessWidget {
               hint: "Nomor WhatsApp",
               icon: Icons.phone_android,
               controller: noWaController,
+              errorText: fieldErrors["nomor_whatsapp"],
+              onChangedClearError: () {
+                onClearError?.call("nomor_whatsapp");
+              },
             ),
 
             Field(
@@ -44,9 +51,11 @@ class CardLogin extends StatelessWidget {
               icon: Icons.lock,
               isPassword: true,
               controller: passwordController,
+              errorText: fieldErrors["password"],
+              onChangedClearError: () {
+                onClearError?.call("password");
+              },
             ),
-            // Field(hint: "Email atau Nomor HP", icon: Icons.email_outlined),
-            // Field(hint: "Password", icon: Icons.lock, isPassword: true),
           ],
         ),
       ),
@@ -55,12 +64,16 @@ class CardLogin extends StatelessWidget {
 }
 
 class Field extends StatefulWidget {
+  final String? errorText;
+  final Function()? onChangedClearError;
   const Field({
     super.key,
     required this.hint,
     required this.icon,
     required this.controller,
     this.isPassword = false,
+    this.errorText,
+    this.onChangedClearError,
   });
 
   final TextEditingController controller;
@@ -81,7 +94,7 @@ class _FieldState extends State<Field> {
   void initState() {
     super.initState();
     _focusNode.addListener(() {
-      setState(() {}); // rebuild saat fokus berubah
+      setState(() {});
     });
   }
 
@@ -96,11 +109,29 @@ class _FieldState extends State<Field> {
     final bool isFocused = _focusNode.hasFocus;
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start, // biar rata kiri
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TextFormField(
           controller: widget.controller,
           focusNode: _focusNode,
+          validator: (value) {
+            if (widget.errorText != null) {
+              return widget.errorText;
+            }
+
+            if (value == null || value.isEmpty) {
+              return widget.hint == "Nomor WhatsApp"
+                  ? "Nomor WA wajib diisi"
+                  : "Password wajib diisi";
+            }
+
+            return null;
+          },
+          onChanged: (_) {
+            if (widget.errorText != null) {
+              widget.onChangedClearError?.call();
+            }
+          },
           obscureText: widget.isPassword && !_isPasswordVisible,
           keyboardType: widget.hint == "Nomor WhatsApp"
               ? TextInputType.number
@@ -113,9 +144,9 @@ class _FieldState extends State<Field> {
             prefixIcon: Icon(widget.icon, size: 30),
             prefixIconColor: WidgetStateColor.resolveWith((states) {
               if (states.contains(WidgetState.focused)) {
-                return const Color(0xff0e86e4); // warna saat fokus
+                return const Color(0xff0e86e4);
               }
-              return const Color(0xff9b9bb4); // warna normal
+              return const Color(0xff9b9bb4);
             }),
             prefixIconConstraints: const BoxConstraints(
               minWidth: 10,
@@ -168,16 +199,3 @@ class _FieldState extends State<Field> {
     );
   }
 }
-
-// TextFormField(
-//   decoration: InputDecoration(
-//     prefixIcon: const Icon(Icons.phone_android),
-//     hintText: "Email atau Nomor HP",
-//     filled: true,
-//     fillColor: Colors.grey.shade100,
-//     border: OutlineInputBorder(
-//       borderRadius: BorderRadius.circular(15),
-//       borderSide: BorderSide.none,
-//     ),
-//   ),
-// ),
