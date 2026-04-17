@@ -38,35 +38,27 @@ class AuthService {
     required String noWhatsapp,
     required String password,
   }) async {
-    try {
-      var request = http.MultipartRequest(
-        "POST",
-        Uri.parse("$baseUrl/user/auth/register"),
-      );
+    var request = http.MultipartRequest(
+      "POST",
+      Uri.parse("$baseUrl/user/auth/register"),
+    );
 
-      request.headers.addAll({
-        "X-API-PLATFORM": "mobile",
-        "X-API-VERSION": "1",
-        "X-API-CLIENT-KEY": dotenv.env['API_CLIENT_KEY']!,
-      });
+    request.headers.addAll({
+      "X-API-PLATFORM": "mobile",
+      "X-API-VERSION": "1",
+      "X-API-CLIENT-KEY": dotenv.env['API_CLIENT_KEY']!,
+    });
 
-      request.fields["nama_lengkap"] = nama;
-      request.fields["nomor_whatsapp"] = noWhatsapp;
-      request.fields["password"] = password;
+    request.fields["nama_lengkap"] = nama;
+    request.fields["nomor_whatsapp"] = noWhatsapp;
+    request.fields["password"] = password;
 
-      var response = await request.send();
-      var responseBody = await response.stream.bytesToString();
+    var response = await request.send();
+    var responseBody = await response.stream.bytesToString();
 
-      final data = jsonDecode(responseBody);
+    final data = jsonDecode(responseBody);
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        return data;
-      } else {
-        throw Exception(data['message'] ?? 'Register gagal');
-      }
-    } catch (e) {
-      throw Exception(e.toString());
-    }
+    return {"statusCode": response.statusCode, "data": data};
   }
 
   //VERIFIKASI OTP REGISTRASI

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jasa_app/services/auth_service.dart';
 import 'package:jasa_app/ui_otp.dart';
+import 'package:jasa_app/utils/snackbar_helper.dart';
 
 class RegisterCard extends StatefulWidget {
   const RegisterCard({super.key});
@@ -94,6 +95,15 @@ class _RegisterCardState extends State<RegisterCard> {
 
                   return null;
                 },
+                onChanged: (_) {
+                  if (fieldErrors.containsKey("nama_lengkap")) {
+                    setState(() {
+                      fieldErrors.remove("nama_lengkap");
+                    });
+                  }
+
+                  _formKey.currentState!.validate();
+                },
               ),
               SizedBox(height: 10),
               //NOMOR WHATSAPP
@@ -150,6 +160,15 @@ class _RegisterCardState extends State<RegisterCard> {
                   }
 
                   return null;
+                },
+                onChanged: (_) {
+                  if (fieldErrors.containsKey("nomor_whatsapp")) {
+                    setState(() {
+                      fieldErrors.remove("nomor_whatsapp");
+                    });
+                  }
+
+                  _formKey.currentState!.validate();
                 },
               ),
               SizedBox(height: 10),
@@ -223,6 +242,15 @@ class _RegisterCardState extends State<RegisterCard> {
 
                   return null;
                 },
+                onChanged: (_) {
+                  if (fieldErrors.containsKey("password")) {
+                    setState(() {
+                      fieldErrors.remove("password");
+                    });
+                  }
+
+                  _formKey.currentState!.validate();
+                },
               ),
               //
               //
@@ -265,8 +293,7 @@ class _RegisterCardState extends State<RegisterCard> {
                             final statusCode = res["statusCode"];
                             final result = res["data"];
 
-                            // 🔥 HANDLE ERROR VALIDATION (INI YANG LU MAU)
-                            if (statusCode == 422) {
+                            if (statusCode == 422 && result["errors"] != null) {
                               final errors = result["errors"];
 
                               Map<String, String> mappedErrors = {};
@@ -282,12 +309,10 @@ class _RegisterCardState extends State<RegisterCard> {
                                 _isLoading = false;
                               });
 
-                              _formKey.currentState!
-                                  .validate(); // 🔥 munculin error
-                              return; // ⛔ STOP disini (jangan lanjut)
+                              _formKey.currentState!.validate();
+                              return;
                             }
 
-                            // ✅ SUCCESS
                             if (statusCode == 200 || statusCode == 201) {
                               final token = result['data']['wa_encrypted'];
 
@@ -306,17 +331,13 @@ class _RegisterCardState extends State<RegisterCard> {
                                 ),
                               );
                             } else {
-                              // ❌ ERROR LAIN
                               if (!mounted) return;
 
                               setState(() => _isLoading = false);
 
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    result["message"] ?? "Terjadi kesalahan",
-                                  ),
-                                ),
+                              AppSnackbar.showError(
+                                context,
+                                result["message"] ?? "Terjadi kesalahan",
                               );
                             }
                           } catch (e) {
@@ -324,12 +345,9 @@ class _RegisterCardState extends State<RegisterCard> {
 
                             setState(() => _isLoading = false);
 
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  e.toString().replaceAll("Exception: ", ""),
-                                ),
-                              ),
+                            AppSnackbar.showError(
+                              context,
+                              e.toString().replaceAll("Exception: ", ""),
                             );
                           }
                         },
