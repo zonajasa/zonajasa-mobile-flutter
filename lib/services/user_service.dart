@@ -1,10 +1,11 @@
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:jasa_app/utils/session_manager.dart';
 
 //buat profile
 class UserService {
-  static const String baseUrl = "https://api.zonajasa.com/api/v1";
+  static String baseUrl = dotenv.env['API_BASE_URL']!;
 
   static Future<Map<String, dynamic>?> getProfile() async {
     // ambil token dari session
@@ -19,7 +20,7 @@ class UserService {
         "Authorization": "Bearer $token",
         "X-API-PLATFORM": "mobile",
         "X-API-VERSION": "1",
-        "X-API-CLIENT-KEY": "wcvHp8fCDa0V",
+        "X-API-CLIENT-KEY": dotenv.env['API_CLIENT_KEY']!,
       },
     );
 

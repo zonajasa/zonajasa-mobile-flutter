@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:jasa_app/AppLoader.dart';
 import 'package:jasa_app/ForgotAuth/ForgotPasswordPage.dart';
 import 'package:jasa_app/navigationPage.dart';
 import 'package:jasa_app/login_card.dart';
@@ -16,7 +15,6 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  bool isLoading = false;
   bool isButtonLoading = false;
   final TextEditingController noWaController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -116,9 +114,11 @@ class _LoginState extends State<Login> {
                               setState(() {
                                 fieldErrors.clear();
                               });
-                              if (!_formKey.currentState!.validate()) {
-                                return;
-                              }
+
+                              if (!_formKey.currentState!.validate()) return;
+
+                              final start = DateTime.now();
+
                               setState(() {
                                 isButtonLoading = true;
                               });
@@ -129,20 +129,28 @@ class _LoginState extends State<Login> {
                                   passwordController.text,
                                 );
 
-                                if (result["status"] == "success" ||
-                                    result["status"] == 200) {
+                                final diff = DateTime.now().difference(start);
+
+                                if (diff.inMilliseconds < 500) {
+                                  await Future.delayed(
+                                    Duration(
+                                      milliseconds: 500 - diff.inMilliseconds,
+                                    ),
+                                  );
+                                }
+
+                                if (result["status"] == 200) {
                                   if (!mounted) return;
-                                  setState(() {
-                                    isLoading = true;
-                                  });
 
                                   String token = result["data"]["token"];
                                   String nama =
-                                      result["data"]["user"]["nama_lengkap"];
+                                      result["data"]["user"]["full_name"];
 
                                   await SessionManager.saveUser(token, nama);
 
                                   if (!mounted) return;
+
+                                  setState(() => isButtonLoading = false);
 
                                   Navigator.pushAndRemoveUntil(
                                     context,
@@ -158,17 +166,20 @@ class _LoginState extends State<Login> {
                                     for (var e in result["errors"]) {
                                       errors[e["field"]] = e["message"];
                                     }
+
                                     if (!mounted) return;
+
                                     setState(() {
                                       fieldErrors = errors;
+                                      isButtonLoading = false;
                                     });
-
-                                    await Future.delayed(
-                                      const Duration(milliseconds: 50),
-                                    );
 
                                     _formKey.currentState!.validate();
                                   } else {
+                                    if (!mounted) return;
+
+                                    setState(() => isButtonLoading = false);
+
                                     AppSnackbar.showError(
                                       context,
                                       result["message"] ?? "Login gagal",
@@ -177,15 +188,14 @@ class _LoginState extends State<Login> {
                                 }
                               } catch (e) {
                                 if (!mounted) return;
+
+                                setState(() => isButtonLoading = false);
+
                                 AppSnackbar.showError(
                                   context,
                                   "Login gagal, coba lagi ya",
                                 );
                               }
-                              if (!mounted) return;
-                              setState(() {
-                                isButtonLoading = false;
-                              });
                             },
 
                       child: Padding(
@@ -250,13 +260,6 @@ class _LoginState extends State<Login> {
               ),
             ),
           ),
-
-          if (isLoading)
-            Container(
-              // ignore: deprecated_member_use
-              color: Colors.black.withOpacity(0.3),
-              child: const Center(child: AppLoader()),
-            ),
         ],
       ),
     );

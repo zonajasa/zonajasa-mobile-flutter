@@ -57,7 +57,7 @@ class _ProfileuiState extends State<Profileui> {
     if (data == null) return;
 
     setState(() {
-      namaLengkap = data["nama_lengkap"] ?? "";
+      namaLengkap = data["full_name"] ?? "";
       noWhatsapp = data["no_whatsapp"] ?? "";
       isPemilikJasa = data["role"] == "pemilik_jasa";
       switchValue = isPemilikJasa;

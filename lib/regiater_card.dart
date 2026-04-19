@@ -84,8 +84,8 @@ class _RegisterCardState extends State<RegisterCard> {
                 ),
                 validator: (value) {
                   // 🔥 PRIORITAS: error dari API
-                  if (fieldErrors["nama_lengkap"] != null) {
-                    return fieldErrors["nama_lengkap"];
+                  if (fieldErrors["full_name"] != null) {
+                    return fieldErrors["full_name"];
                   }
 
                   // fallback basic aja
@@ -96,9 +96,9 @@ class _RegisterCardState extends State<RegisterCard> {
                   return null;
                 },
                 onChanged: (_) {
-                  if (fieldErrors.containsKey("nama_lengkap")) {
+                  if (fieldErrors.containsKey("full_name")) {
                     setState(() {
-                      fieldErrors.remove("nama_lengkap");
+                      fieldErrors.remove("full_name");
                     });
                   }
 
@@ -317,7 +317,11 @@ class _RegisterCardState extends State<RegisterCard> {
                             }
 
                             if (statusCode == 200 || statusCode == 201) {
-                              final token = result['data']?['wa_encrypted'];
+                              final data = result['data'];
+
+                              final token = data?['kode_user'];
+                              final label = data?['label'];
+                              final expire = data?['expire'];
 
                               if (token == null) {
                                 if (!mounted) return;
@@ -326,7 +330,7 @@ class _RegisterCardState extends State<RegisterCard> {
 
                                 AppSnackbar.showError(
                                   context,
-                                  "Token tidak ditemukan, coba lagi",
+                                  "Token tidak ditemukan",
                                 );
                                 return;
                               }
@@ -340,8 +344,11 @@ class _RegisterCardState extends State<RegisterCard> {
                                 MaterialPageRoute(
                                   builder: (_) => UiPinCode(
                                     phone: normalizedPhone,
-                                    mode: OtpMode.register,
+                                    mode: label == "register_token"
+                                        ? OtpMode.register
+                                        : OtpMode.forgotPassword,
                                     token: token,
+                                    expire: expire,
                                   ),
                                 ),
                               );

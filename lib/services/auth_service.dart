@@ -49,7 +49,7 @@ class AuthService {
       "X-API-CLIENT-KEY": dotenv.env['API_CLIENT_KEY']!,
     });
 
-    request.fields["nama_lengkap"] = nama;
+    request.fields["full_name"] = nama;
     request.fields["nomor_whatsapp"] = noWhatsapp;
     request.fields["password"] = password;
 
@@ -64,7 +64,8 @@ class AuthService {
   //VERIFIKASI OTP REGISTRASI
   static Future<bool> verifyOtp({
     required String otp,
-    required String waEncrypted,
+    required String kodeUser,
+    required String type,
   }) async {
     try {
       var request = http.MultipartRequest(
@@ -79,7 +80,8 @@ class AuthService {
       });
 
       request.fields["otp"] = otp;
-      request.fields["wa_encrypted"] = waEncrypted;
+      request.fields["kode_user"] = kodeUser;
+      request.fields["type"] = type;
 
       var response = await request.send();
       var responseBody = await response.stream.bytesToString();
@@ -90,7 +92,7 @@ class AuthService {
 
       if (response.statusCode == 200) {
         final token = data['data']['token'];
-        final nama = data['data']['user']['nama_lengkap'];
+        final nama = data['data']['user']['full_name'];
 
         await SessionManager.saveUser(token, nama);
 
@@ -100,6 +102,37 @@ class AuthService {
       }
     } catch (e) {
       throw Exception(e.toString());
+    }
+  }
+
+  // RESEND OTP
+  static Future<Map<String, dynamic>> resendOtp({
+    required String kodeUser,
+  }) async {
+    try {
+      var request = http.MultipartRequest(
+        "POST",
+        Uri.parse("$baseUrl/user/auth/resend-otp"),
+      );
+
+      request.headers.addAll({
+        "X-API-PLATFORM": "mobile",
+        "X-API-VERSION": "1",
+        "X-API-CLIENT-KEY": dotenv.env['API_CLIENT_KEY']!,
+      });
+
+      request.fields["kode_user"] = kodeUser;
+
+      var response = await request.send();
+      var responseBody = await response.stream.bytesToString();
+
+      final data = jsonDecode(responseBody);
+
+      print("RESEND OTP RESPONSE: $data");
+
+      return {"statusCode": response.statusCode, "data": data};
+    } catch (e) {
+      throw Exception("Gagal resend OTP");
     }
   }
 }

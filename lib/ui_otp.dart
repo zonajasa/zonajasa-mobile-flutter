@@ -4,12 +4,14 @@ import 'package:jasa_app/AppLoader.dart';
 import 'package:jasa_app/ForgotAuth/ResetPasswordPage.dart';
 import 'package:jasa_app/navigationPage.dart';
 import 'package:jasa_app/services/auth_service.dart';
+import 'package:jasa_app/utils/snackbar_helper.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 enum OtpMode { register, forgotPassword }
 
 class UiPinCode extends StatefulWidget {
+  final String expire;
   final String phone;
   final OtpMode mode;
   final String token;
@@ -19,38 +21,35 @@ class UiPinCode extends StatefulWidget {
     required this.phone,
     required this.mode,
     required this.token,
+    required this.expire,
   });
   @override
   State<UiPinCode> createState() => _UiPinCodeState();
 }
 
 class _UiPinCodeState extends State<UiPinCode> {
+  bool isResendLoading = false;
+  String currentExpire = "";
   bool isLoading = false;
-  late BuildContext pageContext;
   final TextEditingController otpController = TextEditingController();
-
-  String maskPhone(String phone) {
-    if (phone.length < 8) return phone;
-
-    return "${phone.substring(0, 4)} ${phone.substring(4, 6)}•• •••• ${phone.substring(phone.length - 3)}";
-  }
 
   bool isVerifying = false;
   StreamController<ErrorAnimationType>? errorController;
   bool hasError = false;
-  int secondsRemaining = 55;
+
+  int secondsRemaining = 0;
   Timer? timer;
 
-  @override
-  void initState() {
-    super.initState();
-    startTimer();
-    errorController = StreamController<ErrorAnimationType>();
-  }
+  // ================= TIMER =================
 
   void startTimer() {
     timer?.cancel();
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+
       if (secondsRemaining > 0) {
         if (!mounted) return;
         setState(() {
@@ -62,40 +61,100 @@ class _UiPinCodeState extends State<UiPinCode> {
     });
   }
 
+  void initExpireTimer() {
+    final now = DateTime.now();
+
+    DateTime expireTime;
+
+    if (currentExpire.contains("T")) {
+      expireTime = DateTime.parse(currentExpire);
+    } else {
+      final parts = currentExpire.split(":");
+
+      expireTime = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        int.parse(parts[0]),
+        int.parse(parts[1]),
+        int.parse(parts[2]),
+      );
+    }
+
+    secondsRemaining = expireTime.difference(now).inSeconds;
+
+    if (secondsRemaining < 0) secondsRemaining = 0;
+  }
+
   String get formattedTime => secondsRemaining.toString().padLeft(2, '0');
+
+  // ================= LIFECYCLE =================
+
+  @override
+  void initState() {
+    super.initState();
+
+    errorController = StreamController<ErrorAnimationType>();
+
+    currentExpire = widget.expire;
+
+    initExpireTimer();
+    startTimer();
+  }
 
   @override
   void dispose() {
     timer?.cancel();
     errorController?.close();
+    otpController.dispose();
     super.dispose();
   }
 
-  // ====== KALAU ADA API SISA GANTI BAGIAN INI AJA ===//
+  // ================= OTP VALIDATION =================
+
   Future<void> validateOtp(String value) async {
     showLoadingDialog();
 
-    bool isValid;
+    try {
+      bool isValid;
 
-    if (widget.mode == OtpMode.register) {
-      // isValid = await AuthOtp.verifyRegisterOtp(value);
-      isValid = await AuthService.verifyOtp(
-        otp: value,
-        waEncrypted: widget.token,
-      );
-    } else {
-      isValid = await AuthOtp.verifyResetOtp(value);
-    }
+      if (widget.mode == OtpMode.register) {
+        isValid = await AuthService.verifyOtp(
+          otp: value,
+          kodeUser: widget.token,
+          type: "register_token",
+        );
+      } else {
+        isValid = await AuthService.verifyOtp(
+          otp: value,
+          kodeUser: widget.token,
+          type: "forgot_token",
+        );
+      }
 
-    if (!mounted) return;
-
-    Navigator.of(context, rootNavigator: true).pop();
-
-    if (!mounted) return;
-    if (isValid) {
-      showVerificationSuccess();
-    } else {
       if (!mounted) return;
+
+      Navigator.of(context, rootNavigator: true).pop();
+
+      if (isValid) {
+        showVerificationSuccess();
+      }
+    } catch (e) {
+      if (!mounted) return;
+
+      Navigator.of(context, rootNavigator: true).pop();
+
+      final msg = e.toString().toLowerCase();
+
+      if (msg.contains("expired")) {
+        setState(() {
+          secondsRemaining = 0;
+        });
+
+        AppSnackbar.showError(context, "Kode OTP sudah kadaluarsa");
+        return;
+      }
+
       setState(() {
         hasError = true;
       });
@@ -104,8 +163,8 @@ class _UiPinCodeState extends State<UiPinCode> {
       otpController.clear();
     }
   }
-  // == END ==//
 
+  // ================= DIALOG =================
   void showLoadingDialog() {
     showDialog(
       context: context,
@@ -204,11 +263,6 @@ class _UiPinCodeState extends State<UiPinCode> {
                       setState(() {
                         isLoading = true;
                       });
-
-                      await Future.delayed(const Duration(seconds: 2));
-
-                      if (!mounted) return;
-
                       handleNavigationAfterOtp();
                     },
                     child: const Text(
@@ -230,7 +284,6 @@ class _UiPinCodeState extends State<UiPinCode> {
 
   @override
   Widget build(BuildContext context) {
-    pageContext = context;
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: isLoading
@@ -288,7 +341,7 @@ class _UiPinCodeState extends State<UiPinCode> {
                               const SizedBox(height: 10),
 
                               Text(
-                                "Kami telah mengirimkan kode 6 digit ke\n${maskPhone(widget.phone)}",
+                                "Kami telah mengirimkan kode 6 digit ke\n${(widget.phone)}",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(color: Colors.white70),
                               ),
@@ -358,7 +411,7 @@ class _UiPinCodeState extends State<UiPinCode> {
                                         ),
                                       ),
 
-                                    const SizedBox(height: 15),
+                                    const SizedBox(height: 10),
 
                                     /// RESEND
                                     secondsRemaining > 0
@@ -373,7 +426,7 @@ class _UiPinCodeState extends State<UiPinCode> {
                                               ),
                                               const SizedBox(width: 6),
                                               Text(
-                                                "Resend code in 00:$formattedTime",
+                                                "Kirim ulang kode 00:$formattedTime",
                                                 style: const TextStyle(
                                                   color: Colors.black54,
                                                   fontWeight: FontWeight.w500,
@@ -382,30 +435,92 @@ class _UiPinCodeState extends State<UiPinCode> {
                                             ],
                                           )
                                         : TextButton(
-                                            onPressed: () {
-                                              if (!mounted) return;
-                                              setState(() {
-                                                secondsRemaining = 55;
-                                              });
-                                              startTimer();
-                                            },
-                                            child: const Text(
-                                              "Resend Code",
-                                              style: TextStyle(
-                                                color: Color(0xff5f6dfc),
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
+                                            onPressed: isResendLoading
+                                                ? null // 🔥 disable kalau lagi loading
+                                                : () async {
+                                                    if (!mounted) return;
+
+                                                    setState(() {
+                                                      isResendLoading = true;
+                                                    });
+
+                                                    try {
+                                                      final res =
+                                                          await AuthService.resendOtp(
+                                                            kodeUser:
+                                                                widget.token,
+                                                          );
+
+                                                      final statusCode =
+                                                          res["statusCode"];
+                                                      final result =
+                                                          res["data"];
+
+                                                      if (statusCode == 200) {
+                                                        final expiredAt =
+                                                            result["data"]["expired_at"];
+
+                                                        if (!mounted) return;
+
+                                                        timer?.cancel();
+
+                                                        setState(() {
+                                                          hasError = false;
+                                                          currentExpire =
+                                                              expiredAt;
+                                                        });
+
+                                                        initExpireTimer();
+                                                        startTimer();
+                                                        if (!mounted) return;
+                                                        AppSnackbar.showSuccess(
+                                                          context,
+                                                          "Kode OTP baru dikirim",
+                                                        );
+                                                      } else {
+                                                        AppSnackbar.showError(
+                                                          context,
+                                                          result["message"] ??
+                                                              "Gagal kirim ulang",
+                                                        );
+                                                      }
+                                                    } catch (e) {
+                                                      AppSnackbar.showError(
+                                                        context,
+                                                        "Terjadi kesalahan",
+                                                      );
+                                                    }
+
+                                                    if (!mounted) return;
+
+                                                    setState(() {
+                                                      isResendLoading = false;
+                                                    });
+                                                  },
+
+                                            child: isResendLoading
+                                                ? const SizedBox(
+                                                    height: 18,
+                                                    width: 18,
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                          strokeWidth: 2,
+                                                          color: Color(
+                                                            0xff5f6dfc,
+                                                          ),
+                                                        ),
+                                                  )
+                                                : const Text(
+                                                    "Kirim Ulang Kode",
+                                                    style: TextStyle(
+                                                      color: Color(0xff5f6dfc),
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
                                           ),
                                   ],
                                 ),
-                              ),
-
-                              const SizedBox(height: 30),
-
-                              const Text(
-                                "Try: 123456",
-                                style: TextStyle(color: Colors.white70),
                               ),
                             ],
                           ),
@@ -420,15 +535,17 @@ class _UiPinCodeState extends State<UiPinCode> {
   }
 
   void handleNavigationAfterOtp() {
+    if (!mounted) return;
+
     if (widget.mode == OtpMode.register) {
       Navigator.pushAndRemoveUntil(
-        pageContext,
+        context,
         MaterialPageRoute(builder: (_) => const Navigationpage()),
         (route) => false,
       );
     } else {
       Navigator.pushReplacement(
-        pageContext,
+        context,
         MaterialPageRoute(builder: (_) => const ResetpasswordPage()),
       );
     }
