@@ -58,6 +58,7 @@ class _LoginState extends State<Login> {
                       ),
                       Form(
                         key: _formKey,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
                         child: CardLogin(
                           noWaController: noWaController,
                           passwordController: passwordController,
@@ -174,7 +175,10 @@ class _LoginState extends State<Login> {
                                       isButtonLoading = false;
                                     });
 
-                                    _formKey.currentState!.validate();
+                                    WidgetsBinding.instance
+                                        .addPostFrameCallback((_) {
+                                          _formKey.currentState?.validate();
+                                        });
                                   } else {
                                     if (!mounted) return;
 

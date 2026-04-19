@@ -10,6 +10,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 enum OtpMode { register, forgotPassword }
 
+String parseError(Object e) {
+  return e.toString().replaceAll("Exception:", "").trim();
+}
+
 class UiPinCode extends StatefulWidget {
   final String expire;
   final String phone;
@@ -31,6 +35,7 @@ class _UiPinCodeState extends State<UiPinCode> {
   bool isDisposed = false;
   bool isResendLoading = false;
   String currentExpire = "";
+  String errorMessage = "";
   bool isLoading = false;
 
   bool isVerifying = false;
@@ -153,12 +158,13 @@ class _UiPinCodeState extends State<UiPinCode> {
           secondsRemaining = 0;
         });
 
-        AppSnackbar.showError(context, "Kode OTP sudah kadaluarsa");
+        AppSnackbar.showError(context, parseError(e));
         return;
       }
 
       setState(() {
         hasError = true;
+        errorMessage = parseError(e);
       });
 
       errorController?.add(ErrorAnimationType.shake);
@@ -402,11 +408,11 @@ class _UiPinCodeState extends State<UiPinCode> {
                                     ),
 
                                     if (hasError)
-                                      const Padding(
-                                        padding: EdgeInsets.only(top: 8),
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 8),
                                         child: Text(
-                                          "Kode OTP salah. Coba lagi.",
-                                          style: TextStyle(
+                                          errorMessage,
+                                          style: const TextStyle(
                                             color: Colors.red,
                                             fontSize: 13,
                                           ),

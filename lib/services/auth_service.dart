@@ -101,7 +101,7 @@ class AuthService {
         throw Exception(data['message'] ?? 'OTP salah');
       }
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
