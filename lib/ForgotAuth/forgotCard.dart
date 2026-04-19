@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:jasa_app/services/auth_service.dart';
+import 'package:jasa_app/ui_otp.dart';
 
 class Forgotcard extends StatefulWidget {
   const Forgotcard({super.key});
@@ -8,6 +10,7 @@ class Forgotcard extends StatefulWidget {
 }
 
 class _ForgotcardState extends State<Forgotcard> {
+  String apiError = "";
   bool _isLoading = false;
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _phoneController = TextEditingController();
@@ -38,6 +41,13 @@ class _ForgotcardState extends State<Forgotcard> {
               TextFormField(
                 controller: _phoneController,
                 keyboardType: TextInputType.phone,
+                onChanged: (value) {
+                  if (apiError.isNotEmpty) {
+                    setState(() {
+                      apiError = "";
+                    });
+                  }
+                },
                 decoration: InputDecoration(
                   prefixIcon: const Icon(Icons.phone_android, size: 25),
                   prefixIconColor: WidgetStateColor.resolveWith((states) {
@@ -71,18 +81,22 @@ class _ForgotcardState extends State<Forgotcard> {
                   ),
                 ),
                 validator: (value) {
+                  if (apiError.isNotEmpty) {
+                    return apiError;
+                  }
+
                   if (value == null || value.isEmpty) {
-                    return 'Masukkan nomor WhatsApp';
+                    return 'Nomor whatsapp tidak boleh dikosongkan';
                   }
 
                   final phone = value.replaceAll(' ', '');
 
                   if (!RegExp(r'^[0-9]+$').hasMatch(phone)) {
-                    return 'Nomor harus berupa angka';
+                    return 'Nomor whatsapp yang dikirim harus angka';
                   }
 
-                  if (phone.length < 10 || phone.length > 15) {
-                    return 'Nomor tidak valid';
+                  if (phone.length < 10) {
+                    return 'Nomor whatsapp terlalu pendek';
                   }
 
                   if (!phone.startsWith('08') && !phone.startsWith('62')) {
@@ -105,27 +119,51 @@ class _ForgotcardState extends State<Forgotcard> {
                   onPressed: _isLoading
                       ? null
                       : () async {
-                          if (_formKey.currentState!.validate()) {
-                            setState(() => _isLoading = true);
+                          if (!_formKey.currentState!.validate()) return;
 
-                            final rawPhone = _phoneController.text;
-                            final normalizedPhone = normalizePhone(rawPhone);
+                          setState(() => _isLoading = true);
 
-                            await Future.delayed(
-                              const Duration(milliseconds: 800),
-                            ); // simulasi API
+                          final rawPhone = _phoneController.text;
+                          final normalizedPhone = normalizePhone(rawPhone);
+
+                          try {
+                            final res = await AuthService.forgotPassword(
+                              phone: normalizedPhone,
+                            );
+
+                            if (!mounted) return;
+
+                            final data = res["data"];
+
+                            final token = data["kode_user"];
+                            final expire = data["expire"];
 
                             setState(() => _isLoading = false);
 
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (_) => UiPinCode(
-                            //       phone: normalizedPhone,
-                            //       mode: OtpMode.forgotPassword,
-                            //     ),
-                            //   ),
-                            // );
+                            final mode = OtpMode.forgotPassword;
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => UiPinCode(
+                                  phone: normalizedPhone,
+                                  mode: mode,
+                                  token: token,
+                                  expire: expire,
+                                ),
+                              ),
+                            );
+                          } catch (e) {
+                            if (!mounted) return;
+
+                            setState(() {
+                              _isLoading = false;
+                              apiError = parseError(e);
+                            });
+
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              _formKey.currentState?.validate();
+                            });
                           }
                         },
                   child: Padding(

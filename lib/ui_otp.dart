@@ -240,14 +240,14 @@ class _UiPinCodeState extends State<UiPinCode> {
                 const SizedBox(height: 20),
 
                 const Text(
-                  "Verification Successful",
+                  "Verifikasi Berhasil",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
 
                 const SizedBox(height: 10),
 
                 const Text(
-                  "Your account has been verified successfully.",
+                  "Akun Anda telah berhasil diverifikasi.",
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.black54),
                 ),
@@ -270,6 +270,11 @@ class _UiPinCodeState extends State<UiPinCode> {
                       setState(() {
                         isLoading = true;
                       });
+
+                      await Future.delayed(const Duration(seconds: 3));
+
+                      if (!mounted) return;
+
                       handleNavigationAfterOtp();
                     },
                     child: const Text(
@@ -554,7 +559,11 @@ class _UiPinCodeState extends State<UiPinCode> {
     } else {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const ResetpasswordPage()),
+        MaterialPageRoute(
+          builder: (_) => ResetpasswordPage(
+            kodeUser: widget.token,
+          ),
+        ),
       );
     }
   }

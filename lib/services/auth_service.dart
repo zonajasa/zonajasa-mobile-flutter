@@ -91,11 +91,12 @@ class AuthService {
       print("VERIFY OTP RESPONSE: $data");
 
       if (response.statusCode == 200) {
-        final token = data['data']['token'];
-        final nama = data['data']['user']['full_name'];
+        if (type == "register_token") {
+          final token = data['data']['token'];
+          final nama = data['data']['user']['full_name'];
 
-        await SessionManager.saveUser(token, nama);
-
+          await SessionManager.saveUser(token, nama);
+        }
         return true;
       } else {
         throw Exception(data['message'] ?? 'OTP salah');
@@ -133,6 +134,68 @@ class AuthService {
       return {"statusCode": response.statusCode, "data": data};
     } catch (e) {
       throw Exception("Gagal resend OTP");
+    }
+  }
+
+  //FORGOT PASSWORD
+  static Future<Map<String, dynamic>> forgotPassword({
+    required String phone,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse("$baseUrl/user/auth/forgot-password"),
+        headers: {
+          "Content-Type": "application/json",
+          "X-API-PLATFORM": "mobile",
+          "X-API-VERSION": "1",
+          "X-API-CLIENT-KEY": dotenv.env['API_CLIENT_KEY']!,
+        },
+        body: jsonEncode({"nomor_whatsapp": phone}),
+      );
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return data;
+      } else {
+        throw Exception(data["message"] ?? "Gagal request reset");
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  //RESET PASSWORD
+  static Future<Map<String, dynamic>> resetPassword({
+    required String kodeUser,
+    required String password,
+    required String passwordConfirmation,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse("$baseUrl/user/auth/reset-password"),
+        headers: {
+          "Content-Type": "application/json",
+          "X-API-PLATFORM": "mobile",
+          "X-API-VERSION": "1",
+          "X-API-CLIENT-KEY": dotenv.env['API_CLIENT_KEY']!,
+        },
+        body: jsonEncode({
+          "kode_user": kodeUser,
+          "password": password,
+          "password_confirmation": passwordConfirmation,
+        }),
+      );
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return data;
+      } else {
+        throw Exception(data["message"] ?? "Reset password gagal");
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 }
