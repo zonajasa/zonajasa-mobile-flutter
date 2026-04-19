@@ -19,7 +19,11 @@ class Resetcard extends StatefulWidget {
 }
 
 class _ResetcardState extends State<Resetcard> {
+  bool isPasswordInvalid = false;
+  bool isConfirmInvalid = false;
+  
   bool _isPasswordVisible = false;
+
   final _passwordFocus = FocusNode();
   final _confirmFocus = FocusNode();
 
@@ -105,14 +109,17 @@ class _ResetcardState extends State<Resetcard> {
                   }
                 },
                 decoration: InputDecoration(
-                  prefixIcon: const Icon(
-                    Icons.lock,
-                    size: 25, // ukuran icon lebih besar
-                  ),
+                  prefixIcon: const Icon(Icons.lock, size: 25),
                   prefixIconColor: WidgetStateColor.resolveWith((states) {
-                    if (states.contains(WidgetState.focused)) {
+                    final isFocused = states.contains(WidgetState.focused);
+
+                    if (isFocused) {
+                      if (isPasswordInvalid) {
+                        return Colors.red;
+                      }
                       return const Color(0xff0e86e4);
                     }
+
                     return const Color(0xff9b9bb4);
                   }),
                   suffixIcon: IconButton(
@@ -156,12 +163,17 @@ class _ResetcardState extends State<Resetcard> {
                   ),
                 ),
                 validator: (value) {
-                  if (passwordError.isNotEmpty) return passwordError;
+                  if (passwordError.isNotEmpty) {
+                    isPasswordInvalid = true;
+                    return passwordError;
+                  }
 
                   if (value == null || value.isEmpty) {
+                    isPasswordInvalid = true;
                     return "Password tidak boleh kosong";
                   }
 
+                  isPasswordInvalid = false;
                   return null;
                 },
               ),
@@ -177,14 +189,17 @@ class _ResetcardState extends State<Resetcard> {
                   }
                 },
                 decoration: InputDecoration(
-                  prefixIcon: const Icon(
-                    Icons.lock,
-                    size: 25, // ukuran icon lebih besar
-                  ),
+                  prefixIcon: const Icon(Icons.lock, size: 25),
                   prefixIconColor: WidgetStateColor.resolveWith((states) {
-                    if (states.contains(WidgetState.focused)) {
+                    final isFocused = states.contains(WidgetState.focused);
+
+                    if (isFocused) {
+                      if (isConfirmInvalid) {
+                        return Colors.red;
+                      }
                       return const Color(0xff0e86e4);
                     }
+
                     return const Color(0xff9b9bb4);
                   }),
                   suffixIcon: IconButton(
@@ -228,16 +243,22 @@ class _ResetcardState extends State<Resetcard> {
                   ),
                 ),
                 validator: (value) {
-                  if (confirmError.isNotEmpty) return confirmError;
+                  if (confirmError.isNotEmpty) {
+                    isConfirmInvalid = true;
+                    return confirmError;
+                  }
 
                   if (value == null || value.isEmpty) {
+                    isConfirmInvalid = true;
                     return "Konfirmasi password tidak boleh kosong";
                   }
 
                   if (value != passwordController.text) {
+                    isConfirmInvalid = true;
                     return "Password tidak sama";
                   }
 
+                  isConfirmInvalid = false;
                   return null;
                 },
               ),
@@ -298,8 +319,9 @@ class _ResetcardState extends State<Resetcard> {
                               }
                             } catch (_) {}
 
-                            setState(() => isLoading = false);
-
+                            setState(() {
+                              isLoading = false;
+                            });
                             _formKey.currentState?.validate();
                           }
                         },
