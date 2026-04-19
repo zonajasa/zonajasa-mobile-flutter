@@ -22,6 +22,8 @@ class _ResetcardState extends State<Resetcard> {
   bool isPasswordInvalid = false;
   bool isConfirmInvalid = false;
 
+  bool hasSubmitted = false;
+
   bool _isConfirmVisible = false;
   bool _isPasswordVisible = false;
 
@@ -128,7 +130,7 @@ class _ResetcardState extends State<Resetcard> {
                       _isPasswordVisible
                           ? Icons.visibility_off
                           : Icons.visibility,
-                      color: _passwordFocus.hasFocus
+                      color: (_passwordFocus.hasFocus || hasSubmitted)
                           ? (isPasswordInvalid
                                 ? Colors.red
                                 : const Color(0xff0e86e4))
@@ -210,7 +212,7 @@ class _ResetcardState extends State<Resetcard> {
                       _isConfirmVisible
                           ? Icons.visibility_off
                           : Icons.visibility,
-                      color: _confirmFocus.hasFocus
+                      color: (_confirmFocus.hasFocus || hasSubmitted)
                           ? (isConfirmInvalid
                                 ? Colors.red
                                 : const Color(0xff0e86e4))
@@ -281,6 +283,9 @@ class _ResetcardState extends State<Resetcard> {
                   onPressed: isLoading
                       ? null
                       : () async {
+                          setState(() {
+                            hasSubmitted = false;
+                          });
                           if (!_formKey.currentState!.validate()) return;
 
                           setState(() => isLoading = true);
