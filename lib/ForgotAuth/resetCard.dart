@@ -21,7 +21,8 @@ class Resetcard extends StatefulWidget {
 class _ResetcardState extends State<Resetcard> {
   bool isPasswordInvalid = false;
   bool isConfirmInvalid = false;
-  
+
+  bool _isConfirmVisible = false;
   bool _isPasswordVisible = false;
 
   final _passwordFocus = FocusNode();
@@ -182,7 +183,7 @@ class _ResetcardState extends State<Resetcard> {
               TextFormField(
                 controller: confirmController,
                 focusNode: _confirmFocus,
-                obscureText: !_isPasswordVisible,
+                obscureText: !_isConfirmVisible,
                 onChanged: (_) {
                   if (confirmError.isNotEmpty) {
                     setState(() => confirmError = "");
@@ -204,7 +205,7 @@ class _ResetcardState extends State<Resetcard> {
                   }),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _isPasswordVisible
+                      _isConfirmVisible
                           ? Icons.visibility_off
                           : Icons.visibility,
                       color: _confirmFocus.hasFocus
@@ -213,7 +214,7 @@ class _ResetcardState extends State<Resetcard> {
                     ),
                     onPressed: () {
                       setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
+                        _isConfirmVisible = !_isConfirmVisible;
                       });
                     },
                   ),
