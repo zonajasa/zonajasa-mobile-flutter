@@ -30,6 +30,20 @@ class _ResetcardState extends State<Resetcard> {
   final passwordController = TextEditingController();
   final confirmController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _passwordFocus.addListener(() {
+      setState(() {});
+    });
+
+    _confirmFocus.addListener(() {
+      setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
