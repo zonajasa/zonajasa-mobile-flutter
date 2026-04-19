@@ -129,7 +129,9 @@ class _ResetcardState extends State<Resetcard> {
                           ? Icons.visibility_off
                           : Icons.visibility,
                       color: _passwordFocus.hasFocus
-                          ? const Color(0xff0e86e4)
+                          ? (isPasswordInvalid
+                                ? Colors.red
+                                : const Color(0xff0e86e4))
                           : const Color(0xff9b9bb4),
                     ),
                     onPressed: () {
@@ -209,7 +211,9 @@ class _ResetcardState extends State<Resetcard> {
                           ? Icons.visibility_off
                           : Icons.visibility,
                       color: _confirmFocus.hasFocus
-                          ? const Color(0xff0e86e4)
+                          ? (isConfirmInvalid
+                                ? Colors.red
+                                : const Color(0xff0e86e4))
                           : const Color(0xff9b9bb4),
                     ),
                     onPressed: () {
