@@ -19,92 +19,119 @@ class Profileui extends StatefulWidget {
 
 class _ProfileuiState extends State<Profileui> {
   final ScrollController _scrollController = ScrollController();
+
   double scrollOffset = 0;
   String currentLocation = "Mendeteksi lokasi...";
   bool switchValue = false;
   bool isPemilikJasa = false;
+  bool isLogin = false;
+
+  // DATA PROFILE
+  String namaLengkap = "";
+  String email = "";
+  String noWhatsapp = "";
 
   @override
   void initState() {
     super.initState();
+
     _scrollController.addListener(() {
+      if (!mounted) return;
       setState(() {
         scrollOffset = _scrollController.offset;
       });
     });
 
-    _getLocation();
-    getProfile();
-    checkLogin();
+    _initPage(); 
   }
 
-  // tambahkan state untuk profile
-  String namaLengkap = "";
-  String email = "";
-  String noWhatsapp = "";
+  // ================= INIT FLOW =================
 
-  Future<void> getProfile() async {
-    final result = await UserService.getProfile();
+  Future<void> _initPage() async {
+    await checkLogin();
 
-    if (!mounted) return;
+    if (!isLogin) return;
 
-    if (result == null) {
-      debugPrint("Gagal load profile");
-      return;
-    }
+    await getProfile();
 
-    final data = result["data"];
-    if (data == null) return;
-
-    setState(() {
-      namaLengkap = data["full_name"] ?? "";
-      noWhatsapp = data["no_whatsapp"] ?? "";
-      isPemilikJasa = data["role"] == "pemilik_jasa";
-      switchValue = isPemilikJasa;
-    });
+    _getLocation(); // non blocking
   }
+
+  // ================= CHECK LOGIN =================
 
   Future<void> checkLogin() async {
-    String? token = await SessionManager.getToken();
+    try {
+      String? token = await SessionManager.getToken();
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    setState(() {
-      isLogin = token != null;
-    });
+      setState(() {
+        isLogin = token != null;
+      });
+    } catch (e) {
+      debugPrint("Error checkLogin: $e");
+    }
   }
 
-  Future<void> _getLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
+  // ================= GET PROFILE =================
 
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      if (!mounted) return;
-      setState(() {
-        currentLocation = "GPS tidak aktif";
-      });
-      return;
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      setState(() {
-        currentLocation = "Izin lokasi ditolak";
-      });
-      return;
-    }
-
-    Position position = await Geolocator.getCurrentPosition(
-      // ignore: deprecated_member_use
-      desiredAccuracy: LocationAccuracy.high,
-    );
-
+  Future<void> getProfile() async {
     try {
+      final result = await UserService.getProfile();
+
+      if (!mounted) return;
+
+      if (result == null || result["data"] == null) {
+        debugPrint("Profile kosong / belum ready");
+        return;
+      }
+
+      final data = result["data"];
+
+      setState(() {
+        namaLengkap = data["full_name"] ?? "";
+        noWhatsapp = data["no_whatsapp"] ?? "";
+        isPemilikJasa = data["role"] == "pemilik_jasa";
+        switchValue = isPemilikJasa;
+      });
+    } catch (e) {
+      debugPrint("Error getProfile: $e");
+    }
+  }
+
+  // ================= LOCATION =================
+
+  Future<void> _getLocation() async {
+    try {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+
+      if (!serviceEnabled) {
+        if (!mounted) return;
+        setState(() {
+          currentLocation = "GPS tidak aktif";
+        });
+        return;
+      }
+
+      LocationPermission permission = await Geolocator.checkPermission();
+
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        if (!mounted) return;
+        setState(() {
+          currentLocation = "Izin lokasi ditolak";
+        });
+        return;
+      }
+
+      Position position = await Geolocator.getCurrentPosition(
+        // ignore: deprecated_member_use
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
       final placemarks = await placemarkFromCoordinates(
         position.latitude,
         position.longitude,
@@ -135,6 +162,8 @@ class _ProfileuiState extends State<Profileui> {
       });
     }
   }
+
+  // ================= DIALOG FLOW  =================
 
   void showConfirmPemilikJasa() {
     showDialog(
@@ -339,8 +368,8 @@ class _ProfileuiState extends State<Profileui> {
     );
   }
 
-  bool isNotifPressed = false;
-  bool isLogin = false;
+
+  // ================= DISPOSE =================
 
   @override
   void dispose() {

@@ -28,10 +28,10 @@ class UiPinCode extends StatefulWidget {
 }
 
 class _UiPinCodeState extends State<UiPinCode> {
+  bool isDisposed = false;
   bool isResendLoading = false;
   String currentExpire = "";
   bool isLoading = false;
-  final TextEditingController otpController = TextEditingController();
 
   bool isVerifying = false;
   StreamController<ErrorAnimationType>? errorController;
@@ -104,9 +104,11 @@ class _UiPinCodeState extends State<UiPinCode> {
 
   @override
   void dispose() {
+    isDisposed = true;
+
     timer?.cancel();
     errorController?.close();
-    otpController.dispose();
+
     super.dispose();
   }
 
@@ -160,7 +162,6 @@ class _UiPinCodeState extends State<UiPinCode> {
       });
 
       errorController?.add(ErrorAnimationType.shake);
-      otpController.clear();
     }
   }
 
@@ -365,11 +366,12 @@ class _UiPinCodeState extends State<UiPinCode> {
                                     PinCodeTextField(
                                       appContext: context,
                                       length: 6,
-                                      controller: otpController,
                                       autoFocus: true,
                                       keyboardType: TextInputType.number,
                                       animationType: AnimationType.fade,
-                                      errorAnimationController: errorController,
+                                      errorAnimationController: isDisposed
+                                          ? null
+                                          : errorController,
                                       enableActiveFill: true,
                                       pinTheme: PinTheme(
                                         shape: PinCodeFieldShape.box,
