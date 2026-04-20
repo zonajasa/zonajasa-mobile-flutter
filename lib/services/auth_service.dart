@@ -187,12 +187,14 @@ class AuthService {
         }),
       );
 
+      print("STATUS: ${response.statusCode}");
+      print("BODY: ${response.body}");
       final data = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
         return data;
       } else {
-        throw Exception(data["message"] ?? "Reset password gagal");
+        throw Exception(jsonEncode(data));
       }
     } catch (e) {
       rethrow;

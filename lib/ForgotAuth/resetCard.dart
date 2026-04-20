@@ -9,6 +9,7 @@ import 'package:jasa_app/login.dart';
 import 'package:jasa_app/model/app_colors.dart';
 import 'package:jasa_app/model/app_text_styles.dart';
 import 'package:jasa_app/services/auth_service.dart';
+import 'package:jasa_app/utils/snackbar_helper.dart';
 
 class Resetcard extends StatefulWidget {
   final String kodeUser;
@@ -37,6 +38,68 @@ class _ResetcardState extends State<Resetcard> {
   final passwordController = TextEditingController();
   final confirmController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  void showSuccessDialog(String message) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // ICON
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: const BoxDecoration(
+                    color: Colors.green,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.check, color: Colors.white, size: 40),
+                ),
+
+                const SizedBox(height: 20),
+
+                const Text(
+                  "Berhasil!",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+
+                const SizedBox(height: 10),
+
+                Text(
+                  message,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.black54),
+                ),
+
+                const SizedBox(height: 20),
+
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (_) => Login()),
+                        (route) => false,
+                      );
+                    },
+                    child: const Text("Login"),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   @override
   void initState() {
@@ -284,14 +347,14 @@ class _ResetcardState extends State<Resetcard> {
                       ? null
                       : () async {
                           setState(() {
-                            hasSubmitted = false;
+                            hasSubmitted = true;
                           });
                           if (!_formKey.currentState!.validate()) return;
 
                           setState(() => isLoading = true);
 
                           try {
-                            await AuthService.resetPassword(
+                            final res = await AuthService.resetPassword(
                               kodeUser: widget.kodeUser,
                               password: passwordController.text,
                               passwordConfirmation: confirmController.text,
@@ -301,11 +364,9 @@ class _ResetcardState extends State<Resetcard> {
 
                             setState(() => isLoading = false);
 
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(builder: (_) => Login()),
-                              (route) => false,
-                            );
+                            final message = res["message"];
+
+                            showSuccessDialog(message);
                           } catch (e) {
                             if (!mounted) return;
 
@@ -318,33 +379,52 @@ class _ResetcardState extends State<Resetcard> {
                               final decoded = jsonDecode(errorString);
                               final errors = decoded["errors"];
 
-                              for (var err in errors) {
-                                if (err["field"] == "password") {
-                                  passwordError = err["message"];
-                                }
+                              if (errors != null && errors is List) {
+                                for (var err in errors) {
+                                  if (err["field"] == "password") {
+                                    passwordError = err["message"];
+                                  }
 
-                                if (err["field"] == "password_confirmation") {
-                                  confirmError = err["message"];
+                                  if (err["field"] == "password_confirmation") {
+                                    confirmError = err["message"];
+                                  }
                                 }
+                              } else {
+                                AppSnackbar.showError(
+                                  context,
+                                  decoded["message"] ?? "Terjadi kesalahan",
+                                );
                               }
-                            } catch (_) {}
+                            } catch (_) {
+                              AppSnackbar.showError(context, errorString);
+                            }
 
                             setState(() {
                               isLoading = false;
                             });
+
                             _formKey.currentState?.validate();
                           }
                         },
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
-                    child: const Text(
-                      "Ubah Password",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
+                    child: isLoading
+                        ? const SizedBox(
+                            height: 25,
+                            width: 25,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Text(
+                            "Ubah Password",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
                   ),
                 ),
               ),
