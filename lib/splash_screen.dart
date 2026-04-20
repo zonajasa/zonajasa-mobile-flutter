@@ -30,12 +30,23 @@ class _SplashSState extends State<SplashS> {
     if (userClicked) return;
 
     String? token = await SessionManager.getToken();
+    bool isExpired = await SessionManager.isTokenExpired();
 
-    if (token != null && token.isNotEmpty) {
+    if (token != null && token.isNotEmpty && !isExpired) {
       if (!mounted) return;
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const Navigationpage()),
+      );
+    } else {
+      await SessionManager.logout();
+
+      if (!mounted) return;
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const Login()),
       );
     }
   }

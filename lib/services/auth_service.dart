@@ -94,8 +94,9 @@ class AuthService {
         if (type == "register_token") {
           final token = data['data']['token'];
           final nama = data['data']['user']['full_name'];
+          final expiredAt = data['data']['expired_at'];
 
-          await SessionManager.saveUser(token, nama);
+          await SessionManager.saveUser(token, nama, expiredAt);
         }
         return true;
       } else {
@@ -200,12 +201,22 @@ class AuthService {
       rethrow;
     }
   }
-}
 
-// OTP DUMMY
-class AuthOtp {
-  static Future<bool> verifyResetOtp(String otp) async {
-    await Future.delayed(const Duration(seconds: 1));
-    return otp == "111222";
+  //LOGOUT
+  static Future<void> logout() async {
+    final token = await SessionManager.getToken();
+
+    if (token == null) return;
+
+    await http.post(
+      Uri.parse("$baseUrl/user/auth/logout"),
+      headers: {
+        "Authorization": "Bearer $token",
+        "Accept": "application/json",
+        "X-API-PLATFORM": "mobile",
+        "X-API-VERSION": "1",
+        "X-API-CLIENT-KEY": dotenv.env['API_CLIENT_KEY']!,
+      },
+    );
   }
 }

@@ -90,7 +90,7 @@ class _buildHomeState extends State<_buildHome> {
   String namaLengkap = "";
 
   Future<void> getProfile() async {
-    final result = await UserService.getProfile();
+    final result = await UserService.getProfile(context);
 
     if (!mounted) return;
 
@@ -103,7 +103,7 @@ class _buildHomeState extends State<_buildHome> {
     if (data == null) return;
 
     setState(() {
-      namaLengkap = data["nama_lengkap"] ?? "";
+      namaLengkap = data["full_name"] ?? "";
     });
   }
 

@@ -1,20 +1,19 @@
-import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:http/http.dart' as http;
+import 'package:jasa_app/utils/api_helper.dart';
 import 'package:jasa_app/utils/session_manager.dart';
 
-//buat profile
 class UserService {
   static String baseUrl = dotenv.env['API_BASE_URL']!;
 
-  static Future<Map<String, dynamic>?> getProfile() async {
-    // ambil token dari session
+  static Future<Map<String, dynamic>?> getProfile(BuildContext context) async {
     String? token = await SessionManager.getToken();
 
     if (token == null) return null;
 
-    var response = await http.post(
-      Uri.parse("$baseUrl/user/auth/profile"),
+    final data = await ApiHelper.post(
+      context: context,
+      url: "$baseUrl/user/auth/profile",
       headers: {
         "Accept": "application/json",
         "Authorization": "Bearer $token",
@@ -24,11 +23,6 @@ class UserService {
       },
     );
 
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      print("Error fetching profile: ${response.statusCode}");
-      return null;
-    }
+    return data;
   }
 }

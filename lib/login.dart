@@ -146,8 +146,14 @@ class _LoginState extends State<Login> {
                                   String token = result["data"]["token"];
                                   String nama =
                                       result["data"]["user"]["full_name"];
+                                  String expiredAt =
+                                      result["data"]["expired_at"];
 
-                                  await SessionManager.saveUser(token, nama);
+                                  await SessionManager.saveUser(
+                                    token,
+                                    nama,
+                                    expiredAt,
+                                  );
 
                                   if (!mounted) return;
 

@@ -83,6 +83,13 @@ class _ResetcardState extends State<Resetcard> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xff0e86e4),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
                     onPressed: () {
                       Navigator.pushAndRemoveUntil(
                         context,
@@ -90,7 +97,10 @@ class _ResetcardState extends State<Resetcard> {
                         (route) => false,
                       );
                     },
-                    child: const Text("Login"),
+                    child: const Text(
+                      "Login",
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
               ],

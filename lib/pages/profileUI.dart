@@ -6,6 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:jasa_app/core/theme/DottedLine.dart';
 import 'package:jasa_app/login.dart';
 import 'package:jasa_app/pages/pemilik_jasa/profil_datajasa.dart';
+import 'package:jasa_app/services/auth_service.dart';
 import 'package:jasa_app/services/user_service.dart';
 import 'package:jasa_app/splash_screen.dart';
 import 'package:jasa_app/utils/session_manager.dart';
@@ -42,7 +43,7 @@ class _ProfileuiState extends State<Profileui> {
       });
     });
 
-    _initPage(); 
+    _initPage();
   }
 
   // ================= INIT FLOW =================
@@ -77,7 +78,7 @@ class _ProfileuiState extends State<Profileui> {
 
   Future<void> getProfile() async {
     try {
-      final result = await UserService.getProfile();
+      final result = await UserService.getProfile(context);
 
       if (!mounted) return;
 
@@ -367,7 +368,6 @@ class _ProfileuiState extends State<Profileui> {
       },
     );
   }
-
 
   // ================= DISPOSE =================
 
@@ -970,8 +970,13 @@ class _ProfileuiState extends State<Profileui> {
                                 ),
                               );
                               if (confirm ?? false) {
-                                await SessionManager.logout();
+                                try {
+                                  await AuthService.logout();
+                                } catch (e) {
+                                  print("Logout API error: $e");
+                                }
 
+                                await SessionManager.logout();
                                 if (!context.mounted) return;
 
                                 Navigator.pushAndRemoveUntil(
