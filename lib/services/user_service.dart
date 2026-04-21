@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -27,20 +29,25 @@ class UserService {
     return data;
   }
 
-  static Future<bool> becomeProvider() async {
+  static Future<bool> becomeProvider(int userId, String namaLengkap) async {
     try {
       final token = await SessionManager.getToken();
 
-      final response = await http.post(
-        Uri.parse("$baseUrl/user/auth/profile"),
+      final response = await http.put(
+        Uri.parse("$baseUrl/user/profile/$userId"),
         headers: {
           "Accept": "application/json",
           "Authorization": "Bearer $token",
           "X-API-PLATFORM": "mobile",
           "X-API-VERSION": "1",
           "X-API-CLIENT-KEY": dotenv.env['API_CLIENT_KEY']!,
+          "Content-Type": "application/json",
         },
-        body: {"role_id": "2", "status_service": "1"},
+        body: jsonEncode({
+          "role_id": 2,
+          "full_name": namaLengkap,
+          "image": null,
+        }),
       );
 
       print("STATUS: ${response.statusCode}");

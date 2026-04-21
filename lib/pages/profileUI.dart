@@ -19,6 +19,7 @@ class Profileui extends StatefulWidget {
 }
 
 class _ProfileuiState extends State<Profileui> {
+  int? userId;
   final ScrollController _scrollController = ScrollController();
 
   double scrollOffset = 0;
@@ -90,6 +91,8 @@ class _ProfileuiState extends State<Profileui> {
       final data = result["data"];
 
       setState(() {
+        userId = data["id"];
+
         namaLengkap = data["full_name"] ?? "";
         noWhatsapp = data["whatsapp"] ?? "";
 
@@ -226,7 +229,12 @@ class _ProfileuiState extends State<Profileui> {
                           Navigator.pop(dialogContext);
                           showLoadingDialog();
 
-                          final success = await UserService.becomeProvider();
+                          if (userId == null) return;
+
+                          final success = await UserService.becomeProvider(
+                            userId!,
+                            namaLengkap,
+                          );
 
                           if (!mounted) return;
 
