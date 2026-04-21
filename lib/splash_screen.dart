@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:jasa_app/navigationPage.dart';
 import 'package:jasa_app/login.dart';
 import 'package:jasa_app/register.dart';
+import 'package:jasa_app/services/user_service.dart';
 import 'package:jasa_app/utils/session_manager.dart';
 
 class SplashS extends StatefulWidget {
@@ -30,23 +31,27 @@ class _SplashSState extends State<SplashS> {
     if (userClicked) return;
 
     String? token = await SessionManager.getToken();
-    bool isExpired = await SessionManager.isTokenExpired();
 
-    if (token != null && token.isNotEmpty && !isExpired) {
-      if (!mounted) return;
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const Navigationpage()),
-      );
-    } else {
-      await SessionManager.logout();
-
+    if (token == null || token.isEmpty) {
       if (!mounted) return;
 
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const Login()),
+      );
+      return;
+    }
+
+    final profile = await UserService.getProfile(context);
+
+    if (profile == null) return;
+
+    if (profile["data"] != null) {
+      if (!mounted) return;
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const Navigationpage()),
       );
     }
   }

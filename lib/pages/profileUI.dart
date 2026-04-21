@@ -91,9 +91,11 @@ class _ProfileuiState extends State<Profileui> {
 
       setState(() {
         namaLengkap = data["full_name"] ?? "";
-        noWhatsapp = data["no_whatsapp"] ?? "";
-        isPemilikJasa = data["role"] == "pemilik_jasa";
-        switchValue = isPemilikJasa;
+        noWhatsapp = data["whatsapp"] ?? "";
+
+        isPemilikJasa = data["role_id"] == 2;
+
+        switchValue = data["status_service"] == 1;
       });
     } catch (e) {
       debugPrint("Error getProfile: $e");
@@ -224,7 +226,7 @@ class _ProfileuiState extends State<Profileui> {
                           Navigator.pop(dialogContext);
                           showLoadingDialog();
 
-                          await Future.delayed(const Duration(seconds: 2));
+                          final success = await UserService.becomeProvider();
 
                           if (!mounted) return;
 
@@ -232,14 +234,17 @@ class _ProfileuiState extends State<Profileui> {
                             Navigator.pop(context);
                           }
 
-                          if (!mounted) return;
+                          if (success) {
+                            await getProfile();
 
-                          setState(() {
-                            switchValue = true;
-                            isPemilikJasa = true;
-                          });
-
-                          showIncompleteProfileDialog();
+                            showIncompleteProfileDialog();
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text("Gagal menjadi pemilik jasa"),
+                              ),
+                            );
+                          }
                         },
                         child: const Text(
                           "Ya",
