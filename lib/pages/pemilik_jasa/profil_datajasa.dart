@@ -2,9 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jasa_app/core/widget/stepperIndikator.dart';
 import 'package:jasa_app/pages/pemilik_jasa/Step2Form.dart';
+import 'package:jasa_app/services/user_service.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class ProfilDatajasa extends StatefulWidget {
-  const ProfilDatajasa({super.key});
+  final int userId;
+  final String namaLengkap;
+  const ProfilDatajasa({
+    super.key,
+    required this.userId,
+    required this.namaLengkap,
+  });
 
   @override
   State<ProfilDatajasa> createState() => _ProfilDatajasaState();
@@ -31,6 +39,80 @@ class _ProfilDatajasaState extends State<ProfilDatajasa> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  void showCancelDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text("Batalkan Pengisian?"),
+          content: const Text(
+            "Jika keluar sekarang, Anda akan dibatalkan sebagai pemilik jasa.",
+          ),
+          actions: [
+            TextButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xff0e86e4),
+              ),
+              onPressed: () {
+                Navigator.pop(dialogContext);
+              },
+              child: const Text(
+                "Lanjutkan",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.pop(dialogContext);
+
+                showLoadingDialog();
+
+                final results = await Future.wait([
+                  UserService.cancelProvider(widget.userId, widget.namaLengkap),
+                  Future.delayed(const Duration(seconds: 2)),
+                ]);
+
+                final success = results[0] as bool;
+
+                if (!mounted) return;
+
+                Navigator.of(context, rootNavigator: true).pop();
+                if (success) {
+                  Navigator.pop(context, true);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Gagal membatalkan")),
+                  );
+                }
+              },
+              child: const Text(
+                "Ya, Batalkan",
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showLoadingDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (loadingContext) {
+        return Center(
+          child: LoadingAnimationWidget.halfTriangleDot(
+            color: Colors.white,
+            size: 100,
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -111,7 +193,7 @@ class _ProfilDatajasaState extends State<ProfilDatajasa> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          Navigator.pop(context);
+                          showCancelDialog();
                         },
                         child: Container(
                           padding: const EdgeInsets.all(8),
@@ -145,6 +227,7 @@ class _ProfilDatajasaState extends State<ProfilDatajasa> {
               },
             ),
           ),
+          //end
         ],
       ),
       bottomNavigationBar: SafeArea(

@@ -59,4 +59,35 @@ class UserService {
       return false;
     }
   }
+
+  static Future<bool> cancelProvider(int userId, String namaLengkap) async {
+    try {
+      final token = await SessionManager.getToken();
+
+      final response = await http.put(
+        Uri.parse("$baseUrl/user/profile/$userId"),
+        headers: {
+          "Accept": "application/json",
+          "Authorization": "Bearer $token",
+          "X-API-PLATFORM": "mobile",
+          "X-API-VERSION": "1",
+          "X-API-CLIENT-KEY": dotenv.env['API_CLIENT_KEY']!,
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode({
+          "role_id": 1, 
+          "full_name": namaLengkap,
+          "image": null,
+        }),
+      );
+
+      print("CANCEL STATUS: ${response.statusCode}");
+      print("CANCEL BODY: ${response.body}");
+
+      return response.statusCode == 200;
+    } catch (e) {
+      print("Error cancelProvider: $e");
+      return false;
+    }
+  }
 }

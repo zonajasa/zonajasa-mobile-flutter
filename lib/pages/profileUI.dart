@@ -309,8 +309,10 @@ class _ProfileuiState extends State<Profileui> {
   }
 
   void showIncompleteProfileDialog() {
+    final parentContext = context;
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) {
         return Dialog(
           shape: RoundedRectangleBorder(
@@ -352,27 +354,82 @@ class _ProfileuiState extends State<Profileui> {
 
                 const SizedBox(height: 25),
 
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xff0e86e4),
-                    ),
-                    onPressed: () {
-                      Navigator.pop(context);
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () async {
+                          Navigator.pop(context);
 
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const ProfilDatajasa(),
-                        ),
-                      );
-                    },
-                    child: const Text(
-                      "Lengkapi Sekarang",
-                      style: TextStyle(color: Colors.white),
+                          showLoadingDialog();
+
+                          if (userId == null) return;
+
+                          final success = await UserService.cancelProvider(
+                            userId!,
+                            namaLengkap,
+                          );
+
+                          if (!mounted) return;
+
+                          Navigator.pop(parentContext);
+
+                          if (success) {
+                            await getProfile();
+
+                            setState(() {
+                              switchValue = false;
+                            });
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  "Gagal membatalkan status pemilik jasa",
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                        child: const Text("Tidak Jadi"),
+                      ),
                     ),
-                  ),
+
+                    const SizedBox(width: 10),
+
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xff0e86e4),
+                        ),
+                        onPressed: () async {
+                          Navigator.pop(context);
+
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ProfilDatajasa(
+                                userId: userId!,
+                                namaLengkap: namaLengkap,
+                              ),
+                            ),
+                          );
+
+                          if (result == true) {
+                            await getProfile();
+
+                            setState(() {
+                              switchValue = false;
+                              isPemilikJasa = false;
+                            });
+                          }
+                        },
+                        child: const Text(
+                          "Lengkapi",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
