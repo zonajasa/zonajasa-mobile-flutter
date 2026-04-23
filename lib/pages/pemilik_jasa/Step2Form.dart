@@ -249,6 +249,16 @@ class Step2FormState extends State<Step2Form>
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    selectedCategoryIds = List.from(widget.selectedCategoryIds);
+    selectedDays = List.from(widget.selectedDays);
+    layananPerCategory = Map.from(widget.layananPerCategory);
+    selectedImages = List.from(widget.selectedImages);
+  }
+
+  @override
   void dispose() {
     jamBukaController.dispose();
     jamTutupController.dispose();
