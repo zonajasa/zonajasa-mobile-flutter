@@ -444,7 +444,13 @@ class _ProfilDatajasaState extends State<ProfilDatajasa> {
         ),
 
         /// STEP 3
-        const Step3Screen(),
+        Step3Screen(
+          namaUsaha: namaUsaha,
+          deskripsi: deskripsi,
+          lokasi: lokasi,
+          latitude: latitude,
+          longitude: longitude,
+        ),
       ],
     );
   }

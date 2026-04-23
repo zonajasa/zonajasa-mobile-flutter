@@ -1,7 +1,20 @@
 import 'package:flutter/material.dart';
 
 class Step3Screen extends StatelessWidget {
-  const Step3Screen({super.key});
+  final String namaUsaha;
+  final String deskripsi;
+  final String lokasi;
+  final double latitude;
+  final double longitude;
+
+  const Step3Screen({
+    super.key,
+    required this.namaUsaha,
+    required this.deskripsi,
+    required this.lokasi,
+    required this.latitude,
+    required this.longitude,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,28 +33,28 @@ class Step3Screen extends StatelessWidget {
           ),
           child: Column(
             children: [
-              _rowItem("Nama Jasa"),
+              _rowItem("Nama Jasa", namaUsaha),
               _divider(),
 
-              _rowItem("Deskripsi Jasa"),
+              _rowItem("Deskripsi Jasa", deskripsi),
               _divider(),
 
-              _buildLokasiItem(),
+              _buildLokasiItem(lokasi, latitude, longitude),
               _divider(),
 
               _buildLayananItem(),
               _divider(),
 
-              _rowItem("Hari Operasional"),
+              _rowItem("Hari Operasional", ""),
               _divider(),
 
-              _rowItem("Jam Operasional"),
+              _rowItem("Jam Operasional", ""),
               _divider(),
 
-              _rowItem("Tarif Layanan"),
+              _rowItem("Tarif Layanan", ""),
               _divider(),
 
-              _rowItem("Galeri"),
+              _rowItem("Galeri", ""),
             ],
           ),
         ),
@@ -118,7 +131,7 @@ Widget _buildLayananItem() {
   );
 }
 
-Widget _buildLokasiItem() {
+Widget _buildLokasiItem(String lokasi, double lat, double lng) {
   return Padding(
     padding: const EdgeInsets.all(14),
     child: Row(
@@ -129,16 +142,16 @@ Widget _buildLokasiItem() {
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               /// alamat utama
-              Text("Jl. Contoh Alamat No.123, Kota Kendari"),
+              Text(lokasi.isEmpty ? "-" : lokasi),
 
-              SizedBox(height: 6),
+              const SizedBox(height: 6),
 
               /// koordinat
               Text(
-                "Lat: -3.9985, Lng: 122.5123",
-                style: TextStyle(fontSize: 12, color: Colors.grey),
+                "Lat: ${lat.toStringAsFixed(5)}, Lng: ${lng.toStringAsFixed(5)}",
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
               ),
             ],
           ),
@@ -152,14 +165,16 @@ Widget _divider() {
   return Divider(height: 1, color: Colors.grey.shade400);
 }
 
-Widget _rowItem(String title) {
+Widget _rowItem(String title, String value) {
   return Padding(
     padding: const EdgeInsets.all(14),
     child: Row(
       children: [
         SizedBox(width: 130, child: Text(title)),
         const Text(": "),
-        const Expanded(child: Text("")),
+        Expanded(
+          child: Text(value, maxLines: 4, overflow: TextOverflow.ellipsis),
+        ),
       ],
     ),
   );
