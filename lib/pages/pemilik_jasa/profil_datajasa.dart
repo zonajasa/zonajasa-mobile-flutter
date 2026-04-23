@@ -431,9 +431,24 @@ class _ProfilDatajasaState extends State<ProfilDatajasa> {
             });
           },
         );
-
       case 3:
-        return const Step3Screen();
+        final step2Data = step2Key.currentState?.getData();
+
+        if (step2Data == null) {
+          return const Center(child: Text("Data belum tersedia"));
+        }
+        if (lokasi.isEmpty || latitude == 0.0 || longitude == 0.0) {
+          return const Center(child: Text("Lokasi belum dipilih dari peta"));
+        }
+        return Step3Screen(
+          namaUsaha: namaUsaha,
+          deskripsi: deskripsi,
+          lokasi: lokasi,
+          latitude: latitude,
+          longitude: longitude,
+          step2Data: step2Data,
+        );
+
       default:
         return Container();
     }
