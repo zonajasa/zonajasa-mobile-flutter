@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jasa_app/core/widget/stepperIndikator.dart';
 import 'package:jasa_app/pages/pemilik_jasa/Step2Form.dart';
+import 'package:jasa_app/pages/pemilik_jasa/map_picker_screen.dart';
 import 'package:jasa_app/services/user_service.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
@@ -21,8 +22,40 @@ class ProfilDatajasa extends StatefulWidget {
 class _ProfilDatajasaState extends State<ProfilDatajasa> {
   final GlobalKey<Step2FormState> step2Key = GlobalKey();
   final ScrollController _scrollController = ScrollController();
+  final TextEditingController lokasiController = TextEditingController();
   double scrollOffset = 0;
   int currentStep = 1;
+
+  String namaUsaha = "";
+  String deskripsi = "";
+  String lokasi = "";
+  double? latitude;
+  double? longitude;
+
+  bool isNamaError = false;
+  bool isDeskripsiError = false;
+  bool isLokasiError = false;
+  bool validateStep1() {
+    bool isValid = true;
+
+    if (namaUsaha.isEmpty) {
+      isNamaError = true;
+      isValid = false;
+    }
+
+    if (deskripsi.isEmpty) {
+      isDeskripsiError = true;
+      isValid = false;
+    }
+
+    if (lokasi.isEmpty || latitude == null || longitude == null) {
+      isLokasiError = true;
+      isValid = false;
+    }
+
+    setState(() {});
+    return isValid;
+  }
 
   @override
   void initState() {
@@ -263,9 +296,16 @@ class _ProfilDatajasaState extends State<ProfilDatajasa> {
 
             /// NAMA JASA
             TextField(
+              onChanged: (value) {
+                setState(() {
+                  namaUsaha = value;
+                  isNamaError = false;
+                });
+              },
               decoration: InputDecoration(
                 hintText: "Nama usaha",
                 helperText: "Contoh: CV. Budi Mandiri atau Laundry Express",
+                errorText: isNamaError ? "Nama usaha wajib diisi" : null,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -281,8 +321,15 @@ class _ProfilDatajasaState extends State<ProfilDatajasa> {
             /// DESKRIPSI
             TextField(
               maxLines: 4,
+              onChanged: (value) {
+                setState(() {
+                  deskripsi = value;
+                  isDeskripsiError = false;
+                });
+              },
               decoration: InputDecoration(
                 hintText: "Ceritakan tentang usaha Anda",
+                errorText: isDeskripsiError ? "Deskripsi wajib diisi" : null,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -292,16 +339,38 @@ class _ProfilDatajasaState extends State<ProfilDatajasa> {
             const SizedBox(height: 15),
 
             /// LOKASI
-            TextField(
-              decoration: InputDecoration(
-                hintText: "Lokasi usaha",
-                helperText: "Contoh: Batam Center, Kepulauan Riau",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                suffixIcon: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: FaIcon(FontAwesomeIcons.magnifyingGlass, size: 22),
+            GestureDetector(
+              onTap: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => MapPickerScreen()),
+                );
+
+                if (result != null) {
+                  setState(() {
+                    lokasi = result["address"];
+                    lokasiController.text = result["address"];
+                    latitude = result["lat"];
+                    longitude = result["lng"];
+                    isLokasiError = false;
+                  });
+                }
+              },
+              child: AbsorbPointer(
+                child: TextField(
+                  controller: lokasiController,
+                  decoration: InputDecoration(
+                    hintText: "Pilih lokasi usaha",
+                    helperText: "Tap untuk pilih lokasi dari peta",
+                    errorText: isLokasiError ? "Lokasi wajib dipilih" : null,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    suffixIcon: const Icon(
+                      Icons.location_on,
+                      color: Colors.blue,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -353,16 +422,20 @@ class _ProfilDatajasaState extends State<ProfilDatajasa> {
               ),
             ),
             onPressed: () {
+              if (currentStep == 1) {
+                final isValid = validateStep1();
+                if (!isValid) return;
+              }
+
               if (currentStep == 2) {
                 final isValid = step2Key.currentState?.validate() ?? false;
-
                 if (!isValid) return;
               }
 
               if (currentStep < 3) {
                 setState(() => currentStep++);
               } else {
-                // submit
+                // submit nanti di sini
               }
             },
             child: Text(currentStep == 3 ? "Selesai" : "Lanjut"),
