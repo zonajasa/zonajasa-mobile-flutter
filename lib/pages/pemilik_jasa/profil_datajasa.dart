@@ -450,6 +450,7 @@ class _ProfilDatajasaState extends State<ProfilDatajasa> {
           lokasi: lokasi,
           latitude: latitude,
           longitude: longitude,
+          layananPerCategory: layananPerCategory,
         ),
       ],
     );

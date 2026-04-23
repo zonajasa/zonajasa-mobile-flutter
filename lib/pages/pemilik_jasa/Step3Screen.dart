@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:jasa_app/model/category.dart';
+import 'package:jasa_app/pages/pemilik_jasa/Step2Form.dart';
 
 class Step3Screen extends StatelessWidget {
   final String namaUsaha;
@@ -6,6 +8,7 @@ class Step3Screen extends StatelessWidget {
   final String lokasi;
   final double latitude;
   final double longitude;
+  final Map<String, List<LayananItem>> layananPerCategory;
 
   const Step3Screen({
     super.key,
@@ -14,10 +17,13 @@ class Step3Screen extends StatelessWidget {
     required this.lokasi,
     required this.latitude,
     required this.longitude,
+    required this.layananPerCategory,
   });
 
   @override
   Widget build(BuildContext context) {
+    print("STEP3 DATA:");
+    print(layananPerCategory);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -42,7 +48,7 @@ class Step3Screen extends StatelessWidget {
               _buildLokasiItem(lokasi, latitude, longitude),
               _divider(),
 
-              _buildLayananItem(),
+              _buildLayananItem(layananPerCategory),
               _divider(),
 
               _rowItem("Hari Operasional", ""),
@@ -83,7 +89,7 @@ class Step3Screen extends StatelessWidget {
   }
 }
 
-Widget _buildLayananItem() {
+Widget _buildLayananItem(Map<String, List<LayananItem>> layananPerCategory) {
   return Padding(
     padding: const EdgeInsets.all(14),
     child: Row(
@@ -94,36 +100,45 @@ Widget _buildLayananItem() {
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              /// kategori
-              const Text(
-                "AC Service",
-                style: TextStyle(fontWeight: FontWeight.w500),
-              ),
-              const SizedBox(height: 6),
-              //layanan jasa
-              Wrap(
-                spacing: 8,
-                children: const [
-                  Chip(label: Text("Cuci AC")),
-                  Chip(label: Text("Service AC")),
+            children: layananPerCategory.entries.map((entry) {
+              final categoryId = entry.key;
+              final layananList = entry.value;
+
+              final category = demoCategories.firstWhere(
+                (c) => c.id == categoryId,
+              );
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// NAMA KATEGORI
+                  Text(
+                    category.name,
+                    style: const TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                  const SizedBox(height: 6),
+
+                  /// CHIP LAYANAN
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 6,
+                    children: layananList
+                        .map(
+                          (item) => Chip(
+                            label: Text(
+                              item.nameController.text.isEmpty
+                                  ? "(kosong)"
+                                  : item.nameController.text,
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ),
+
+                  const SizedBox(height: 10),
                 ],
-              ),
-
-              const SizedBox(height: 10),
-
-              /// kategori 2
-              const Text(
-                "Multimedia",
-                style: TextStyle(fontWeight: FontWeight.w500),
-              ),
-              const SizedBox(height: 6),
-              //layanan jasa
-              Wrap(
-                spacing: 8,
-                children: const [Chip(label: Text("Editing Video"))],
-              ),
-            ],
+              );
+            }).toList(),
           ),
         ),
       ],
