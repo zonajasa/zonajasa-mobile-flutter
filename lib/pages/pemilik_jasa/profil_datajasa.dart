@@ -307,9 +307,11 @@ class _ProfilDatajasaState extends State<ProfilDatajasa> {
   }
 
   Widget buildStepContent() {
-    switch (currentStep) {
-      case 1:
-        return Column(
+    return IndexedStack(
+      index: currentStep - 1,
+      children: [
+        /// STEP 1
+        Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
@@ -405,10 +407,10 @@ class _ProfilDatajasaState extends State<ProfilDatajasa> {
               ),
             ),
           ],
-        );
+        ),
 
-      case 2:
-        return Step2Form(
+        /// STEP 2
+        Step2Form(
           key: step2Key,
           selectedCategoryIds: selectedCategoryIds,
           selectedDays: selectedDays,
@@ -430,13 +432,12 @@ class _ProfilDatajasaState extends State<ProfilDatajasa> {
               jamTutup = data["closeTime"];
             });
           },
-        );
-      case 3:
-        return const Step3Screen();
+        ),
 
-      default:
-        return Container();
-    }
+        /// STEP 3
+        const Step3Screen(),
+      ],
+    );
   }
 
   Widget buildNavigationButton() {
