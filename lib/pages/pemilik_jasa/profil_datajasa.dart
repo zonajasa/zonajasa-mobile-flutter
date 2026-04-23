@@ -174,133 +174,142 @@ class _ProfilDatajasaState extends State<ProfilDatajasa> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            controller: _scrollController,
-            child: Container(
-              color: Color(0xffeeeefa),
-              child: Column(
-                children: [
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.12),
+    return PopScope(
+      canPop: false,
+      // ignore: deprecated_member_use
+      onPopInvoked: (didPop) {
+        if (didPop) return;
 
-                  Container(
-                    width: double.infinity,
-                    constraints: BoxConstraints(
-                      minHeight: MediaQuery.of(context).size.height,
-                    ),
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(30),
-                        topRight: Radius.circular(30),
+        showCancelDialog();
+      },
+      child: Scaffold(
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+              controller: _scrollController,
+              child: Container(
+                color: Color(0xffeeeefa),
+                child: Column(
+                  children: [
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.12),
+
+                    Container(
+                      width: double.infinity,
+                      constraints: BoxConstraints(
+                        minHeight: MediaQuery.of(context).size.height,
+                      ),
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(30),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          StepIndicator(currentStep: currentStep, totalStep: 3),
+                          const SizedBox(height: 25),
+
+                          buildStepContent(),
+
+                          const SizedBox(height: 30),
+                        ],
                       ),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        StepIndicator(currentStep: currentStep, totalStep: 3),
-                        const SizedBox(height: 25),
-
-                        buildStepContent(),
-
-                        const SizedBox(height: 30),
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
 
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Builder(
-              builder: (context) {
-                bool isScrolled = scrollOffset > 10;
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Builder(
+                builder: (context) {
+                  bool isScrolled = scrollOffset > 10;
 
-                return AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  height: kToolbarHeight + MediaQuery.of(context).padding.top,
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    height: kToolbarHeight + MediaQuery.of(context).padding.top,
 
-                  padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).padding.top,
-                    left: 16,
-                    right: 16,
-                  ),
+                    padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).padding.top,
+                      left: 16,
+                      right: 16,
+                    ),
 
-                  decoration: BoxDecoration(
-                    color: isScrolled ? Colors.white : Colors.transparent,
-                    boxShadow: isScrolled
-                        ? [
-                            BoxShadow(
-                              // ignore: deprecated_member_use
-                              color: Colors.black.withOpacity(0.08),
-                              blurRadius: 8,
+                    decoration: BoxDecoration(
+                      color: isScrolled ? Colors.white : Colors.transparent,
+                      boxShadow: isScrolled
+                          ? [
+                              BoxShadow(
+                                // ignore: deprecated_member_use
+                                color: Colors.black.withOpacity(0.08),
+                                blurRadius: 8,
+                              ),
+                            ]
+                          : [],
+                    ),
+
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            showCancelDialog();
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: isScrolled
+                                  ? Colors.grey.shade200
+                                  : Colors.white,
+                              shape: BoxShape.circle,
                             ),
-                          ]
-                        : [],
-                  ),
-
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          showCancelDialog();
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: isScrolled
-                                ? Colors.grey.shade200
-                                : Colors.white,
-                            shape: BoxShape.circle,
+                            child: Icon(
+                              Icons.arrow_back_ios_new,
+                              size: 18,
+                              color: isScrolled ? Colors.black : Colors.black,
+                            ),
                           ),
-                          child: Icon(
-                            Icons.arrow_back_ios_new,
-                            size: 18,
+                        ),
+
+                        const SizedBox(width: 12),
+
+                        Text(
+                          "Buka Jasa",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
                             color: isScrolled ? Colors.black : Colors.black,
                           ),
                         ),
-                      ),
-
-                      const SizedBox(width: 12),
-
-                      Text(
-                        "Buka Jasa",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: isScrolled ? Colors.black : Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-          //end
-        ],
-      ),
-      bottomNavigationBar: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.all(15),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                // ignore: deprecated_member_use
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 10,
+                      ],
+                    ),
+                  );
+                },
               ),
-            ],
+            ),
+            //end
+          ],
+        ),
+        bottomNavigationBar: SafeArea(
+          child: Container(
+            padding: const EdgeInsets.all(15),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  // ignore: deprecated_member_use
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                ),
+              ],
+            ),
+            child: buildNavigationButton(),
           ),
-          child: buildNavigationButton(),
         ),
       ),
     );
