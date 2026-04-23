@@ -41,13 +41,32 @@ class LayananItem {
 }
 
 class Step2Form extends StatefulWidget {
-  const Step2Form({super.key});
+  final List<String> selectedCategoryIds;
+  final List<String> selectedDays;
+  final Map<String, List<LayananItem>> layananPerCategory;
+  final List<File> selectedImages;
+  final String jamBuka;
+  final String jamTutup;
+
+  final Function(Map<String, dynamic>) onChanged;
+
+  const Step2Form({
+    super.key,
+    required this.selectedCategoryIds,
+    required this.selectedDays,
+    required this.layananPerCategory,
+    required this.selectedImages,
+    required this.jamBuka,
+    required this.jamTutup,
+    required this.onChanged,
+  });
 
   @override
   State<Step2Form> createState() => Step2FormState();
 }
 
-class Step2FormState extends State<Step2Form> {
+class Step2FormState extends State<Step2Form>
+    with AutomaticKeepAliveClientMixin {
   final TextEditingController kategoriController = TextEditingController();
   List<String> selectedCategoryIds = [];
   List<String> selectedDays = [];
@@ -158,10 +177,7 @@ class Step2FormState extends State<Step2Form> {
       isValid = false;
     }
 
-    if (!isJamBukaSelected ||
-        !isJamTutupSelected ||
-        jamBukaController.text.isEmpty ||
-        jamTutupController.text.isEmpty) {
+    if (jamBukaController.text.isEmpty || jamTutupController.text.isEmpty) {
       isTimeError = true;
       isValid = false;
     }
@@ -171,9 +187,65 @@ class Step2FormState extends State<Step2Form> {
       isValid = false;
     }
 
-    setState(() {});
+    bool hasValidLayanan = false;
 
+    outerLoop:
+    for (var list in layananPerCategory.values) {
+      for (var item in list) {
+        final name = item.nameController.text.trim();
+        final price = item.priceController.text.replaceAll('.', '');
+
+        if (name.isNotEmpty && price.isNotEmpty) {
+          hasValidLayanan = true;
+          break outerLoop;
+        }
+      }
+    }
+
+    if (!hasValidLayanan) {
+      isValid = false;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Minimal isi 1 layanan")));
+    }
+
+    if (mounted) {
+      setState(() {});
+    }
     return isValid;
+  }
+
+  List<Map<String, dynamic>> buildLayanan() {
+    List<Map<String, dynamic>> result = [];
+
+    layananPerCategory.forEach((categoryId, list) {
+      for (var item in list) {
+        final priceText = item.priceController.text.replaceAll('.', '');
+
+        if (item.nameController.text.isEmpty || priceText.isEmpty) continue;
+
+        result.add({
+          "categoryId": int.parse(categoryId),
+          "name": item.nameController.text,
+          "harga": int.parse(priceText),
+          "image": "",
+        });
+      }
+    });
+
+    return result;
+  }
+
+  Map<String, dynamic> getData() {
+    return {
+      "categories": selectedCategoryIds.map((e) => int.parse(e)).toList(),
+      "layanan": buildLayanan(),
+      "days": selectedDays,
+      "openTime": jamBukaController.text,
+      "closeTime": jamTutupController.text,
+      "images": selectedImages,
+    };
   }
 
   @override
@@ -192,7 +264,10 @@ class Step2FormState extends State<Step2Form> {
   }
 
   @override
+  bool get wantKeepAlive => true;
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -430,7 +505,9 @@ class Step2FormState extends State<Step2Form> {
                                     keyboardType: TextInputType.number,
                                     inputFormatters: [CurrencyInputFormatter()],
                                     onChanged: (_) {
-                                      setState(() {});
+                                      if (mounted) {
+                                        setState(() {});
+                                      }
                                     },
                                     decoration: InputDecoration(
                                       hintText: "Harga",

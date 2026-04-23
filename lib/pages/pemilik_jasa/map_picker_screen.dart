@@ -38,7 +38,7 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
       final data = jsonDecode(response.body);
 
       final placeName = data["features"][0]["place_name"];
-
+      if (!mounted) return "Lokasi tidak ditemukan";
       setState(() {
         address = placeName;
       });
@@ -68,7 +68,7 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
       final city = place.locality ?? place.subAdministrativeArea ?? "Unknown";
 
       print("KOTA USER: $city");
-
+      if (!mounted) return;
       final cityCenter = LatLng(position.latitude, position.longitude);
 
       setState(() {
@@ -81,7 +81,7 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
       print("ERROR INIT MAP: $e");
 
       final fallback = LatLng(-3.9985, 122.5149);
-
+      if (!mounted) return;
       setState(() {
         selectedLocation = fallback;
         isLoadingLocation = false;
@@ -174,9 +174,9 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
                     final resultAddress = await getAddressFromLatLng(
                       selectedLocation,
                     );
-
+                    if (!mounted) return;
                     Navigator.pop(context, {
-                      "address": resultAddress, 
+                      "address": resultAddress,
                       "lat": selectedLocation.latitude,
                       "lng": selectedLocation.longitude,
                     });

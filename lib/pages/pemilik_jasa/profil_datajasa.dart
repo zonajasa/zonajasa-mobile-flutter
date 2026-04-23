@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jasa_app/core/widget/stepperIndikator.dart';
 import 'package:jasa_app/pages/pemilik_jasa/Step2Form.dart';
+import 'package:jasa_app/pages/pemilik_jasa/Step3Screen.dart';
 import 'package:jasa_app/pages/pemilik_jasa/map_picker_screen.dart';
 import 'package:jasa_app/services/user_service.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -23,14 +26,25 @@ class _ProfilDatajasaState extends State<ProfilDatajasa> {
   final GlobalKey<Step2FormState> step2Key = GlobalKey();
   final ScrollController _scrollController = ScrollController();
   final TextEditingController lokasiController = TextEditingController();
+  final namaController = TextEditingController();
+  final deskripsiController = TextEditingController();
+
+  List<String> selectedCategoryIds = [];
+  List<String> selectedDays = [];
+  Map<String, List<LayananItem>> layananPerCategory = {};
+  List<File> selectedImages = [];
+
+  String jamBuka = "";
+  String jamTutup = "";
+
   double scrollOffset = 0;
   int currentStep = 1;
 
   String namaUsaha = "";
   String deskripsi = "";
   String lokasi = "";
-  double? latitude;
-  double? longitude;
+  double latitude = 0.0;
+  double longitude = 0.0;
 
   bool isNamaError = false;
   bool isDeskripsiError = false;
@@ -48,12 +62,15 @@ class _ProfilDatajasaState extends State<ProfilDatajasa> {
       isValid = false;
     }
 
-    if (lokasi.isEmpty || latitude == null || longitude == null) {
+    // ignore: unnecessary_null_comparison
+    if (lokasi.isEmpty || latitude == 0.0 || longitude == 0.0) {
       isLokasiError = true;
       isValid = false;
     }
 
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
     return isValid;
   }
 
@@ -62,15 +79,22 @@ class _ProfilDatajasaState extends State<ProfilDatajasa> {
     super.initState();
 
     _scrollController.addListener(() {
+      if (!mounted) return;
       setState(() {
         scrollOffset = _scrollController.offset;
       });
     });
+    namaController.text = namaUsaha;
+    deskripsiController.text = deskripsi;
+    lokasiController.text = lokasi;
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    namaController.dispose();
+    deskripsiController.dispose();
+    lokasiController.dispose();
     super.dispose();
   }
 
@@ -296,6 +320,7 @@ class _ProfilDatajasaState extends State<ProfilDatajasa> {
 
             /// NAMA JASA
             TextField(
+              controller: namaController,
               onChanged: (value) {
                 setState(() {
                   namaUsaha = value;
@@ -320,6 +345,7 @@ class _ProfilDatajasaState extends State<ProfilDatajasa> {
 
             /// DESKRIPSI
             TextField(
+              controller: deskripsiController,
               maxLines: 4,
               onChanged: (value) {
                 setState(() {
@@ -353,8 +379,10 @@ class _ProfilDatajasaState extends State<ProfilDatajasa> {
                   print(result);
                   setState(() {
                     lokasiController.text = result["address"];
-                    latitude = result["lat"];
-                    longitude = result["lng"];
+                    lokasi = result["address"];
+                    latitude = (result["lat"] as num).toDouble();
+                    longitude = (result["lng"] as num).toDouble();
+                    isLokasiError = false;
                   });
                 }
               },
@@ -380,9 +408,46 @@ class _ProfilDatajasaState extends State<ProfilDatajasa> {
         );
 
       case 2:
-        return Step2Form(key: step2Key);
+        return Step2Form(
+          key: step2Key,
+          selectedCategoryIds: selectedCategoryIds,
+          selectedDays: selectedDays,
+          layananPerCategory: layananPerCategory,
+          selectedImages: selectedImages,
+          jamBuka: jamBuka,
+          jamTutup: jamTutup,
+          onChanged: (data) {
+            setState(() {
+              selectedCategoryIds = List<String>.from(
+                data["selectedCategoryIds"],
+              );
+              selectedDays = List<String>.from(data["selectedDays"]);
+              layananPerCategory = Map<String, List<LayananItem>>.from(
+                data["layanan"],
+              );
+              selectedImages = List<File>.from(data["images"]);
+              jamBuka = data["openTime"];
+              jamTutup = data["closeTime"];
+            });
+          },
+        );
       case 3:
-        return const Text("STEP 3 - preview / submit");
+        final step2Data = step2Key.currentState?.getData();
+
+        if (step2Data == null) {
+          return const Center(child: Text("Data belum tersedia"));
+        }
+        if (lokasi.isEmpty || latitude == 0.0 || longitude == 0.0) {
+          return const Center(child: Text("Lokasi belum dipilih dari peta"));
+        }
+        return Step3Screen(
+          namaUsaha: namaUsaha,
+          deskripsi: deskripsi,
+          lokasi: lokasi,
+          latitude: latitude,
+          longitude: longitude,
+          step2Data: step2Data,
+        );
 
       default:
         return Container();
