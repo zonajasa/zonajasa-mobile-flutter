@@ -346,13 +346,15 @@ class _ProfilDatajasaState extends State<ProfilDatajasa> {
                   MaterialPageRoute(builder: (_) => MapPickerScreen()),
                 );
 
+                if (!mounted) return;
+
                 if (result != null) {
+                  // ignore: avoid_print
+                  print(result);
                   setState(() {
-                    lokasi = result["address"];
                     lokasiController.text = result["address"];
                     latitude = result["lat"];
                     longitude = result["lng"];
-                    isLokasiError = false;
                   });
                 }
               },
