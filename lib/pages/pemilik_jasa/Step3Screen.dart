@@ -8,7 +8,7 @@ class Step3Screen extends StatelessWidget {
   final String lokasi;
   final double latitude;
   final double longitude;
-  final Map<String, List<LayananItem>> layananPerCategory;
+  final GlobalKey<Step2FormState> step2Key;
 
   const Step3Screen({
     super.key,
@@ -17,13 +17,17 @@ class Step3Screen extends StatelessWidget {
     required this.lokasi,
     required this.latitude,
     required this.longitude,
-    required this.layananPerCategory,
+    required this.step2Key,
   });
 
   @override
   Widget build(BuildContext context) {
-    print("STEP3 DATA:");
-    print(layananPerCategory);
+    final step2Data = step2Key.currentState?.getData() ?? {};
+    final layanan = step2Data["layanan"] ?? [];
+    final days = step2Data["days"] ?? [];
+    final openTime = step2Data["openTime"] ?? "";
+    final closeTime = step2Data["closeTime"] ?? "";
+    final images = step2Data["images"] ?? [];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -48,19 +52,19 @@ class Step3Screen extends StatelessWidget {
               _buildLokasiItem(lokasi, latitude, longitude),
               _divider(),
 
-              _buildLayananItem(layananPerCategory),
+              _buildLayananItem(layanan),
               _divider(),
 
-              _rowItem("Hari Operasional", ""),
+              _buildHariItem(days),
               _divider(),
 
-              _rowItem("Jam Operasional", ""),
+              _buildJamItem(openTime, closeTime),
               _divider(),
 
-              _rowItem("Tarif Layanan", ""),
+              _buildTarifItem(layanan),
               _divider(),
 
-              _rowItem("Galeri", ""),
+              _buildGaleriItem(images),
             ],
           ),
         ),
@@ -89,7 +93,144 @@ class Step3Screen extends StatelessWidget {
   }
 }
 
-Widget _buildLayananItem(Map<String, List<LayananItem>> layananPerCategory) {
+Widget _buildGaleriItem(List images) {
+  return Padding(
+    padding: const EdgeInsets.all(14),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(width: 130, child: Text("Galeri")),
+        const Text(": "),
+        Expanded(
+          child: images.isEmpty
+              ? const Text("-")
+              : Row(
+                  children: List.generate(3, (index) {
+                    final hasImage = index < images.length;
+
+                    return Expanded(
+                      child: Container(
+                        margin: EdgeInsets.only(right: index != 2 ? 8 : 0),
+                        height: 70,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.grey.shade200,
+                          image: hasImage
+                              ? DecorationImage(
+                                  image: FileImage(images[index]),
+                                  fit: BoxFit.cover,
+                                )
+                              : null,
+                        ),
+                        child: !hasImage
+                            ? const Center(
+                                child: Icon(
+                                  Icons.image,
+                                  size: 20,
+                                  color: Colors.grey,
+                                ),
+                              )
+                            : null,
+                      ),
+                    );
+                  }),
+                ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _buildTarifItem(List layanan) {
+  if (layanan.isEmpty) {
+    return _rowItem("Tarif Layanan", "-");
+  }
+
+  /// ambil semua harga
+  final prices = layanan
+      .map<int>((e) => e["harga"] ?? 0)
+      .where((p) => p > 0)
+      .toList();
+
+  if (prices.isEmpty) {
+    return _rowItem("Tarif Layanan", "-");
+  }
+
+  prices.sort();
+
+  final min = prices.first;
+  final max = prices.last;
+
+  String format(int value) {
+    return value.toString().replaceAllMapped(
+      RegExp(r'\B(?=(\d{3})+(?!\d))'),
+      (match) => '.',
+    );
+  }
+
+  final text = min == max
+      ? "Rp ${format(min)}"
+      : "Rp ${format(min)} - Rp ${format(max)}";
+
+  return _rowItem("Tarif Layanan", text);
+}
+
+Widget _buildJamItem(String openTime, String closeTime) {
+  final isEmpty = openTime.isEmpty || closeTime.isEmpty;
+
+  return Padding(
+    padding: const EdgeInsets.all(14),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(width: 130, child: Text("Jam Operasional")),
+        const Text(": "),
+        Expanded(
+          child: Text(
+            isEmpty ? "-" : "Jam $openTime Sampai $closeTime",
+            style: const TextStyle(fontWeight: FontWeight.w500),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _buildHariItem(List days) {
+  return Padding(
+    padding: const EdgeInsets.all(14),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(width: 130, child: Text("Hari Operasional")),
+        const Text(": "),
+        Expanded(
+          child: Wrap(
+            spacing: 8,
+            runSpacing: 6,
+            children: days.map<Widget>((day) {
+              return Chip(label: Text(day));
+            }).toList(),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _buildLayananItem(List layanan) {
+  final Map<int, List<Map<String, dynamic>>> grouped = {};
+
+  for (var item in layanan) {
+    final int categoryId = item["categoryId"];
+
+    if (!grouped.containsKey(categoryId)) {
+      grouped[categoryId] = [];
+    }
+
+    grouped[categoryId]!.add(item);
+  }
+
   return Padding(
     padding: const EdgeInsets.all(14),
     child: Row(
@@ -100,39 +241,30 @@ Widget _buildLayananItem(Map<String, List<LayananItem>> layananPerCategory) {
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: layananPerCategory.entries.map((entry) {
+            children: grouped.entries.map((entry) {
               final categoryId = entry.key;
-              final layananList = entry.value;
+              final items = entry.value;
 
+              /// ambil nama kategori
               final category = demoCategories.firstWhere(
-                (c) => c.id == categoryId,
+                (c) => c.id == categoryId.toString(),
               );
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  /// NAMA KATEGORI
                   Text(
                     category.name,
                     style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
                   const SizedBox(height: 6),
 
-                  /// CHIP LAYANAN
                   Wrap(
                     spacing: 8,
                     runSpacing: 6,
-                    children: layananList
-                        .map(
-                          (item) => Chip(
-                            label: Text(
-                              item.nameController.text.isEmpty
-                                  ? "(kosong)"
-                                  : item.nameController.text,
-                            ),
-                          ),
-                        )
-                        .toList(),
+                    children: items.map<Widget>((item) {
+                      return Chip(label: Text(item["name"] ?? "-"));
+                    }).toList(),
                   ),
 
                   const SizedBox(height: 10),
