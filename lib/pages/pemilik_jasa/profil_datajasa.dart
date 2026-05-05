@@ -7,6 +7,7 @@ import 'package:jasa_app/pages/pemilik_jasa/Step2Form.dart';
 import 'package:jasa_app/pages/pemilik_jasa/Step3Screen.dart';
 import 'package:jasa_app/pages/pemilik_jasa/map_picker_screen.dart';
 import 'package:jasa_app/services/user_service.dart';
+import 'package:jasa_app/utils/snackbar_helper.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class ProfilDatajasa extends StatefulWidget {
@@ -23,6 +24,7 @@ class ProfilDatajasa extends StatefulWidget {
 }
 
 class _ProfilDatajasaState extends State<ProfilDatajasa> {
+  bool isLoading = false;
   final GlobalKey<Step2FormState> step2Key = GlobalKey();
   final ScrollController _scrollController = ScrollController();
   final TextEditingController lokasiController = TextEditingController();
@@ -170,6 +172,50 @@ class _ProfilDatajasaState extends State<ProfilDatajasa> {
         );
       },
     );
+  }
+
+  Future<void> submitData() async {
+    if (isLoading) return;
+    setState(() => isLoading = true);
+
+    final step2Data = step2Key.currentState?.getData() ?? {};
+
+    final layanan = step2Data["layanan"] ?? [];
+    final categories = step2Data["categories"] ?? [];
+    final openTime = step2Data["openTime"] ?? "";
+    final closeTime = step2Data["closeTime"] ?? "";
+    final days = step2Data["days"] ?? [];
+
+    final body = {
+      "service": {
+        "company": namaUsaha,
+        "description": deskripsi,
+        "address": lokasi,
+        "latitude": latitude.toString(),
+        "longitude": longitude.toString(),
+      },
+      "service_kategori": {"categoryId": categories},
+      "service_layanan": layanan,
+      "service_operational": {"day": days},
+      "service_waktu": {"openTime": openTime, "closeTime": closeTime},
+    };
+
+    // ignore: avoid_print
+    print("BODY: $body");
+
+    // API CALL
+    final success = await UserService.createService(body);
+
+    if (!mounted) return;
+
+    setState(() => isLoading = false);
+
+    if (success) {
+      AppSnackbar.showSuccess(context, "Berhasil membuat jasa");
+      Navigator.pop(context);
+    } else {
+      AppSnackbar.showError(context, "Gagal menambahkan jasa");
+    }
   }
 
   @override
@@ -503,11 +549,25 @@ class _ProfilDatajasaState extends State<ProfilDatajasa> {
 
               if (currentStep < 3) {
                 setState(() => currentStep++);
+                Future.delayed(Duration(milliseconds: 50), () {
+                  _scrollController.animateTo(
+                    0,
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.easeOut,
+                  );
+                });
               } else {
-                // submit nanti di sini
+                submitData();
               }
             },
-            child: Text(currentStep == 3 ? "Selesai" : "Lanjut"),
+            // child: Text(currentStep == 3 ? "Selesai" : "Lanjut"),
+            child: isLoading
+                ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Text(currentStep == 3 ? "Selesai" : "Lanjut"),
           ),
         ),
       ],

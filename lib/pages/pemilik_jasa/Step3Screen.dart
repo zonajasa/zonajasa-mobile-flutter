@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jasa_app/model/category.dart';
 import 'package:jasa_app/pages/pemilik_jasa/Step2Form.dart';
 
-class Step3Screen extends StatelessWidget {
+class Step3Screen extends StatefulWidget {
   final String namaUsaha;
   final String deskripsi;
   final String lokasi;
@@ -21,8 +21,14 @@ class Step3Screen extends StatelessWidget {
   });
 
   @override
+  State<Step3Screen> createState() => _Step3ScreenState();
+}
+
+class _Step3ScreenState extends State<Step3Screen> {
+  bool isAgree = false;
+  @override
   Widget build(BuildContext context) {
-    final step2Data = step2Key.currentState?.getData() ?? {};
+    final step2Data = widget.step2Key.currentState?.getData() ?? {};
     final layanan = step2Data["layanan"] ?? [];
     final days = step2Data["days"] ?? [];
     final openTime = step2Data["openTime"] ?? "";
@@ -43,13 +49,17 @@ class Step3Screen extends StatelessWidget {
           ),
           child: Column(
             children: [
-              _rowItem("Nama Jasa", namaUsaha),
+              _rowItem("Nama Jasa", widget.namaUsaha),
               _divider(),
 
-              _rowItem("Deskripsi Jasa", deskripsi),
+              _rowItem("Deskripsi Jasa", widget.deskripsi),
               _divider(),
 
-              _buildLokasiItem(lokasi, latitude, longitude),
+              _buildLokasiItem(
+                widget.lokasi,
+                widget.latitude,
+                widget.longitude,
+              ),
               _divider(),
 
               _buildLayananItem(layanan),
@@ -73,17 +83,27 @@ class Step3Screen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Checkbox(
-              value: false,
+              value: isAgree,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(4),
               ),
-              onChanged: (v) {},
+              onChanged: (v) {
+                setState(() {
+                  isAgree = v ?? false;
+                });
+              },
             ),
-
             Expanded(
-              child: Text(
-                "Dengan ini saya setuju untuk semua ketentuan yang berlaku",
-                style: TextStyle(fontSize: 12),
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    isAgree = !isAgree;
+                  });
+                },
+                child: Text(
+                  "Dengan ini saya setuju untuk semua ketentuan yang berlaku",
+                  style: TextStyle(fontSize: 12),
+                ),
               ),
             ),
           ],

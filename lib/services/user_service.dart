@@ -75,7 +75,7 @@ class UserService {
           "Content-Type": "application/json",
         },
         body: jsonEncode({
-          "role_id": 1, 
+          "role_id": 1,
           "full_name": namaLengkap,
           "image": null,
         }),
@@ -87,6 +87,32 @@ class UserService {
       return response.statusCode == 200;
     } catch (e) {
       print("Error cancelProvider: $e");
+      return false;
+    }
+  }
+
+  static Future<bool> createService(Map<String, dynamic> body) async {
+    try {
+      final token = await SessionManager.getToken();
+
+      final response = await http.post(
+        Uri.parse("$baseUrl/user/jasa"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+          "X-API-PLATFORM": "mobile",
+          "X-API-VERSION": "1",
+          "X-API-CLIENT-KEY": dotenv.env['API_CLIENT_KEY']!,
+        },
+        body: jsonEncode(body),
+      );
+
+      print("CREATE SERVICE STATUS: ${response.statusCode}");
+      print("CREATE SERVICE BODY: ${response.body}");
+
+      return response.statusCode == 200 || response.statusCode == 201;
+    } catch (e) {
+      print("ERROR CREATE SERVICE: $e");
       return false;
     }
   }
